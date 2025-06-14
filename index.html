@@ -222,7 +222,7 @@
         apiKey: "AIzaSyDLzpa2HYzJZdZvY_YuviKZ6Zg0FhWTfJw", // استبدل بمفتاحك
         authDomain: "my-site-cdd00.firebaseapp.com",
         projectId: "my-site-cdd00",
-        storageBucket: "my-site-cdd00.appspot.com", // Corrected domain
+        storageBucket: "my-site-cdd00.firebasestorage.app", // Consistent with user's original first file
         messagingSenderId: "514123463555",
         appId: "1:514123463555:web:8499c5bde152537a3dd4b6",
         measurementId: "G-3Y7SYCE0NZ"
@@ -269,6 +269,7 @@
       const btnLogout = document.getElementById('btn-logout');
       const authStatusDiv = document.getElementById('auth-status');
 
+      // --- AUTH LOGIC FROM FIRST FILE (WITH VERIFICATION) ---
       const updateAuthUI = (isLoggedIn, userEmail = '', isVerified = true) => {
         showHideElement(authFormFields, !isLoggedIn);
         showHideElement(mainActionButton, !isLoggedIn);
@@ -295,10 +296,10 @@
           updateLoginModeUI(); 
           updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
           navLoginLink.textContent = 'تسجيل الدخول';
-          navLoginLink.onclick = handleNavLinkClick;
+          navLoginLink.onclick = handleNavLinkClick; // Re-assign original handler
           gameSections.forEach(gs => { gs.classList.add('hidden-by-auth'); gs.classList.remove('active'); });
         }
-        updateNavigationDOM(isLoggedIn && isVerified);
+        updateNavigationDOM(isLoggedIn && isVerified); // Pass verification status
       };
 
       const updateLoginModeUI = () => {
@@ -337,10 +338,11 @@
             auth.signInWithEmailAndPassword(email, password)
               .then((userCredential) => {
                 if (userCredential.user && !userCredential.user.emailVerified) {
-                  updateElementText(authStatusDiv, "لقد سجلت الدخول، ولكن يجب التحقق من بريدك الإلكتروني أولاً. تم إرسال رسالة تحقق.", 'error');
+                  updateElementText(authStatusDiv, "لقد سجلت الدخول، ولكن يجب التحقق من بريدك الإلكتروني أولاً. يمكنك إعادة إرسال رسالة تحقق إذا أردت.", 'error');
                   // userCredential.user.sendEmailVerification(); // Optionally re-send
                   auth.signOut(); 
                 } else {
+                  // Verified, onAuthStateChanged will handle UI
                   loginEmailInput.value = ''; loginPasswordInput.value = '';
                 }
               })
@@ -382,12 +384,13 @@
               .finally(() => { disableElement(mainActionButton, false); });
         }
       };
+      // --- END AUTH LOGIC FROM FIRST FILE ---
 
       updateLoginModeUI(); 
       mainActionButton.addEventListener('click', handleAuthAction);
       btnLogout.addEventListener('click', () => { 
         auth.signOut().catch(e => console.error('Logout error', e)); 
-        updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
+        updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info'); // Reflect logout immediately
       });
 
       auth.onAuthStateChanged(user => {
@@ -406,7 +409,7 @@
             showHideElement(loginSectionElement, true); 
             updateElementText(authStatusDiv, `تم تسجيل حسابك (${user.email}) ولكن لم يتم التحقق من البريد الإلكتروني. يرجى التحقق من بريدك لتتمكن من اللعب.`, 'info');
              gameSections.forEach(gs => { gs.classList.add('hidden-by-auth'); gs.classList.remove('active'); });
-             updateNavigationDOM(false); 
+             updateNavigationDOM(false); // Do not show game links
           }
         } else {
           updateAuthUI(false);
@@ -418,7 +421,7 @@
       const updateNavigationDOM = (isLoggedInAndVerified) => { 
         currentNavLinksElements.forEach(link => { if (link !== navLoginLink) link.remove(); });
         currentNavLinksElements = [navLoginLink];
-        if (isLoggedInAndVerified) {
+        if (isLoggedInAndVerified) { // Only add game links if logged in AND verified
           gameNavLinksData.forEach(data => { const l = document.createElement('a'); l.href=data.href; l.textContent=data.text; l.addEventListener('click',handleNavLinkClick); mainNav.appendChild(l); currentNavLinksElements.push(l); });
         }
       };
@@ -430,6 +433,7 @@
         currentNavLinksElements.forEach(a => { if(a) a.classList.toggle('active', a.getAttribute('href') === `#${targetId}`); });
         
         const currentUser = auth.currentUser;
+        // Play sound if game section and user is verified, or if login section and no user
         if ( (isGame && currentUser && currentUser.emailVerified) || (targetId === 'login' && !currentUser) ) {
              if (targetId !== 'login' || !currentUser) playSound('snd-click');
         }
@@ -440,6 +444,7 @@
           const isGame = Array.from(gameSections).some(gs => gs.id === id);
           
           const currentUser = auth.currentUser;
+          // Check auth and verification for game links
           if (isGame && (!currentUser || !currentUser.emailVerified)) { 
             updateElementText(authStatusDiv, "يجب تسجيل الدخول والتحقق من بريدك الإلكتروني أولاً للعب.", "error"); 
             showSection('login', false); 
@@ -449,6 +454,7 @@
       };
       navLoginLink.addEventListener('click', handleNavLinkClick);
       
+      // --- Game Initializations (Kept from second file, with added verification checks) ---
       const initXOGame=()=>{const s=document.querySelector('#xo');if(!s)return;const bE=s.querySelector('.board'),sE=s.querySelector('.status'),rB=s.querySelector('#xo-restart');let b=Array(9).fill(''),cP='❌',gA=true;const wP=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];const cW=()=>{for(const p of wP){const [x,y,z]=p;if(b[x]&&b[x]===b[y]&&b[x]===b[z])return b[x];}return null;};const hC=(idx)=>{if(!auth.currentUser||!auth.currentUser.emailVerified){updateElementText(sE,'يرجى التحقق من بريدك للعب.','info');return;}if(!gA||b[idx])return;b[idx]=cP;bE.children[idx].textContent=cP;const w=cW();if(w){updateElementText(sE,`فاز ${w}`);playSound('snd-win');gA=false;}else if(!b.includes('')){updateElementText(sE,'تعادل');playSound('snd-lose');gA=false;}else{cP=cP==='❌'?'⭕':'❌';updateElementText(sE,`الدور: ${cP}`);playSound('snd-click');}};const rG=()=>{if(!auth.currentUser||!auth.currentUser.emailVerified){updateElementText(sE,'يرجى التحقق من بريدك للعب.','info');return;}b.fill('');cP='❌';gA=true;updateElementText(sE,'الدور: ❌');Array.from(bE.children).forEach(c=>c.textContent='');playSound('snd-click');};if(bE){bE.innerHTML=Array(9).fill().map((_,i)=>`<div class="cell" data-index="${i}"></div>`).join('');Array.from(bE.children).forEach((c,i)=>c.addEventListener('click',()=>hC(i)));}if(rB)rB.addEventListener('click',rG);if(sE)updateElementText(sE,'الدور: ❌');};
       
       const initRPSGame = () => { 
@@ -525,7 +531,7 @@
         let startTime, timeoutId, waitingForClick = false;
 
         const startGame = () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(reactBox, 'يرجى التحقق من بريدك للعب.','info'); return;}
+            if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(reactBox, 'يرجى التحقق من بريدك للعب.','info'); reactBox.classList.remove('waiting', 'ready'); return;}
             if (waitingForClick) { 
                 if (reactBox.classList.contains('ready')) { 
                     const reactionTime = Date.now() - startTime;
@@ -566,7 +572,7 @@
         const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 
         if(rollButton) rollButton.addEventListener('click', () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(resultElement, '--', 'info'); alert('يرجى التحقق من بريدك للعب.'); return;}
+            if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(resultElement, '--', 'info'); if(statusElement) statusElement.textContent = 'يرجى التحقق من بريدك للعب.'; return;}
             const roll = Math.floor(Math.random() * 6);
             updateElementText(resultElement, diceFaces[roll]);
             playSound('snd-click');
@@ -598,7 +604,7 @@
             if(!cardsContainer || !statusElement) return;
             if (auth.currentUser && !auth.currentUser.emailVerified) { 
                 updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info');
-                // cardsContainer.innerHTML = ''; // Optionally clear board
+                cardsContainer.innerHTML = ''; // Clear board if not verified to prevent interaction
                 return;
             }
 
@@ -616,7 +622,6 @@
 
                 const cardFaceFront = document.createElement('div');
                 cardFaceFront.classList.add('card-face', 'card-front');
-                // cardFaceFront.textContent = '?'; // Optional: symbol for card front
 
                 const cardFaceBack = document.createElement('div');
                 cardFaceBack.classList.add('card-face', 'card-back');
@@ -657,8 +662,9 @@
                 card2.classList.add('matched');
                 matchedPairs++;
                 playSound('snd-win');
+                if(statusElement) updateElementText(statusElement, `أزواج متطابقة: ${matchedPairs}/${cardValues.length}`);
                 if (matchedPairs === cardValues.length) {
-                    if(statusElement) updateElementText(statusElement, 'أحسنت! لقد وجدت كل الأزواج.', 'success');
+                    if(statusElement) updateElementText(statusElement, 'أحسنت! لقد وجدت كل الأزواج!', 'success');
                 }
             } else {
                 playSound('snd-lose');
@@ -668,7 +674,7 @@
                 }, 1000);
             }
             flippedCards = [];
-            setTimeout(() => { canFlip = true; }, isMatch ? 200 : 1000);
+            setTimeout(() => { canFlip = true; }, isMatch ? 200 : 1000); // Allow flipping sooner if match
         }
 
         if(restartButton) restartButton.addEventListener('click', () => {
@@ -730,6 +736,7 @@
                 updateElementText(resultElement, `خطأ. الإجابة الصحيحة: ${correctAnswer}`, 'error');
                 playSound('snd-lose');
             }
+             if(answerInput) answerInput.value = ''; // Clear input for next question or retry
         };
 
         if(startButton) startButton.addEventListener('click', startGame);
@@ -778,6 +785,7 @@
             if (guess === secretNumber) {
                 updateElementText(resultElement, `أحسنت! لقد خمنت الرقم ${secretNumber} في ${attempts} محاولات.`, 'success');
                 playSound('snd-win');
+                if(messageElement) updateElementText(messageElement, 'اضغط "ابدأ اللعبة" للعب مرة أخرى.');
                 showHideElement(startButton, true);
                 disableElement(submitButton, true);
                 disableElement(inputField, true);
@@ -787,12 +795,13 @@
                 if (remainingAttempts <= 0) {
                     updateElementText(resultElement, `للأسف انتهت محاولاتك. الرقم الصحيح كان ${secretNumber}.`, 'error');
                     playSound('snd-lose');
+                    if(messageElement) updateElementText(messageElement, 'اضغط "ابدأ اللعبة" للعب مرة أخرى.');
                     showHideElement(startButton, true);
                     disableElement(submitButton, true);
                     disableElement(inputField, true);
                 } else {
                     updateElementText(resultElement, guess < secretNumber ? 'أعلى!' : 'أقل!', 'info');
-                    updateElementText(messageElement, `محاولات متبقية: ${remainingAttempts}`);
+                    if(messageElement) updateElementText(messageElement, `محاولات متبقية: ${remainingAttempts}`);
                 }
             }
             if(inputField) {
@@ -803,7 +812,7 @@
         if(startButton) startButton.addEventListener('click', startGame);
         if(submitButton) submitButton.addEventListener('click', checkGuess);
         if(inputField) inputField.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkGuess(); });
-        if(resultElement) updateElementText(resultElement, '--');
+        if(messageElement) updateElementText(messageElement, 'خمن رقمًا بين 1 و 100');
       };
 
       const initBigSmallGame = () => {
@@ -856,6 +865,7 @@
                 updateElementText(resultElement, `خطأ. الرقم الأكبر كان ${biggerNum}.`, 'error');
                 playSound('snd-lose');
             }
+            if(answerInput) answerInput.value = ''; // Clear input
         };
         if(startButton) startButton.addEventListener('click', startGame);
         if(submitButton) submitButton.addEventListener('click', checkAnswer);
@@ -905,7 +915,7 @@
                 if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
             }
             const typedText = inputField.value;
-            const originalText = textToTypeElement.textContent;
+            const originalText = textToTypeElement.textContent; // Use the current text content
             const endTime = new Date();
             const timeTaken = (endTime - startTime) / 1000; 
 
@@ -915,19 +925,27 @@
                     errors++;
                 }
             }
-            if (typedText.length > originalText.length) {
+            if (typedText.length > originalText.length) { // Penalize extra characters
                 errors += (typedText.length - originalText.length);
             }
+            // Only count as complete if all original text is typed
+            if (typedText.length < originalText.length && typedText !== originalText) {
+                 updateElementText(statusElement, 'أكمل النص أولاً ثم اضغط تحقق.');
+                 playSound('snd-lose');
+                 return;
+            }
 
-            const words = originalText.split(/\s+/).filter(Boolean).length; // More robust word count
+
+            const words = originalText.split(/\s+/).filter(Boolean).length;
             const wpm = timeTaken > 0 ? Math.round((words / timeTaken) * 60) : 0;
             const accuracy = originalText.length > 0 ? Math.round(((originalText.length - errors) / originalText.length) * 100) : 0;
             
             updateElementText(statusElement, `الوقت: ${timeTaken.toFixed(1)} ثانية, السرعة: ${wpm} ك/د, الدقة: ${Math.max(0, accuracy)}%, الأخطاء: ${errors}`);
-            playSound(accuracy > 80 ? 'snd-win' : 'snd-lose');
+            playSound(accuracy >= 80 ? 'snd-win' : 'snd-lose');
             showHideElement(startButton, true);
             disableElement(inputField, true);
             disableElement(submitButton, true);
+            // Don't hide inputGroup and textToTypeElement immediately, so user can see results. Start button will reset.
         };
         if(startButton) startButton.addEventListener('click', startGame);
         if(submitButton) submitButton.addEventListener('click', checkTyping);
