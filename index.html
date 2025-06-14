@@ -32,10 +32,29 @@
     nav { background:#002b4d; padding:12px; text-align:center; position:fixed; top:0; left:0; right:0; z-index: 1000; direction: rtl;}
     nav a { color:white; margin:0 10px; text-decoration:none; font-size:1.1rem; }
     nav a:hover, nav a.active { text-decoration:underline; font-weight: bold; }
-    section { display:none; padding:20px; max-width:500px; margin: 20px auto; margin-top: 80px; background:rgba(255,255,255,0.95); color:#333; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.15); direction: rtl;}
+    
+    section {
+      display: none;
+      padding: 0 20px 20px 20px; /* تعديل هنا: أعلى 0، يمين 20، أسفل 20، يسار 20 */
+      max-width: 500px;
+      margin: 20px auto; /* هذا margin خارجي للـ section نفسها */
+      margin-top: 80px; /* مسافة من الناف بار */
+      background: rgba(255, 255, 255, 0.95);
+      color: #333;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      direction: rtl;
+    }
     section.active { display:block; }
-    section#login.active { background: transparent; box-shadow: none; border: none; padding: 0;}
-    section h2 { margin-top:0; color: #003B73; text-align:center; margin-bottom: 20px;}
+    section#login.active { background: transparent; box-shadow: none; border: none; padding: 0;} /* قسم تسجيل الدخول لا يحتاج padding */
+    
+    section h2 {
+      margin-top: 20px; /* !!! تعديل هنا: هذا هو الهامش العلوي للعنوان داخل الـ section */
+      color: #003B73;
+      text-align: center;
+      margin-bottom: 20px; /* الهامش السفلي للعنوان قبل محتوى اللعبة */
+    }
+
     section:not(#login) button { padding:10px 20px; margin:8px 4px; font-size:1rem; cursor:pointer; border:none; border-radius:8px; background:#005A9C; color:white; transition:background .2s; }
     section:not(#login) button:hover { background:#003B73; }
     section:not(#login) button:disabled { background:#ccc; cursor:not-allowed; }
@@ -46,34 +65,29 @@
         grid-template-columns:repeat(3,100px); 
         gap:8px; 
         justify-content:center; 
-        margin: 0 auto 20px auto; /* هامش علوي 0، سفلي 20، وتوسيط أفقي */
+        margin: 0 auto 20px auto; /* هامش علوي 0 (يعتمد على h2)، سفلي 20، وتوسيط أفقي */
     }
     .cell { width:100px; height:100px; border:2px solid #aaa; display:flex; align-items:center; justify-content:center; font-size:2.8rem; background:#f9f9f9; transition:background .2s; cursor:pointer; border-radius: 8px;}
     .cell:hover { background:#e9e9e9; }
 
-    .gamebox, /* لمعظم الألعاب التي تستخدم هذا الكلاس لمنطقة اللعب أو الأزرار الرئيسية */
-    .cards /* للعبة الذاكرة حيث .cards هي منطقة اللعب الرئيسية */ {
-      margin-top: 0; /* للتأكيد على عدم وجود هامش علوي إضافي */
-      margin-right: auto; /* للتوسيط الأفقي إذا كان العنصر block */
+    .gamebox, 
+    .cards {
+      margin-top: 0; /* يعتمد على margin-bottom للـ h2 */
+      margin-right: auto; 
       margin-bottom: 20px; /* لإضافة مسافة سفلية متناسقة */
-      margin-left: auto; /* للتوسيط الأفقي */
-      /* إذا كانت محتويات gamebox تحتاج إلى توسيط (مثل الأزرار): */
+      margin-left: auto; 
       text-align: center;
     }
-    /* قد تحتاج .cards إلى خصائص عرض خاصة بها مثل grid أو flex لاحقًا لتخطيط البطاقات */
     .cards {
-        display: grid; /* أو flex, حسب تصميم لعبة الذاكرة */
-        /* مثال: grid-template-columns: repeat(4, 1fr); */
-        gap: 10px; /* مثال للمسافة بين البطاقات */
+        display: grid; 
+        gap: 10px; 
     }
-    /* إذا كانت بعض gamebox لا تحتاج text-align: center, يمكن تخصيصها */
-    #click-target-area { /* مثال: منطقة الهدف قد لا تحتاج text-align إذا كان الهدف يملؤها */
-        text-align: left; /* أو إزالة text-align إذا لم تكن هناك عناصر نصية لتوسيطها */
-        min-height: 150px; /* مثال لارتفاع منطقة الهدف */
-        background-color: #e0e0e0; /* مثال لخلفية منطقة الهدف */
-        position: relative; /* ضروري لتحريك الهدف داخلها */
+    #click-target-area { 
+        text-align: left; 
+        min-height: 150px; 
+        background-color: #e0e0e0; 
+        position: relative; 
     }
-
 
     .hidden-by-auth { display: none !important; }
     .button-text { margin: 0 5px; }
@@ -254,10 +268,10 @@
         if (user) {
           updateAuthUI(true, user.email);
           showHideElement(loginSectionElement, false);
-          if (gameNavLinksData.length > 0 && gameNavLinksData.some(link => link.href === "#xo")) { // Check if XO exists
-            showSection('xo', true); // Default to XO if logged in and XO exists
+          if (gameNavLinksData.length > 0 && gameNavLinksData.some(link => link.href === "#xo")) { 
+            showSection('xo', true); 
           } else if (gameNavLinksData.length > 0) {
-            showSection(gameNavLinksData[0].href.slice(1), true); // Fallback to first game
+            showSection(gameNavLinksData[0].href.slice(1), true); 
           }
         } else {
           updateAuthUI(false);
@@ -316,7 +330,7 @@
       initRPSGame(); 
 
       if (!auth.currentUser) { showSection('login', false); }
-       else { // If user is already logged in on page load, try to show XO or first game
+       else { 
         if (gameNavLinksData.length > 0 && gameNavLinksData.some(link => link.href === "#xo")) {
             showSection('xo', true);
         } else if (gameNavLinksData.length > 0) {
