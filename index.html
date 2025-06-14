@@ -23,22 +23,22 @@
       background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat;
       background-size: cover;
       background-position: center;
-      direction: ltr; /* لتصميم Glassmorphism، ثم نعدل اتجاه العناصر الداخلية */
+      direction: rtl; /* الجسم كله RTL */
     }
 
-    /* أنماط Glassmorphism LOGIN WRAPPER */
+    /* أنماط Glassmorphism LOGIN WRAPPER - معدلة */
     .login-wrapper {
       width: 420px;
-      background-color: transparent;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(20px); /* زيادة البلور قليلاً */
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
+      /* تعديل الخلفية لزيادة التباين الطفيف مع الحفاظ على الشفافية */
+      background-color: rgba(0, 0, 0, 0.15); /* لون أسود خفيف شبه شفاف كقاعدة */
+      border: 2px solid rgba(255, 255, 255, 0.25); /* حدود أوضح قليلاً */
+      backdrop-filter: blur(15px); /* تقليل البلور قليلاً قد يساعد في الأداء والوضوح */
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); /* ظل أوضح قليلاً */
       color: #fff;
       border-radius: 16px;
       padding: 30px 40px;
-      margin-top: 20px; /* لتوفير مساحة لشريط التنقل */
+      margin-top: 80px;
       margin-bottom: 20px;
-      direction: rtl; /* إعادة الاتجاه للعربية داخل صندوق تسجيل الدخول */
     }
 
     .login-wrapper h1 {
@@ -51,29 +51,28 @@
       width: 100%;
       height: 50px;
       position: relative;
-      margin: 25px 0; /* تقليل المسافة قليلاً */
+      margin: 25px 0;
     }
 
     .input-box input {
       width: 100%;
       height: 100%;
-      background: transparent;
+      /* تعديل خلفية حقل الإدخال */
+      background: rgba(255, 255, 255, 0.05); /* خلفية بيضاء خفيفة جدًا وشبه شفافة للحقل */
       border: none;
       outline: none;
-      border: 2px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3); /* حدود أفتح وأوضح للحقل */
       border-radius: 40px;
       font-size: 16px;
       color: #fff;
-      padding: 20px 45px 20px 20px; /* ترك مساحة للأيقونة على اليمين (في LTR) */
+      padding: 20px 20px 20px 45px; /* RTL: مساحة للأيقونة على اليسار */
+      text-align: right;
     }
-     html[dir="rtl"] .input-box input {
-        padding: 20px 20px 20px 45px; /* تعديل الحشوة لـ RTL */
-    }
-
 
     .input-box input::placeholder {
-      color: #fff;
-      opacity: 0.8;
+      color: #eee; /* placeholder أفتح قليلاً */
+      opacity: 0.9;
+      text-align: right;
     }
 
     .input-box i {
@@ -81,17 +80,10 @@
       top: 50%;
       transform: translateY(-50%);
       font-size: 20px;
+      left: 20px; /* الأيقونة على اليسار لـ RTL */
+      right: auto;
+      color: #eee; /* لون الأيقونة */
     }
-
-    html[dir="rtl"] .input-box i {
-        left: 20px; /* أيقونة على اليسار في RTL */
-        right: auto;
-    }
-    html[dir="ltr"] .input-box i {
-        right: 20px; /* أيقونة على اليمين في LTR */
-        left: auto;
-    }
-
 
     .login-wrapper .remember-forgot {
       display: flex;
@@ -102,23 +94,16 @@
 
     .remember-forgot label input {
       accent-color: #fff;
-      margin-left: 3px; /* RTL */
+      margin-left: 3px;
     }
-     html[dir="ltr"] .remember-forgot label input {
-        margin-right: 3px; /* LTR */
-    }
-
 
     .remember-forgot a {
       color: #fff;
       text-decoration: none;
     }
+    .remember-forgot a:hover { text-decoration: underline; }
 
-    .remember-forgot a:hover {
-      text-decoration: underline;
-    }
-
-    .login-wrapper .auth-btn { /* تغيير اسم الكلاس لتمييزه */
+    .login-wrapper .auth-btn {
       width: 100%;
       height: 45px;
       background: #fff;
@@ -132,45 +117,33 @@
       font-weight: 600;
       margin-top: 10px;
     }
-     .login-wrapper .auth-btn:disabled {
-        background: #ccc;
-        color: #666;
-        cursor: not-allowed;
-    }
+    .login-wrapper .auth-btn:disabled { background: #ccc; color: #666; cursor: not-allowed; }
 
-
-    .login-wrapper .register-link-container { /* لتوسيط رسالة الحالة */
+    .login-wrapper .register-link-container {
       text-align: center;
       font-size: 14.5px;
       margin: 20px 0 10px;
     }
     #auth-status {
-        margin-top:15px;
-        padding: 10px;
-        border-radius: 8px;
-        font-weight: 500;
-        min-height: 1.5em;
+        margin-top:15px; padding: 10px; border-radius: 8px; font-weight: 500; min-height: 1.5em;
     }
-    #auth-status.success { background-color: rgba(40, 167, 69, 0.15); border: 1px solid rgba(40, 167, 69, 0.4); color: #c3e6cb;}
-    #auth-status.error { background-color: rgba(220, 53, 69, 0.15); border: 1px solid rgba(220, 53, 69, 0.4); color: #f5c6cb;}
-    #auth-status.info { background-color: rgba(23, 162, 184, 0.15); border: 1px solid rgba(23, 162, 184, 0.4); color: #bee5eb;}
+    #auth-status.success { background-color: rgba(40, 167, 69, 0.2); border: 1px solid rgba(40, 167, 69, 0.5); color: #d4edda;}
+    #auth-status.error { background-color: rgba(220, 53, 69, 0.2); border: 1px solid rgba(220, 53, 69, 0.5); color: #f8d7da;}
+    #auth-status.info { background-color: rgba(23, 162, 184, 0.2); border: 1px solid rgba(23, 162, 184, 0.5); color: #d1ecf1;}
 
-
-    /* أنماط الموقع العام والألعاب */
-    nav { background:#003B73; /* لون أغمق قليلاً */ padding:12px; text-align:center; position:fixed; /* تثبيت في الأعلى */ top:0; left:0; right:0; z-index: 1000; direction: rtl;}
+    nav { background:#003B73; padding:12px; text-align:center; position:fixed; top:0; left:0; right:0; z-index: 1000; direction: rtl;}
     nav a { color:white; margin:0 10px; text-decoration:none; font-size:1.1rem; }
     nav a:hover, nav a.active { text-decoration:underline; font-weight: bold; }
-    nav a.disabled-link { color: #aaa; cursor: not-allowed; text-decoration: none; }
 
-    section { display:none; padding:20px; max-width:500px; margin: 20px auto; margin-top: 80px; /* لتجنب التداخل مع شريط التنقل */ background:rgba(255,255,255,0.95); color:#333; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.15); direction: rtl;}
+    section { display:none; padding:20px; max-width:500px; margin: 20px auto; margin-top: 80px; background:rgba(255,255,255,0.95); color:#333; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.15); direction: rtl;}
     section.active { display:block; }
     section h2 { margin-top:0; color: #003B73; text-align:center; margin-bottom: 20px;}
 
-    /* ... (بقية أنماط الألعاب هنا إذا أردت تعديلها لتتناسب مع الشكل الجديد) ... */
     .gamebox { text-align:center; margin:15px auto; }
     button { padding:10px 20px; margin:8px 4px; font-size:1rem; cursor:pointer; border:none; border-radius:8px; background:#005A9C; color:white; transition:background .2s; }
     button:hover { background:#003B73; }
-    button:disabled { background:#ccc; cursor:not-allowed; }
+    /* button:disabled استثناء للأزرار داخل .login-wrapper */
+    section:not(#login) button:disabled { background:#ccc; cursor:not-allowed; }
     .status, .result, .message { margin:15px 0; font-size:1.1rem; min-height: 1.2em; text-align: center;}
     .board { display:grid; grid-template-columns:repeat(3,100px); gap:8px; justify-content:center; margin:20px auto; }
     .cell { width:100px; height:100px; border:2px solid #aaa; display:flex; align-items:center; justify-content:center; font-size:2.8rem; background:#f9f9f9; transition:background .2s; cursor:pointer; border-radius: 8px;}
@@ -183,12 +156,11 @@
 
   <nav id="main-nav">
     <a href="#login" id="nav-login-link">تسجيل الدخول</a>
-    <!-- روابط الألعاب ستتم إضافتها/إزالتها بواسطة JavaScript -->
   </nav>
 
-  <section id="login" class="active"> <!-- قسم تسجيل الدخول يبدأ نشطًا -->
+  <section id="login" class="active">
     <div class="login-wrapper">
-        <form action="javascript:void(0);"> <!-- منع الإرسال التقليدي للفورم -->
+        <form action="javascript:void(0);">
             <h1 id="login-title">تسجيل الدخول</h1>
             <div id="auth-form-fields">
                 <div class="input-box">
@@ -200,13 +172,9 @@
                     <i class='bx bxs-lock-alt'></i>
                 </div>
             </div>
-            <!-- <div class="remember-forgot">
-                <label><input type="checkbox">تذكرني</label>
-                <a href="#">هل نسيت كلمة المرور؟</a>
-            </div> -->
             <button type="button" class="auth-btn" id="btn-main-action">تسجيل الدخول</button>
             <div class="register-link-container">
-                <p id="toggle-auth-mode-text">ليس لديك حساب؟ <a href="#" id="toggle-auth-mode-link">إنشاء حساب</a></p>
+                <p id="toggle-auth-mode-text">ليس لديك حساب؟ <a href="#" id="toggle-auth-mode-link-inner">إنشاء حساب</a></p>
             </div>
              <button type="button" class="auth-btn" id="btn-logout" style="display:none;">تسجيل الخروج</button>
         </form>
@@ -214,7 +182,6 @@
     </div>
   </section>
 
-  <!-- أقسام الألعاب (نفس الأقسام السابقة مع كلاس game-section) -->
   <section id="xo" class="game-section hidden-by-auth"> <h2>❌⭕ XO</h2> <div class="board"></div> <div class="status">الدور: ❌</div> <button id="xo-restart">إعادة XO</button> </section>
   <section id="rps" class="game-section hidden-by-auth"> <h2>✊🖐✌ حجر ورقة مقص</h2> <div class="gamebox"> <button data-choice="🪨">🪨</button> <button data-choice="📄">📄</button> <button data-choice="✂️">✂️</button> </div> <div class="result">اختر لبدء!</div> </section>
   <section id="click" class="game-section hidden-by-auth"> <h2>🎯 اصطياد الهدف</h2> <div class="gamebox"><button id="click-start">ابدأ</button></div> <div id="click-target-area" class="gamebox"></div> <div class="status">اضغط "ابدأ"</div> </section>
@@ -247,14 +214,8 @@
     const auth = firebase.auth();
 
     document.addEventListener('DOMContentLoaded', () => {
-      const playSound = (id) => {/* ... */};
-      const updateElementText = (el, txt, type) => {
-          if(el) {
-              el.textContent = txt;
-              el.className = ''; // Reset classes
-              if(type) el.classList.add(type);
-          }
-      };
+      const playSound = (id) => { const s = document.getElementById(id); if (s) { s.currentTime = 0; s.play().catch(e => {}); } };
+      const updateElementText = (el, txt, type) => { if(el) { el.textContent = txt; el.className = ''; if(type) el.classList.add(type); }};
       const showHideElement = (el, show, disp = 'block') => { if(el) el.style.display = show ? disp : 'none'; };
       const disableElement = (el, dis) => { if(el) el.disabled = dis; };
 
@@ -262,21 +223,14 @@
       const gameSections = document.querySelectorAll('.game-section');
       const mainNav = document.getElementById('main-nav');
       const navLoginLink = document.getElementById('nav-login-link');
-      const gameNavLinksData = [
-        { href: "#xo", text: "XO" }, { href: "#rps", text: "RPS" }, { href: "#click", text: "Target" },
-        { href: "#react", text: "Reaction" }, { href: "#dice", text: "Dice" }, { href: "#memory", text: "Memory" },
-        { href: "#math", text: "Math" }, { href: "#guessnum", text: "GuessNum" }, { href: "#bigsmall", text: "BigSmall" },
-        { href: "#typing", text: "Typing" }
-      ];
+      const gameNavLinksData = [ { href: "#xo", text: "XO" }, { href: "#rps", text: "RPS" }, { href: "#click", text: "Target" }, { href: "#react", text: "Reaction" }, { href: "#dice", text: "Dice" }, { href: "#memory", text: "Memory" }, { href: "#math", text: "Math" }, { href: "#guessnum", text: "GuessNum" }, { href: "#bigsmall", text: "BigSmall" }, { href: "#typing", text: "Typing" } ];
       let currentNavLinksElements = [navLoginLink];
-      let isLoginMode = true; // true for login, false for signup
+      let isLoginMode = true;
 
       const loginTitle = document.getElementById('login-title');
       const mainActionButton = document.getElementById('btn-main-action');
       const toggleAuthModeText = document.getElementById('toggle-auth-mode-text');
-      const toggleAuthModeLink = document.getElementById('toggle-auth-mode-link');
       const authFormFields = document.getElementById('auth-form-fields');
-
       const loginEmailInput = document.getElementById('login-email');
       const loginPasswordInput = document.getElementById('login-password');
       const btnLogout = document.getElementById('btn-logout');
@@ -285,9 +239,8 @@
       const updateAuthUI = (isLoggedIn, userEmail = '') => {
         showHideElement(authFormFields, !isLoggedIn);
         showHideElement(mainActionButton, !isLoggedIn);
-        showHideElement(toggleAuthModeText.parentElement, !isLoggedIn); // Hide "Don't have an account?"
-        showHideElement(btnLogout, isLoggedIn, 'block'); // Show logout button as block
-
+        showHideElement(toggleAuthModeText.parentElement, !isLoggedIn);
+        showHideElement(btnLogout, isLoggedIn, 'block');
         if (isLoggedIn) {
           updateElementText(loginTitle, `أهلاً بك`);
           updateElementText(authStatusDiv, userEmail, 'success');
@@ -295,8 +248,7 @@
           navLoginLink.onclick = (e) => { e.preventDefault(); btnLogout.click(); };
           gameSections.forEach(gs => gs.classList.remove('hidden-by-auth'));
         } else {
-          isLoginMode = true; // Reset to login mode on logout
-          updateLoginModeUI();
+          isLoginMode = true; updateLoginModeUI();
           updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
           updateElementText(navLoginLink, 'تسجيل الدخول');
           navLoginLink.onclick = handleNavLinkClick;
@@ -306,76 +258,43 @@
       };
 
       const updateLoginModeUI = () => {
+        const linkId = 'toggle-auth-mode-link-inner';
         if (isLoginMode) {
-          updateElementText(loginTitle, 'تسجيل الدخول');
-          updateElementText(mainActionButton, 'تسجيل الدخول');
-          toggleAuthModeText.innerHTML = 'ليس لديك حساب؟ <a href="#" id="toggle-auth-mode-link-inner">إنشاء حساب</a>';
+          updateElementText(loginTitle, 'تسجيل الدخول'); updateElementText(mainActionButton, 'تسجيل الدخول');
+          toggleAuthModeText.innerHTML = `ليس لديك حساب؟ <a href="#" id="${linkId}">إنشاء حساب</a>`;
         } else {
-          updateElementText(loginTitle, 'إنشاء حساب جديد');
-          updateElementText(mainActionButton, 'إنشاء حساب');
-          toggleAuthModeText.innerHTML = 'لديك حساب بالفعل؟ <a href="#" id="toggle-auth-mode-link-inner">تسجيل الدخول</a>';
+          updateElementText(loginTitle, 'إنشاء حساب جديد'); updateElementText(mainActionButton, 'إنشاء حساب');
+          toggleAuthModeText.innerHTML = `لديك حساب بالفعل؟ <a href="#" id="${linkId}">تسجيل الدخول</a>`;
         }
-        // Re-attach event listener to the new inner link
-        const newToggleLink = document.getElementById('toggle-auth-mode-link-inner');
+        const newToggleLink = document.getElementById(linkId);
         if(newToggleLink) newToggleLink.addEventListener('click', toggleMode);
       };
       
-      const toggleMode = (e) => {
-        if(e) e.preventDefault();
-        isLoginMode = !isLoginMode;
-        updateLoginModeUI();
-        updateElementText(authStatusDiv, isLoginMode ? 'أدخل بيانات تسجيل الدخول.' : 'أدخل بيانات لإنشاء حساب جديد.', 'info');
-      };
-      toggleAuthModeLink.addEventListener('click', toggleMode); // Initial attachment for the outer link
-      updateLoginModeUI(); // Set initial UI for login mode
-
+      const toggleMode = (e) => { if(e) e.preventDefault(); isLoginMode = !isLoginMode; updateLoginModeUI(); updateElementText(authStatusDiv, isLoginMode ? 'أدخل بيانات تسجيل الدخول.' : 'أدخل بيانات لإنشاء حساب جديد.', 'info'); };
+      // Initial attachment for the first link inside toggleAuthModeText (created by updateLoginModeUI)
+      updateLoginModeUI(); 
 
       const handleAuthAction = () => {
-        const email = loginEmailInput.value.trim();
-        const password = loginPasswordInput.value;
-
-        if (!email || !password) {
-          updateElementText(authStatusDiv, "الرجاء إدخال البريد الإلكتروني وكلمة المرور.", 'error');
-          return;
-        }
-        if (password.length < 6) {
-          updateElementText(authStatusDiv, "يجب أن تكون كلمة المرور 6 حروف على الأقل.", 'error');
-          return;
-        }
-
+        const email = loginEmailInput.value.trim(); const password = loginPasswordInput.value;
+        if (!email || !password) { updateElementText(authStatusDiv, "الرجاء إدخال البريد الإلكتروني وكلمة المرور.", 'error'); return; }
+        if (password.length < 6) { updateElementText(authStatusDiv, "يجب أن تكون كلمة المرور 6 حروف على الأقل.", 'error'); return; }
         updateElementText(authStatusDiv, isLoginMode ? 'جاري تسجيل الدخول...' : 'جاري إنشاء الحساب...', 'info');
         disableElement(mainActionButton, true);
-
-        const actionPromise = isLoginMode ?
-          auth.signInWithEmailAndPassword(email, password) :
-          auth.createUserWithEmailAndPassword(email, password);
-
+        const actionPromise = isLoginMode ? auth.signInWithEmailAndPassword(email, password) : auth.createUserWithEmailAndPassword(email, password);
         actionPromise
-          .then((userCredential) => {
-            // Handled by onAuthStateChanged
-            loginEmailInput.value = ''; loginPasswordInput.value = '';
-          })
+          .then(() => { loginEmailInput.value = ''; loginPasswordInput.value = '';})
           .catch((error) => {
-            let userMessage = "حدث خطأ ما. يرجى المحاولة مرة أخرى.";
-            if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-              userMessage = "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
-            } else if (error.code === 'auth/email-already-in-use') {
-              userMessage = "هذا البريد الإلكتروني مستخدم بالفعل. حاول تسجيل الدخول.";
-            } else if (error.code === 'auth/weak-password') {
-              userMessage = "كلمة المرور ضعيفة جدًا. يجب أن تكون 6 أحرف على الأقل.";
-            } else if (error.code === 'auth/invalid-email') {
-                userMessage = "صيغة البريد الإلكتروني غير صحيحة.";
-            }
-            console.error(isLoginMode ? 'Login error:' : 'Signup error:', error.code, error.message);
-            updateElementText(authStatusDiv, userMessage, 'error');
+            let msg = "حدث خطأ. حاول مرة أخرى.";
+            if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') msg = "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
+            else if (error.code === 'auth/email-already-in-use') msg = "هذا البريد الإلكتروني مستخدم بالفعل.";
+            else if (error.code === 'auth/weak-password') msg = "كلمة المرور ضعيفة (6 حروف على الأقل).";
+            else if (error.code === 'auth/invalid-email') msg = "صيغة البريد الإلكتروني غير صحيحة.";
+            console.error(error.code, error.message); updateElementText(authStatusDiv, msg, 'error');
           })
-          .finally(() => {
-            disableElement(mainActionButton, false);
-          });
+          .finally(() => { disableElement(mainActionButton, false); });
       };
       mainActionButton.addEventListener('click', handleAuthAction);
       btnLogout.addEventListener('click', () => { auth.signOut().catch(e => console.error('Logout error', e)); });
-
 
       auth.onAuthStateChanged(user => {
         if (user) {
@@ -384,83 +303,40 @@
           if (!activeSection || activeSection.id === 'login') {
             if (gameNavLinksData.length > 0) showSection(gameNavLinksData[0].href.slice(1), true);
           }
-        } else {
-          updateAuthUI(false);
-          showSection('login', false);
-        }
+        } else { updateAuthUI(false); showSection('login', false); }
       });
 
       const updateNavigationDOM = (isLoggedIn) => {
         currentNavLinksElements.forEach(link => { if (link !== navLoginLink) link.remove(); });
         currentNavLinksElements = [navLoginLink];
         if (isLoggedIn) {
-          gameNavLinksData.forEach(data => {
-            const newLink = document.createElement('a');
-            newLink.href = data.href; newLink.textContent = data.text;
-            newLink.addEventListener('click', handleNavLinkClick);
-            mainNav.appendChild(newLink); currentNavLinksElements.push(newLink);
-          });
+          gameNavLinksData.forEach(data => { const l = document.createElement('a'); l.href=data.href; l.textContent=data.text; l.addEventListener('click',handleNavLinkClick); mainNav.appendChild(l); currentNavLinksElements.push(l); });
         }
       };
 
-      const showSection = (targetId, isGameSection = false) => {
+      const showSection = (targetId, isGame = false) => {
         allSections.forEach(s => s.classList.remove('active'));
         const sectionToShow = document.getElementById(targetId);
         if (sectionToShow) sectionToShow.classList.add('active');
         currentNavLinksElements.forEach(a => { if(a) a.classList.toggle('active', a.getAttribute('href') === `#${targetId}`); });
-        if (isGameSection || (targetId === 'login' && !auth.currentUser) ) playSound('snd-click');
+        if (isGame || (targetId === 'login' && !auth.currentUser) ) playSound('snd-click');
       };
 
       const handleNavLinkClick = (e) => {
-          e.preventDefault();
-          const id = e.target.getAttribute('href').slice(1);
+          e.preventDefault(); const id = e.target.getAttribute('href').slice(1);
           const isGame = Array.from(gameSections).some(gs => gs.id === id);
-          if (!auth.currentUser && isGame) {
-              updateElementText(authStatusDiv, "يجب تسجيل الدخول أولاً للعب.", "error");
-              showSection('login', false);
-              return;
-          }
+          if (!auth.currentUser && isGame) { updateElementText(authStatusDiv, "يجب تسجيل الدخول أولاً للعب.", "error"); showSection('login', false); return; }
           showSection(id, isGame);
       };
       navLoginLink.addEventListener('click', handleNavLinkClick);
+      
+      // --- كود تهيئة الألعاب (مثال واحد، يجب إضافة البقية) ---
+      const initXOGame=()=>{const s=document.querySelector('#xo');if(!s)return;const bE=s.querySelector('.board'),sE=s.querySelector('.status'),rB=s.querySelector('#xo-restart');let b=Array(9).fill(''),cP='❌',gA=true;const wP=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];const cW=()=>{for(const p of wP){const [x,y,z]=p;if(b[x]&&b[x]===b[y]&&b[x]===b[z])return b[x];}return null;};const hC=(idx)=>{if(!gA||b[idx]||!auth.currentUser)return;b[idx]=cP;bE.children[idx].textContent=cP;const w=cW();if(w){updateElementText(sE,`فاز ${w}`);gA=false;}else if(!b.includes('')){updateElementText(sE,'تعادل');gA=false;}else{cP=cP==='❌'?'⭕':'❌';updateElementText(sE,`الدور: ${cP}`);}};const rG=()=>{b.fill('');cP='❌';gA=true;updateElementText(sE,'الدور: ❌');Array.from(bE.children).forEach(c=>c.textContent='');};if(bE){bE.innerHTML=Array(9).fill().map((_,i)=>`<div class="cell" data-index="${i}"></div>`).join('');Array.from(bE.children).forEach((c,i)=>c.addEventListener('click',()=>hC(i)));}if(rB)rB.addEventListener('click',rG);if(bE)rG();};
+      initXOGame();
+      // استدعِ initRPSGame(); initClickTargetGame(); ... etc.
 
-      // ... (كود تهيئة الألعاب هنا بنفس الطريقة السابقة) ...
-      // initXOGame(); initRPSGame(); ... etc.
-      // مثال للعبة واحدة فقط لتجنب طول الكود هنا
-      const initXOGame = () => {
-        const section = document.querySelector('#xo'); if(!section) return;
-        const boardElement = section.querySelector('.board'), statusElement = section.querySelector('.status'), restartButton = section.querySelector('#xo-restart');
-        let board = Array(9).fill(''), currentPlayer = '❌', gameActive = true;
-        const winningPatterns = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-        const checkWin = () => { for (const p of winningPatterns) { const [a,b,c] = p; if (board[a] && board[a]===board[b] && board[a]===board[c]) return board[a];} return null; };
-        const handleClick = (index) => {
-          if (!gameActive || board[index] || !auth.currentUser) return; // تأكد أن المستخدم مسجل
-          board[index] = currentPlayer; boardElement.children[index].textContent = currentPlayer;
-          const winner = checkWin();
-          if (winner) { updateElementText(statusElement, `فاز ${winner}`); gameActive = false; }
-          else if (!board.includes('')) { updateElementText(statusElement, 'تعادل'); gameActive = false; }
-          else { currentPlayer = currentPlayer === '❌' ? '⭕' : '❌'; updateElementText(statusElement, `الدور: ${currentPlayer}`); }
-        };
-        const resetGame = () => { board.fill(''); currentPlayer = '❌'; gameActive = true; updateElementText(statusElement, 'الدور: ❌'); Array.from(boardElement.children).forEach(c=>c.textContent='');};
-        if(boardElement) {
-            boardElement.innerHTML = Array(9).fill().map((_,i) => `<div class="cell" data-index="${i}"></div>`).join('');
-            Array.from(boardElement.children).forEach((cell, i) => cell.addEventListener('click', () => handleClick(i)));
-        }
-        if(restartButton) restartButton.addEventListener('click', resetGame);
-        if(boardElement) resetGame();
-      };
-      initXOGame(); // استدعِ بقية دوال تهيئة الألعاب
-
-      if (!auth.currentUser) {
-        showSection('login', false);
-      } else {
-        // إذا كان المستخدم مسجلاً، اذهب إلى أول لعبة
-        if (gameNavLinksData.length > 0) {
-            showSection(gameNavLinksData[0].href.slice(1), true);
-        } else {
-            showSection('login', false); // Fallback if no games
-        }
-      }
+      if (!auth.currentUser) { showSection('login', false); }
+      else { if (gameNavLinksData.length > 0) showSection(gameNavLinksData[0].href.slice(1), true); else showSection('login', false); }
     });
   </script>
 </body>
