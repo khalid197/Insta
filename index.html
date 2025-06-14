@@ -1,106 +1,173 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar">
 <head>
-    <title>لعبة تخمين الأرقام</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-            background-color: #f4f4f4;
-        }
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-        }
-        input[type="number"] {
-            padding: 10px;
-            margin: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #5cb85c;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #4cae4c;
-        }
-        #result {
-            margin-top: 20px;
-            font-size: 18px;
-            min-height: 1em; /* عشان يحافظ على مكانه حتى لو مفيش نص */
-        }
-        #guesses {
-             margin-top: 10px;
-             font-size: 14px;
-             color: #555;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎮 موقع الألعاب - XO</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f5f7fa;
+      padding: 20px;
+      direction: rtl;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .home, .game {
+      display: none;
+    }
+
+    .active {
+      display: block;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #00bcd4;
+      color: white;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #0097a7;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 10px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      background-color: #fff;
+      border: 2px solid #ccc;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .cell:hover {
+      background-color: #f0f0f0;
+    }
+
+    .status {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: #333;
+    }
+
+    .restart {
+      margin-top: 15px;
+      font-size: 1rem;
+      background-color: #4caf50;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>لعبة تخمين الأرقام</h1>
-        <p>توقع رقم بين 1 و 100:</p>
-        <input type="number" id="guessInput" min="1" max="100">
-        <button onclick="checkGuess()">خمن</button>
-        <p id="result"></p>
-        <p id="guesses">عدد المحاولات: 0</p>
+  <div class="home active" id="home">
+    <h1>🎮 مرحبًا بك في لعبة XO</h1>
+    <p>اختبر ذكاءك في لعبة XO الكلاسيكية</p>
+    <button onclick="startGame()">ابدأ اللعبة</button>
+  </div>
+
+  <div class="game" id="game">
+    <h1>❌⭕ لعبة XO</h1>
+    <div class="board" id="board">
+      <!-- 9 خلايا -->
+      <div class="cell" data-index="0"></div>
+      <div class="cell" data-index="1"></div>
+      <div class="cell" data-index="2"></div>
+      <div class="cell" data-index="3"></div>
+      <div class="cell" data-index="4"></div>
+      <div class="cell" data-index="5"></div>
+      <div class="cell" data-index="6"></div>
+      <div class="cell" data-index="7"></div>
+      <div class="cell" data-index="8"></div>
     </div>
+    <div class="status" id="status">الدور: ❌</div>
+    <button class="restart" onclick="restartGame()">إعادة اللعبة</button>
+  </div>
 
-    <script>
-        let randomNumber = Math.floor(Math.random() * 100) + 1;
-        let guessCount = 0;
-        const guessInput = document.getElementById('guessInput');
-        const resultDisplay = document.getElementById('result');
-        const guessesDisplay = document.getElementById('guesses');
-        const guessButton = document.querySelector('button');
+  <script>
+    const homeDiv = document.getElementById("home");
+    const gameDiv = document.getElementById("game");
+    const cells = document.querySelectorAll(".cell");
+    const statusDiv = document.getElementById("status");
 
-        function checkGuess() {
-            const userGuess = Number(guessInput.value);
+    let board = ["", "", "", "", "", "", "", "", ""];
+    let currentPlayer = "❌";
+    let gameOver = false;
 
-            if (userGuess < 1 || userGuess > 100 || isNaN(userGuess)) {
-                resultDisplay.textContent = 'لو سمحت دخل رقم صحيح بين 1 و 100.';
-                resultDisplay.style.color = 'orange';
-                return;
-            }
+    function startGame() {
+      homeDiv.classList.remove("active");
+      gameDiv.classList.add("active");
+    }
 
-            guessCount++;
-            guessesDisplay.textContent = `عدد المحاولات: ${guessCount}`;
+    function restartGame() {
+      board = ["", "", "", "", "", "", "", "", ""];
+      currentPlayer = "❌";
+      gameOver = false;
+      cells.forEach(cell => cell.textContent = "");
+      statusDiv.textContent = "الدور: ❌";
+    }
 
-            if (userGuess === randomNumber) {
-                resultDisplay.textContent = `مبروك! خمنت الرقم الصحيح (${randomNumber}) في ${guessCount} محاولة!`;
-                resultDisplay.style.color = 'green';
-                guessInput.disabled = true;
-                guessButton.disabled = true;
-            } else if (userGuess < randomNumber) {
-                resultDisplay.textContent = 'الرقم اللي بتدور عليه أعلى.';
-                resultDisplay.style.color = 'red';
-            } else {
-                resultDisplay.textContent = 'الرقم اللي بتدور عليه أقل.';
-                resultDisplay.style.color = 'red';
-            }
+    function checkWinner() {
+      const winPatterns = [
+        [0,1,2], [3,4,5], [6,7,8], // صفوف
+        [0,3,6], [1,4,7], [2,5,8], // أعمدة
+        [0,4,8], [2,4,6]           // أقطار
+      ];
 
-            guessInput.value = '';
-            guessInput.focus();
+      for (const pattern of winPatterns) {
+        const [a, b, c] = pattern;
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+          return board[a];
         }
+      }
 
-        // إمكانية الضغط على Enter للتخمين
-        guessInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                checkGuess();
-            }
-        });
-    </script>
+      if (!board.includes("")) return "تعادل";
+      return null;
+    }
+
+    cells.forEach(cell => {
+      cell.addEventListener("click", () => {
+        const index = cell.getAttribute("data-index");
+        if (board[index] || gameOver) return;
+
+        board[index] = currentPlayer;
+        cell.textContent = currentPlayer;
+
+        const winner = checkWinner();
+        if (winner) {
+          gameOver = true;
+          if (winner === "تعادل") {
+            statusDiv.textContent = "انتهت اللعبة: تعادل 🤝";
+          } else {
+            statusDiv.textContent = `الفائز هو: ${winner} 🎉`;
+          }
+        } else {
+          currentPlayer = currentPlayer === "❌" ? "⭕" : "❌";
+          statusDiv.textContent = `الدور: ${currentPlayer}`;
+        }
+      });
+    });
+  </script>
 
 </body>
 </html>
