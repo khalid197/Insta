@@ -1,173 +1,212 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎮 موقع الألعاب - XO</title>
+  <meta charset="UTF‑8">
+  <meta name="viewport" content="width=device‑width, initial‑scale=1.0">
+  <title>🎮 موقع الألعاب الترفيهي</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background-color: #f5f7fa;
-      padding: 20px;
-      direction: rtl;
-    }
-
-    h1 {
-      color: #333;
-    }
-
-    .home, .game {
-      display: none;
-    }
-
-    .active {
-      display: block;
-    }
-
-    button {
-      padding: 10px 20px;
-      font-size: 1.2rem;
-      border: none;
-      border-radius: 8px;
-      background-color: #00bcd4;
-      color: white;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-
-    button:hover {
-      background-color: #0097a7;
-    }
-
-    .board {
-      display: grid;
-      grid-template-columns: repeat(3, 100px);
-      grid-gap: 10px;
-      justify-content: center;
-      margin-top: 30px;
-    }
-
-    .cell {
-      width: 100px;
-      height: 100px;
-      background-color: #fff;
-      border: 2px solid #ccc;
-      font-size: 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .cell:hover {
-      background-color: #f0f0f0;
-    }
-
-    .status {
-      margin-top: 20px;
-      font-size: 1.2rem;
-      color: #333;
-    }
-
-    .restart {
-      margin-top: 15px;
-      font-size: 1rem;
-      background-color: #4caf50;
-    }
+    body { margin:0; font-family: Arial, sans-serif; direction: rtl; background:#fafafa; color:#333; }
+    nav { background:#1976d2; padding:12px; text-align:center; position:sticky; top:0; z-index:10; }
+    nav a { color:white; margin:0 10px; text-decoration:none; font-size:1.1rem; }
+    nav a:hover, nav a.active { text-decoration:underline; }
+    section { display:none; padding:20px; max-width:500px; margin:20px auto; background:white; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+    section.active { display:block; }
+    h2 { margin-top:0; }
+    button { padding:8px 16px; margin:5px; font-size:1rem; cursor:pointer; border:none; border-radius:6px; background:#0288d1; color:white; transition:background .2s; }
+    button:hover { background:#026aa7; }
+    .status, .result { margin:15px 0; font-size:1.1rem; }
+    .board { display:grid; grid-template-columns:repeat(3,100px); grid-gap:8px; justify-content:center; margin:15px auto; }
+    .cell { width:100px; height:100px; border:2px solid #999; display:flex; align-items:center; justify-content:center; font-size:2rem; background:#fdfdfd; transition:background .2s; }
+    .cell:hover { background:#f0f0f0; }
+    /* لعبات إضافية تنسيق بسيط */
+    .gamebox { margin:20px auto; text-align:center; }
+    .gamebox button { width:120px; }
+    .timebox { font-size:2rem; margin:15px; }
+    .cards { display:grid; grid-template-columns:repeat(4,80px); grid-gap:10px; justify-content:center; }
+    .card { width:80px; height:80px; background:#eee; display:flex; align-items:center; justify-content:center; font-size:1.6rem; cursor:pointer; }
+    .hidden { background:#999; cursor:pointer; }
   </style>
 </head>
 <body>
 
-  <div class="home active" id="home">
-    <h1>🎮 مرحبًا بك في لعبة XO</h1>
-    <p>اختبر ذكاءك في لعبة XO الكلاسيكية</p>
-    <button onclick="startGame()">ابدأ اللعبة</button>
-  </div>
+  <nav>
+    <a href="#xo" class="active">❌⭕ XO</a>
+    <a href="#rps">✊🖐✌ حجر ورقة مقص</a>
+    <a href="#click">🎯 اصطياد طارگت</a>
+    <a href="#react">⌛ سرعة الضغط</a>
+    <a href="#dice">🎲 نرد</a>
+    <a href="#memory">🧠 ذاكرة بطاقات</a>
+    <a href="#math">🧮 جمع أرقام</a>
+  </nav>
 
-  <div class="game" id="game">
-    <h1>❌⭕ لعبة XO</h1>
-    <div class="board" id="board">
-      <!-- 9 خلايا -->
-      <div class="cell" data-index="0"></div>
-      <div class="cell" data-index="1"></div>
-      <div class="cell" data-index="2"></div>
-      <div class="cell" data-index="3"></div>
-      <div class="cell" data-index="4"></div>
-      <div class="cell" data-index="5"></div>
-      <div class="cell" data-index="6"></div>
-      <div class="cell" data-index="7"></div>
-      <div class="cell" data-index="8"></div>
+  <section id="xo" class="active">
+    <h2>❌⭕ لعبة XO</h2>
+    <div class="board"></div>
+    <div class="status">الدور: ❌</div>
+    <button>إعادة XO</button>
+  </section>
+
+  <section id="rps">
+    <h2>✊🖐✌ حجر ورقة مقص</h2>
+    <div class="choices">
+      <button>🪨</button>
+      <button>📄</button>
+      <button>✂️</button>
     </div>
-    <div class="status" id="status">الدور: ❌</div>
-    <button class="restart" onclick="restartGame()">إعادة اللعبة</button>
-  </div>
+    <div class="result">اختر لتبدأ!</div>
+  </section>
 
+  <section id="click">
+    <h2>🎯 اصطياد الطارگت</h2>
+    <div class="gamebox"><button>ابدأ</button></div>
+    <div class="status">اضغط "ابدأ" للانطلاق</div>
+  </section>
+
+  <section id="react">
+    <h2>⌛ سرعة الضغط</h2>
+    <div class="gamebox"><button>ابدأ</button></div>
+    <div class="timebox">--</div>
+  </section>
+
+  <section id="dice">
+    <h2>🎲 لعبة النرد</h2>
+    <div class="gamebox"><button>رمي النرد</button></div>
+    <div class="result">--</div>
+  </section>
+
+  <section id="memory">
+    <h2>🧠 لعبة الذاكرة</h2>
+    <div class="cards"></div>
+    <div class="status">اضغط على بطاقة للبدء</div>
+  </section>
+
+  <section id="math">
+    <h2>🧮 جمع الأرقام بسرعة</h2>
+    <div class="gamebox"><button>ابدأ</button></div>
+    <div class="result">--</div>
+  </section>
+
+  <!-- الأصوات -->
+  <audio id="snd-click" src="https://actions.google.com/sounds/v1/alarms/button_click.ogg"></audio>
+  <audio id="snd-win" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+  <audio id="snd-lose" src="https://actions.google.com/sounds/v1/cartoon/cartoon_cowbell.ogg"></audio>
+
+  <!-- تابع الكود الجاي -->
   <script>
-    const homeDiv = document.getElementById("home");
-    const gameDiv = document.getElementById("game");
-    const cells = document.querySelectorAll(".cell");
-    const statusDiv = document.getElementById("status");
+    /* الكود مكثف لتنسيق الرد القصير */
+    // التنقل بشريط
+    const secs = document.querySelectorAll('section'),
+          navs = document.querySelectorAll('nav a'),
+          play = (id)=>{ secs.forEach(s=>s.id===id? s.classList.add('active'): s.classList.remove('active'));
+                         navs.forEach(a=>a.getAttribute('href')===('#'+id)? a.classList.add('active'): a.classList.remove('active')); };
+    navs.forEach(a=>a.onclick=e=>{ e.preventDefault(); play(a.getAttribute('href').slice(1)); playSound('snd-click'); });
 
-    let board = ["", "", "", "", "", "", "", "", ""];
-    let currentPlayer = "❌";
-    let gameOver = false;
+    const snd=(id)=>document.getElementById(id).play();
 
-    function startGame() {
-      homeDiv.classList.remove("active");
-      gameDiv.classList.add("active");
-    }
-
-    function restartGame() {
-      board = ["", "", "", "", "", "", "", "", ""];
-      currentPlayer = "❌";
-      gameOver = false;
-      cells.forEach(cell => cell.textContent = "");
-      statusDiv.textContent = "الدور: ❌";
-    }
-
-    function checkWinner() {
-      const winPatterns = [
-        [0,1,2], [3,4,5], [6,7,8], // صفوف
-        [0,3,6], [1,4,7], [2,5,8], // أعمدة
-        [0,4,8], [2,4,6]           // أقطار
-      ];
-
-      for (const pattern of winPatterns) {
-        const [a, b, c] = pattern;
-        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-          return board[a];
-        }
-      }
-
-      if (!board.includes("")) return "تعادل";
-      return null;
-    }
-
-    cells.forEach(cell => {
-      cell.addEventListener("click", () => {
-        const index = cell.getAttribute("data-index");
-        if (board[index] || gameOver) return;
-
-        board[index] = currentPlayer;
-        cell.textContent = currentPlayer;
-
-        const winner = checkWinner();
-        if (winner) {
-          gameOver = true;
-          if (winner === "تعادل") {
-            statusDiv.textContent = "انتهت اللعبة: تعادل 🤝";
-          } else {
-            statusDiv.textContent = `الفائز هو: ${winner} 🎉`;
-          }
-        } else {
-          currentPlayer = currentPlayer === "❌" ? "⭕" : "❌";
-          statusDiv.textContent = `الدور: ${currentPlayer}`;
-        }
-      });
+    // ===== XO
+    let xb=['','','','','','','','',''], cp='❌', over=false;
+    const bd = document.querySelector('#xo .board'),
+          st = document.querySelector('#xo .status'),
+          bxBtn = document.querySelector('#xo button');
+    bd.innerHTML = Array(9).fill().map((_,i)=>`<div class="cell" data-i="${i}"></div>`).join('');
+    bd.querySelectorAll('.cell').forEach(c=>c.onclick=()=>{
+      const i=c.dataset.i; if(xb[i]||over)return;
+      xb[i]=cp; c.textContent=cp; snd('snd-click');
+      const w=(()=>{
+        const ps=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        for(let [a,b,c] of ps) if(xb[a] && xb[a]===xb[b]&&xb[a]===xb[c])return xb[a];
+        return xb.includes('')? null : 'draw';
+      })();
+      if(w){ over=true;
+        if(w==='draw') st.textContent='تعادل!'; else st.textContent=`فاز ${w}!`;
+        snd(w==='draw'?'snd-click':'snd-win'); }
+      else{ cp=cp==='❌'?'⭕':'❌'; st.textContent='الدور: '+cp; }
     });
-  </script>
+    bxBtn.onclick=()=>{
+      xb=Array(9).fill(''); cp='❌'; over=false; st.textContent='الدور: ❌';
+      bd.querySelectorAll('.cell').forEach(c=>c.textContent=''); snd('snd-click');
+    };
 
+    // ===== RPS
+    const rsBtns = document.querySelectorAll('#rps .choices button'),
+          rsRes = document.querySelector('#rps .result'),
+          opt=['🪨','📄','✂️'];
+    rsBtns.forEach(b=>b.onclick=()=>{
+      const p=b.textContent, b2=opt[Math.floor(Math.random()*3)], msg=(p===b2?'تعادل': ((p==='🪨'&&b2==='✂️')||(p==='📄'&&b2==='🪨')||(p==='✂️'&&b2==='📄'))?'فزت':'خسرت');
+      rsRes.textContent=`${msg}! أنت:${p} الكمبيوتر:${b2}`; snd(msg==='فزت'?'snd-win': msg==='خسرت'?'snd-lose':'snd-click');
+    });
+
+    // باقي الألعاب (بمصغرات):
+    const clickSec=document.querySelector('#click'), clickBtn=clickSec.querySelector('button'), clickSt=clickSec.querySelector('.status');
+    clickBtn.onclick=()=>{
+      clickBtn.disabled=true; clickSt.textContent='اضغط الهدف عند ظهوره...';
+      setTimeout(()=>{
+        const btnT=document.createElement('button');
+        btnT.textContent='🎯'; btnT.style.fontSize='2rem'; btnT.onclick=()=>{
+           const t=Date.now()-t0; clickSt.textContent=`ممتاز! زمنك: ${t}ملي ثانية`; snd('snd-win'); btnT.remove(); clickBtn.disabled=false;
+        };
+        const t0=Date.now();
+        clickSec.appendChild(btnT);
+      }, 1000+Math.random()*2000);
+    };
+
+    const reactSec=document.querySelector('#react'), reactBtn=reactSec.querySelector('button'), timeBox=reactSec.querySelector('.timebox');
+    reactBtn.onclick=()=>{
+      reactBtn.disabled=true; timeBox.textContent='انتظر...';
+      setTimeout(()=>{
+        const t0=Date.now();
+        timeBox.textContent='اضغط!'; reactBtn.textContent='اضغط الآن!';
+        reactBtn.disabled=false;
+        const listener=()=>{ const dt=Date.now()-t0; timeBox.textContent=`سرعتك: ${dt}ملي ثانية`; snd('snd-win'); reactBtn.textContent='ابدأ'; reactBtn.removeEventListener('click',listener); };
+        reactBtn.addEventListener('click', listener);
+      }, 500+Math.random()*2500);
+    };
+
+    const diceSec = document.querySelector('#dice'), diceBtn=diceSec.querySelector('button'), diceRes=diceSec.querySelector('.result');
+    diceBtn.onclick=()=>{ const n=1+Math.floor(Math.random()*6); diceRes.textContent=`طلعت: ${n}`; snd('snd-click'); };
+
+    const memSec = document.querySelector('#memory'), cardsDiv=memSec.querySelector('.cards'), memSt=memSec.querySelector('.status');
+    (() => {
+      let arr=[...Array(8).keys(),...Array(8).keys()], sel=[], matched=[];
+      function initMem(){
+        arr.sort(() => Math.random() - 0.5);
+        cardsDiv.innerHTML=arr.map(c=>`<div class="card"></div>`).join('');
+        cardsDiv.querySelectorAll('.card').forEach((cd,i)=>{
+          cd.onclick=()=>{
+            if(sel.length===2||matched.includes(i))return;
+            cd.textContent=arr[i]; cd.classList.add('hidden');
+            sel.push({i,cd});
+            if(sel.length===2){
+              setTimeout(()=>{
+                if(arr[sel[0].i]===arr[sel[1].i]){
+                  matched.push(sel[0].i,sel[1].i);
+                  snd('snd-win');
+                  if(matched.length===arr.length){ memSt.textContent='أنهيت! 👏'; }
+                } else {
+                  sel.forEach(o=>{ o.cd.textContent=''; o.cd.classList.remove('hidden'); });
+                  snd('snd-lose');
+                }
+                sel=[];
+              },500);
+            }
+          };
+        });
+        memSt.textContent='ابدأ اللعبة!';
+      }
+      initMem();
+    })();
+
+    const mathSec=document.querySelector('#math'), mathBtn=mathSec.querySelector('button'), mathRes=mathSec.querySelector('.result');
+    mathBtn.onclick=()=>{
+      const a=1+Math.floor(Math.random()*20), b=1+Math.floor(Math.random()*20), ans=a+b;
+      const user=prompt(`احسب: ${a} + ${b} = ؟`);
+      if(user===null)return;
+      if(parseInt(user)===ans){
+        mathRes.textContent='إجابة صحيحة! 🎉'; snd('snd-win');
+      } else {
+        mathRes.textContent=`خطأ... الصحيح هو: ${ans}`; snd('snd-lose');
+      }
+    };
+  </script>
 </body>
 </html>
