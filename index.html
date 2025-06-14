@@ -201,7 +201,7 @@
     <div class="xo-options">
         <button id="xo-pvp">لاعب ضد لاعب</button>
         <button id="xo-pvc-easy">لاعب ضد كمبيوتر (سهل)</button>
-        <!-- <button id="xo-pvc-hard">لاعب ضد كمبيوتر (صعب)</button> --> {/* لاحقًا */}
+        <button id="xo-pvc-hard">لاعب ضد كمبيوتر (صعب)</button>
     </div>
     <div class="xo-board-container">
         <div class="board"></div> 
@@ -529,6 +529,7 @@
           const restartButton = section.querySelector('#xo-restart');
           const pvpButton = section.querySelector('#xo-pvp');
           const pvcEasyButton = section.querySelector('#xo-pvc-easy');
+          const pvcHardButton = section.querySelector('#xo-pvc-hard'); // Added
           const canvas = section.querySelector('#xo-winning-line-canvas');
           const ctx = canvas.getContext('2d');
           const boardContainer = section.querySelector('.xo-board-container');
@@ -536,7 +537,7 @@
           let boardState = Array(9).fill('');
           let currentPlayer = '❌';
           let gameActive = false;
-          let gameMode = null; // 'pvp', 'pvc-easy'
+          let gameMode = null; // 'pvp', 'pvc-easy', 'pvc-hard'
           const playerSymbol = '❌';
           const computerSymbol = '⭕';
 
@@ -553,15 +554,15 @@
 
           const drawWinningLine = (combination) => {
               if (!combination || combination.length < 3) return;
-              resizeCanvas(); // Ensure canvas is sized correctly
-              ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous lines
+              resizeCanvas(); 
+              ctx.clearRect(0, 0, canvas.width, canvas.height); 
               ctx.beginPath();
-              ctx.lineWidth = 8; // Thicker line
-              ctx.strokeStyle = 'rgba(220, 53, 69, 0.8)'; // Reddish line color
+              ctx.lineWidth = 8; 
+              ctx.strokeStyle = 'rgba(220, 53, 69, 0.8)'; 
               ctx.lineCap = 'round';
 
-              const cellSize = 100; // From CSS
-              const gap = 8;      // From CSS
+              const cellSize = 100; 
+              const gap = 8;      
 
               const getCellCenter = (index) => {
                   const row = Math.floor(index / 3);
@@ -579,16 +580,29 @@
               ctx.stroke();
           };
           
-          const checkWin = () => {
+          const checkWin = () => { // Checks global boardState
               for (const pattern of winningPatterns) {
                   const [a, b, c] = pattern;
                   if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
                       return { winner: boardState[a], combination: pattern };
                   }
               }
-              if (!boardState.includes('')) return { winner: 'tie', combination: null }; // Tie
-              return null; // No winner yet
+              if (!boardState.includes('')) return { winner: 'tie', combination: null }; 
+              return null; 
           };
+          
+          // Helper: checkWin but with a given board state (for AI)
+          const checkWinWithBoard = (boardToCheck) => {
+            for (const pattern of winningPatterns) {
+                const [a, b, c] = pattern;
+                if (boardToCheck[a] && boardToCheck[a] === boardToCheck[b] && boardToCheck[a] === boardToCheck[c]) {
+                    return { winner: boardToCheck[a], combination: pattern };
+                }
+            }
+            if (!boardToCheck.includes('')) return { winner: 'tie', combination: null };
+            return null;
+          };
+
 
           const handleClick = (index) => {
               if (!gameActive || boardState[index] || !auth.currentUser || !auth.currentUser.emailVerified) return;
@@ -611,17 +625,36 @@
                   showHideElement(restartButton, true);
                   return;
               }
-
+              
+              const previousPlayer = currentPlayer; // Store who just played
               currentPlayer = (currentPlayer === playerSymbol) ? computerSymbol : playerSymbol;
               updateElementText(statusElement, `الدور: ${currentPlayer}`);
 
-              if (gameMode === 'pvc-easy' && currentPlayer === computerSymbol && gameActive) {
-                  // Add a small delay for computer's move to feel more natural
+              // If it's now computer's turn and game is active
+              if (gameActive && currentPlayer === computerSymbol) {
                   disableBoardInteraction(true);
-                  setTimeout(() => {
-                      computerMoveEasy();
-                      disableBoardInteraction(false);
-                  }, 500 + Math.random() * 500);
+                  let moveDelay = 500 + Math.random() * 500;
+                  let computerMoveFunction;
+
+                  if (gameMode === 'pvc-easy') {
+                      computerMoveFunction = computerMoveEasy;
+                  } else if (gameMode === 'pvc-hard') {
+                      computerMoveFunction = computerMoveHard;
+                      moveDelay = 300 + Math.random() * 400; // Slightly faster for "hard"
+                  }
+
+                  if (computerMoveFunction) {
+                    setTimeout(() => {
+                        const moveIndex = computerMoveFunction();
+                        if (moveIndex !== -1 && boardState[moveIndex] === '') { 
+                            // CurrentPlayer is already computerSymbol
+                            handleClick(moveIndex); // Computer makes its move
+                        }
+                        disableBoardInteraction(false);
+                    }, moveDelay);
+                  } else {
+                      disableBoardInteraction(false); // Should not happen if gameMode is set
+                  }
               }
           };
           
@@ -631,9 +664,8 @@
             });
           };
 
-
           const computerMoveEasy = () => {
-              if (!gameActive) return;
+              if (!gameActive) return -1;
               let availableCells = [];
               boardState.forEach((cell, index) => {
                   if (cell === '') availableCells.push(index);
@@ -641,13 +673,68 @@
 
               if (availableCells.length > 0) {
                   const randomIndex = Math.floor(Math.random() * availableCells.length);
-                  const moveIndex = availableCells[randomIndex];
-                  
-                  // Directly call handleClick for the computer's chosen move.
-                  // Need to set currentPlayer correctly before calling for computer.
-                  currentPlayer = computerSymbol; // Ensure it's computer's turn
-                  handleClick(moveIndex); // This will handle game logic, check win, and switch player
+                  return availableCells[randomIndex];
               }
+              return -1; // No move available
+          };
+
+          const computerMoveHard = () => {
+            if (!gameActive) return -1;
+
+            // Helper to find a winning or blocking move on a given board for a given player
+            const findStrategicMove = (player, currentBoardState) => {
+                for (let i = 0; i < currentBoardState.length; i++) {
+                    if (currentBoardState[i] === '') {
+                        let tempBoard = [...currentBoardState];
+                        tempBoard[i] = player; // Try move
+                        const winCheck = checkWinWithBoard(tempBoard);
+                        if (winCheck && winCheck.winner === player) {
+                            return i; // Found winning/blocking move
+                        }
+                    }
+                }
+                return -1; // No such move found
+            };
+
+            // 1. Check for Computer's winning move
+            let move = findStrategicMove(computerSymbol, boardState);
+            if (move !== -1) return move;
+
+            // 2. Check for Player's winning move (block player)
+            move = findStrategicMove(playerSymbol, boardState);
+            if (move !== -1) return move;
+
+            // 3. Try to take the center
+            if (boardState[4] === '') return 4;
+
+            // 4. Try to take an opposite corner if player took one
+            const corners = [0, 2, 6, 8];
+            const oppositeCorners = { 0: 8, 2: 6, 6: 2, 8: 0 };
+            for (const corner of corners) {
+                if (boardState[corner] === playerSymbol && boardState[oppositeCorners[corner]] === '') {
+                    return oppositeCorners[corner];
+                }
+            }
+            
+            // 5. Try to take any empty corner
+            const emptyCorners = corners.filter(corner => boardState[corner] === '');
+            if (emptyCorners.length > 0) {
+                return emptyCorners[Math.floor(Math.random() * emptyCorners.length)];
+            }
+
+            // 6. Try to take any empty side
+            const sides = [1, 3, 5, 7];
+            const emptySides = sides.filter(side => boardState[side] === '');
+            if (emptySides.length > 0) {
+                return emptySides[Math.floor(Math.random() * emptySides.length)];
+            }
+            
+            // Fallback: first available spot (should only happen if board is almost full)
+            for (let i = 0; i < boardState.length; i++) {
+                if (boardState[i] === '') return i;
+            }
+
+            return -1; // Should not be reached in a normal game flow unless board is full
           };
 
 
@@ -659,13 +746,13 @@
               gameMode = mode;
               gameActive = true;
               boardState.fill('');
-              currentPlayer = playerSymbol; // Player always starts with X
+              currentPlayer = playerSymbol; 
               Array.from(boardElement.children).forEach(cell => cell.textContent = '');
-              ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear winning line
+              ctx.clearRect(0, 0, canvas.width, canvas.height); 
               updateElementText(statusElement, `الدور: ${currentPlayer}`);
-              showHideElement(restartButton, false); // Hide restart until game over or explicitly requested
-              showHideElement(section.querySelector('.xo-options'), false); // Hide mode selection
-              showHideElement(restartButton, true); // Show restart button after mode is selected
+              showHideElement(restartButton, false); 
+              showHideElement(section.querySelector('.xo-options'), false); 
+              showHideElement(restartButton, true); 
               playSound('snd-click');
           };
 
@@ -679,28 +766,26 @@
               updateElementText(statusElement, 'اختر نمط اللعبة');
               showHideElement(restartButton, false);
               showHideElement(section.querySelector('.xo-options'), true);
+              disableBoardInteraction(false); // Ensure board is interactive
               playSound('snd-click');
           };
 
-          // Build board
           boardElement.innerHTML = Array(9).fill().map((_, i) => `<div class="cell" data-index="${i}"></div>`).join('');
           Array.from(boardElement.children).forEach((cell, i) => cell.addEventListener('click', () => handleClick(i)));
           
-          // Event listeners for mode buttons
           if(pvpButton) pvpButton.addEventListener('click', () => startGameMode('pvp'));
           if(pvcEasyButton) pvcEasyButton.addEventListener('click', () => startGameMode('pvc-easy'));
+          if(pvcHardButton) pvcHardButton.addEventListener('click', () => startGameMode('pvc-hard')); // Added
           if(restartButton) restartButton.addEventListener('click', resetGame);
 
-          // Resize canvas on window resize
           window.addEventListener('resize', resizeCanvas);
           
-          // Initial setup when section becomes active
            const observer = new MutationObserver((mutationsList) => {
             for(const mutation of mutationsList) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     if (section.classList.contains('active')) {
-                        resizeCanvas(); // Ensure canvas is sized when section is shown
-                        if (!gameActive) { // If game not active, show mode options
+                        resizeCanvas(); 
+                        if (!gameActive) { 
                            resetGame();
                         }
                     }
@@ -709,7 +794,7 @@
           });
           if(section) observer.observe(section, { attributes: true });
 
-          resetGame(); // Initial state
+          resetGame(); 
       };
       
       // ... (init functions for RPS, ClickTarget, React, Dice, Memory, Math, GuessNum, BigSmall, Typing)
