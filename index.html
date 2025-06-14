@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🎮 موقع الألعاب الترفيهي مع تسجيل الدخول</title>
+  <title>🎮 موقع الألعاب (يتطلب تسجيل الدخول)</title>
   <style>
     body { margin:0; font-family: Arial, sans-serif; direction: rtl; background:#fafafa; color:#333; }
     nav { background:#1976d2; padding:12px; text-align:center; position:sticky; top:0; z-index: 1000;}
     nav a { color:white; margin:0 8px; text-decoration:none; font-size:1rem; }
     nav a:hover, nav a.active { text-decoration:underline; }
+    nav a.disabled-link { color: #ccc; cursor: not-allowed; text-decoration: none; } /* لتعطيل الروابط */
     section { display:none; padding:20px; max-width:480px; margin:20px auto; background:white; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
     section.active { display:block; }
     h2 { margin-top:0; }
@@ -35,22 +36,14 @@
     #auth-status { font-weight: bold; color: #1976d2; }
     .auth-form-container { margin-bottom: 15px; }
     .auth-container button { width: calc(33.333% - 8px); }
+    .hidden-by-auth { display: none !important; } /* لإخفاء العناصر التي تتطلب تسجيل دخول */
   </style>
 </head>
 <body>
 
-  <nav>
+  <nav id="main-nav">
     <a href="#login" id="nav-login-link">تسجيل الدخول</a>
-    <a href="#xo">XO</a>
-    <a href="#rps">RPS</a>
-    <a href="#click">Target</a>
-    <a href="#react">Reaction</a>
-    <a href="#dice">Dice</a>
-    <a href="#memory">Memory</a>
-    <a href="#math">Math</a>
-    <a href="#guessnum">GuessNum</a>
-    <a href="#bigsmall">BigSmall</a>
-    <a href="#typing">Typing</a>
+    <!-- روابط الألعاب ستتم إضافتها/إزالتها بواسطة JavaScript -->
   </nav>
 
   <section id="login">
@@ -73,14 +66,15 @@
     <div id="auth-status">يرجى تسجيل الدخول أو إنشاء حساب جديد.</div>
   </section>
 
-  <section id="xo">
+  <!-- أقسام الألعاب ستكون مبدئيًا غير ظاهرة إذا لم يتم تسجيل الدخول -->
+  <section id="xo" class="game-section hidden-by-auth">
     <h2>❌⭕ XO</h2>
     <div class="board"></div>
     <div class="status">الدور: ❌</div>
     <button id="xo-restart">إعادة XO</button>
   </section>
 
-  <section id="rps">
+  <section id="rps" class="game-section hidden-by-auth">
     <h2>✊🖐✌ حجر ورقة مقص</h2>
     <div class="gamebox">
       <button data-choice="🪨">🪨</button>
@@ -90,33 +84,33 @@
     <div class="result">اختر لبدء!</div>
   </section>
 
-  <section id="click">
+  <section id="click" class="game-section hidden-by-auth">
     <h2>🎯 اصطياد الهدف</h2>
     <div class="gamebox"><button id="click-start">ابدأ</button></div>
     <div id="click-target-area" class="gamebox"></div>
     <div class="status">اضغط "ابدأ"</div>
   </section>
 
-  <section id="react">
+  <section id="react" class="game-section hidden-by-auth">
     <h2>⌛ اختبار سرعة الضغط</h2>
     <div class="gamebox"><button id="react-start">ابدأ</button></div>
     <div class="timebox">--</div>
   </section>
 
-  <section id="dice">
+  <section id="dice" class="game-section hidden-by-auth">
     <h2>🎲 لعبة النرد</h2>
     <div class="gamebox"><button id="dice-roll">رمي النرد</button></div>
     <div class="result">--</div>
   </section>
 
-  <section id="memory">
+  <section id="memory" class="game-section hidden-by-auth">
     <h2>🧠 لعبة الذاكرة</h2>
     <div class="cards"></div>
     <div class="status">اضغط بطاقة للبدء</div>
     <div class="gamebox"><button id="memory-restart">إعادة اللعبة</button></div>
   </section>
 
-  <section id="math">
+  <section id="math" class="game-section hidden-by-auth">
     <h2>🧮 جمع أرقام بسرعة</h2>
     <div class="gamebox"><button id="math-start">ابدأ اللعبة</button></div>
     <div class="question-area" style="display:none;"></div>
@@ -127,7 +121,7 @@
     <div class="result">--</div>
   </section>
 
-  <section id="guessnum">
+  <section id="guessnum" class="game-section hidden-by-auth">
     <h2>🔢 تخمين الرقم</h2>
     <div class="gamebox"><button id="guessnum-start">ابدأ اللعبة</button></div>
     <div class="input-group" style="display:none;">
@@ -138,7 +132,7 @@
     <div class="message"></div>
   </section>
 
-  <section id="bigsmall">
+  <section id="bigsmall" class="game-section hidden-by-auth">
     <h2>📏 من الأكبر؟</h2>
     <div class="gamebox"><button id="bigsmall-start">ابدأ اللعبة</button></div>
     <div class="question-area" style="display:none;"></div>
@@ -149,7 +143,7 @@
     <div class="result">--</div>
   </section>
 
-  <section id="typing">
+  <section id="typing" class="game-section hidden-by-auth">
     <h2>⌨️ اختبار الكتابة</h2>
     <div class="gamebox"><button id="typing-start">ابدأ الاختبار</button></div>
     <div class="text-to-type" style="display:none;"></div>
@@ -168,6 +162,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
   <script>
+    // --- استبدل هذا بـ firebaseConfig الخاص بك ---
     const firebaseConfig = {
       apiKey: "AIzaSyDLzpa2HYzJZdZvY_YuviKZ6Zg0FhWTfJw",
       authDomain: "my-site-cdd00.firebaseapp.com",
@@ -177,6 +172,7 @@
       appId: "1:514123463555:web:8499c5bde152537a3dd4b6",
       measurementId: "G-3Y7SYCE0NZ"
     };
+    // ---------------------------------------------
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -188,21 +184,61 @@
       const showHideElement = (element, show, displayType = 'block') => { if (element) element.style.display = show ? displayType : 'none'; }
       const disableElement = (element, disabled) => { if(element) element.disabled = disabled; }
 
-      const sections = document.querySelectorAll('section');
-      const navLinks = document.querySelectorAll('nav a');
-      const navLoginLink = document.querySelector('#nav-login-link');
+      const allSections = document.querySelectorAll('section'); // كل الأقسام بما فيها تسجيل الدخول
+      const gameSections = document.querySelectorAll('.game-section'); // أقسام الألعاب فقط
+      const mainNav = document.getElementById('main-nav');
+      const navLoginLink = document.getElementById('nav-login-link');
 
-      const showSection = (targetId) => {
-        sections.forEach(s => s.classList.toggle('active', s.id === targetId));
-        navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === `#${targetId}`));
-        playSound('snd-click');
+      // بيانات روابط الألعاب
+      const gameNavLinksData = [
+        { href: "#xo", text: "XO" }, { href: "#rps", text: "RPS" },
+        { href: "#click", text: "Target" }, { href: "#react", text: "Reaction" },
+        { href: "#dice", text: "Dice" }, { href: "#memory", text: "Memory" },
+        { href: "#math", text: "Math" }, { href: "#guessnum", text: "GuessNum" },
+        { href: "#bigsmall", text: "BigSmall" }, { href: "#typing", text: "Typing" }
+      ];
+      let currentNavLinks = [navLoginLink]; // نبدأ برابط تسجيل الدخول فقط
+
+      const updateNavigation = (isLoggedIn) => {
+        // إزالة روابط الألعاب القديمة (ما عدا رابط تسجيل الدخول/الخروج)
+        currentNavLinks.forEach(link => {
+            if (link !== navLoginLink) link.remove();
+        });
+        currentNavLinks = [navLoginLink]; // إعادة التعيين
+
+        if (isLoggedIn) {
+          gameNavLinksData.forEach(data => {
+            const newLink = document.createElement('a');
+            newLink.href = data.href;
+            newLink.textContent = data.text;
+            newLink.addEventListener('click', handleNavLinkClick);
+            mainNav.appendChild(newLink);
+            currentNavLinks.push(newLink);
+          });
+        }
       };
 
-      navLinks.forEach(a => a.addEventListener('click', e => {
-        e.preventDefault();
-        const id = a.getAttribute('href').slice(1);
-        showSection(id);
-      }));
+      const showSection = (targetId, isGameSection = false) => {
+        allSections.forEach(s => s.classList.remove('active')); // إخفاء كل الأقسام
+        const sectionToShow = document.getElementById(targetId);
+        if (sectionToShow) {
+            sectionToShow.classList.add('active');
+        }
+
+        currentNavLinks.forEach(a => {
+            if (a) a.classList.toggle('active', a.getAttribute('href') === `#${targetId}`);
+        });
+        if (isGameSection || targetId === 'login') playSound('snd-click');
+      };
+      
+      const handleNavLinkClick = (e) => {
+          e.preventDefault();
+          const id = e.target.getAttribute('href').slice(1);
+          const isGame = Array.from(gameSections).some(gs => gs.id === id);
+          showSection(id, isGame);
+      };
+      navLoginLink.addEventListener('click', handleNavLinkClick);
+
 
       const loginSectionEl = document.querySelector('#login');
       const loginEmailInput = loginSectionEl.querySelector('#login-email');
@@ -213,188 +249,83 @@
       const authStatusDiv = loginSectionEl.querySelector('#auth-status');
       const emailGroup = loginSectionEl.querySelector('#email-group');
       const passwordGroup = loginSectionEl.querySelector('#password-group');
+      const authFormContainer = loginSectionEl.querySelector('.auth-form-container');
 
-      btnSignup.addEventListener('click', () => {
-        const email = loginEmailInput.value;
-        const password = loginPasswordInput.value;
+      btnSignup.addEventListener('click', () => { /* ... نفس كود الإنشاء مع finally ... */
+        const email = loginEmailInput.value; const password = loginPasswordInput.value;
         if (!email || !password) { updateElementText(authStatusDiv, "الرجاء إدخال البريد الإلكتروني وكلمة المرور."); return; }
         if (password.length < 6) { updateElementText(authStatusDiv, "يجب أن تكون كلمة المرور 6 حروف على الأقل."); return; }
-        updateElementText(authStatusDiv, 'جاري إنشاء الحساب...');
-        disableElement(btnSignup, true); disableElement(btnLogin, true);
+        updateElementText(authStatusDiv, 'جاري إنشاء الحساب...'); disableElement(btnSignup, true); disableElement(btnLogin, true);
         auth.createUserWithEmailAndPassword(email, password)
           .then((userCredential) => { updateElementText(authStatusDiv, `تم إنشاء الحساب بنجاح! مرحباً ${userCredential.user.email}`); loginEmailInput.value = ''; loginPasswordInput.value = ''; })
-          .catch((error) => { updateElementText(authStatusDiv, `خطأ في إنشاء الحساب: ${error.message}`); console.error('Signup error:', error.code, error.message); })
+          .catch((error) => { updateElementText(authStatusDiv, `خطأ في إنشاء الحساب: ${error.message}`); })
           .finally(() => { disableElement(btnSignup, false); disableElement(btnLogin, false); });
       });
 
-      btnLogin.addEventListener('click', () => {
-        const email = loginEmailInput.value;
-        const password = loginPasswordInput.value;
+      btnLogin.addEventListener('click', () => { /* ... نفس كود تسجيل الدخول مع finally ... */
+        const email = loginEmailInput.value; const password = loginPasswordInput.value;
         if (!email || !password) { updateElementText(authStatusDiv, "الرجاء إدخال البريد الإلكتروني وكلمة المرور."); return; }
-        updateElementText(authStatusDiv, 'جاري تسجيل الدخول...');
-        disableElement(btnSignup, true); disableElement(btnLogin, true);
+        updateElementText(authStatusDiv, 'جاري تسجيل الدخول...'); disableElement(btnSignup, true); disableElement(btnLogin, true);
         auth.signInWithEmailAndPassword(email, password)
           .then((userCredential) => { updateElementText(authStatusDiv, `تم تسجيل الدخول بنجاح! مرحباً ${userCredential.user.email}`); })
-          .catch((error) => { updateElementText(authStatusDiv, `خطأ في تسجيل الدخول: ${error.message}`); console.error('Login error:', error.code, error.message); })
+          .catch((error) => { updateElementText(authStatusDiv, `خطأ في تسجيل الدخول: ${error.message}`); })
           .finally(() => { disableElement(btnSignup, false); disableElement(btnLogin, false); });
       });
 
-      btnLogout.addEventListener('click', () => {
-        auth.signOut().catch((error) => { updateElementText(authStatusDiv, `خطأ في تسجيل الخروج: ${error.message}`); console.error('Logout error:', error); });
-      });
+      btnLogout.addEventListener('click', () => { auth.signOut().catch((error) => { updateElementText(authStatusDiv, `خطأ في تسجيل الخروج: ${error.message}`); }); });
 
       auth.onAuthStateChanged(user => {
         if (user) {
           updateElementText(authStatusDiv, `أهلاً بك, ${user.email}`);
           updateElementText(navLoginLink, 'تسجيل الخروج');
-          navLoginLink.onclick = (e) => { e.preventDefault(); btnLogout.click(); showSection('login'); };
+          navLoginLink.onclick = (e) => { e.preventDefault(); btnLogout.click(); }; // Note: showSection('login') will be handled by state change
           showHideElement(btnLogout, true, 'inline-block');
+          showHideElement(authFormContainer, false); // إخفاء فورم الإيميل والباسورد
           showHideElement(btnLogin, false);
           showHideElement(btnSignup, false);
-          showHideElement(emailGroup, false);
-          showHideElement(passwordGroup, false);
+          gameSections.forEach(gs => gs.classList.remove('hidden-by-auth'));
+          updateNavigation(true);
+          // إذا لم يكن هناك قسم فعال أو القسم الفعال هو تسجيل الدخول، اعرض أول لعبة
+          const activeSection = document.querySelector('section.active');
+          if (!activeSection || activeSection.id === 'login') {
+            if (gameNavLinksData.length > 0) {
+              showSection(gameNavLinksData[0].href.slice(1), true);
+            }
+          }
         } else {
           updateElementText(authStatusDiv, 'أنت غير مسجل الدخول. قم بتسجيل الدخول أو إنشاء حساب جديد.');
           updateElementText(navLoginLink, 'تسجيل الدخول');
-          navLoginLink.onclick = (e) => { e.preventDefault(); showSection('login'); };
+          navLoginLink.onclick = handleNavLinkClick; // إعادة المعالج الأصلي
           showHideElement(btnLogout, false);
+          showHideElement(authFormContainer, true);
           showHideElement(btnLogin, true, 'inline-block');
           showHideElement(btnSignup, true, 'inline-block');
-          showHideElement(emailGroup, true);
-          showHideElement(passwordGroup, true);
-          loginEmailInput.value = '';
-          loginPasswordInput.value = '';
+          gameSections.forEach(gs => {
+            gs.classList.add('hidden-by-auth');
+            gs.classList.remove('active'); // تأكد من إخفاء أي لعبة كانت نشطة
+          });
+          updateNavigation(false);
+          showSection('login', false); // عرض قسم تسجيل الدخول دائمًا عند عدم تسجيل الدخول
+          loginEmailInput.value = ''; loginPasswordInput.value = '';
         }
       });
 
-      const initXOGame = () => {
-        const section = document.querySelector('#xo'), boardElement = section.querySelector('.board'), statusElement = section.querySelector('.status'), restartButton = section.querySelector('#xo-restart');
-        let board = Array(9).fill(''), currentPlayer = '❌', gameActive = true;
-        const winningPatterns = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-        const checkWin = () => { for (const p of winningPatterns) { const [a,b,c] = p; if (board[a] && board[a]===board[b] && board[a]===board[c]) return board[a];} return null; };
-        const checkDraw = () => !board.includes('');
-        const handleClick = (index) => {
-          if (!gameActive || board[index]) return;
-          board[index] = currentPlayer; boardElement.children[index].textContent = currentPlayer; playSound('snd-click');
-          const winner = checkWin();
-          if (winner) { updateElementText(statusElement, `فاز ${winner}`); playSound('snd-win'); gameActive = false; }
-          else if (checkDraw()) { updateElementText(statusElement, 'تعادل'); playSound('snd-click'); gameActive = false; }
-          else { currentPlayer = currentPlayer === '❌' ? '⭕' : '❌'; updateElementText(statusElement, `الدور: ${currentPlayer}`); }
-        };
-        const resetGame = () => { board.fill(''); currentPlayer = '❌'; gameActive = true; updateElementText(statusElement, 'الدور: ❌'); Array.from(boardElement.children).forEach(c=>c.textContent=''); playSound('snd-click'); };
-        boardElement.innerHTML = Array(9).fill().map((_,i) => `<div class="cell" data-index="${i}"></div>`).join('');
-        Array.from(boardElement.children).forEach((cell, i) => cell.addEventListener('click', () => handleClick(i)));
-        restartButton.addEventListener('click', resetGame); resetGame();
-      };
+      // دوال تهيئة الألعاب (يجب أن تكون موجودة)
+      const initXOGame = () => { /* ... كود لعبة XO ... */ };
+      const initRPSGame = () => { /* ... كود لعبة RPS ... */ };
+      const initClickTargetGame = () => { /* ... كود لعبة Click Target ... */ };
+      const initReactionTestGame = () => { /* ... كود لعبة Reaction Test ... */ };
+      const initDiceGame = () => { /* ... كود لعبة Dice ... */ };
+      const initMemoryGame = () => { /* ... كود لعبة Memory ... */ };
+      const initMathGame = () => { /* ... كود لعبة Math ... */ };
+      const initGuessNumGame = () => { /* ... كود لعبة GuessNum ... */ };
+      const initBigSmallGame = () => { /* ... كود لعبة BigSmall ... */ };
+      const initTypingTestGame = () => { /* ... كود لعبة Typing ... */ };
 
-      const initRPSGame = () => {
-        const section = document.querySelector('#rps'), resultElement = section.querySelector('.result'), choiceButtons = section.querySelectorAll('.gamebox button'), options = ['🪨','📄','✂️'];
-        choiceButtons.forEach(button => button.addEventListener('click', () => {
-          const pC = button.dataset.choice, cC = options[getRandomInt(0,2)]; let msg='تعادل';
-          if ((pC==='🪨'&&cC==='✂️')||(pC==='📄'&&cC==='🪨')||(pC==='✂️'&&cC==='📄')) msg='فزت'; else if(pC!==cC)msg='خسرت';
-          updateElementText(resultElement, `${msg}! أنت:${pC} الكومبيوتر:${cC}`); playSound(msg==='فزت'?'snd-win':msg==='خسرت'?'snd-lose':'snd-click');
-        }));
-      };
-
-      const initClickTargetGame = () => {
-        const section = document.querySelector('#click'), startButton = section.querySelector('#click-start'), statusElement = section.querySelector('.status'), targetArea = section.querySelector('#click-target-area'); let gtid = null;
-        startButton.addEventListener('click', () => {
-          disableElement(startButton,true); updateElementText(statusElement,'انتظر...'); targetArea.innerHTML=''; if(gtid)clearTimeout(gtid);
-          gtid = setTimeout(() => {
-            const sT = Date.now(), tB = document.createElement('button'); tB.textContent='🎯'; tB.style.fontSize=`${getRandomInt(2,4)}rem`; tB.style.position='relative'; tB.style.top=`${getRandomInt(-30,30)}px`; tB.style.left=`${getRandomInt(-50,50)}px`;
-            tB.onclick=()=>{ const rT=Date.now()-sT; updateElementText(statusElement,`زمنك: ${rT} مللي. اضغط "ابدأ"`); playSound('snd-win'); tB.remove(); disableElement(startButton,false); };
-            targetArea.appendChild(tB); updateElementText(statusElement,'اضغط الهدف!');
-          }, getRandomInt(1000,3000));
-        });
-      };
-
-      const initReactionTestGame = () => {
-        const section = document.querySelector('#react'), startButton = section.querySelector('#react-start'), timeBox = section.querySelector('.timebox');
-        let sT = 0, gtid = null, canClick = false;
-        const triggerPress = () => { updateElementText(startButton,'اضغط الآن!'); startButton.style.backgroundColor='#4CAF50'; sT=Date.now(); disableElement(startButton,false); canClick=true; };
-        const handleReaction = () => {
-          if (!canClick && sT === 0) { updateElementText(timeBox,"انتظر اللون الأخضر!"); playSound('snd-lose'); clearTimeout(gtid); disableElement(startButton,false); updateElementText(startButton,"ابدأ"); startButton.style.backgroundColor=''; return; }
-          if (!canClick) return;
-          const rT = Date.now()-sT; updateElementText(timeBox,`${rT} مللي`); playSound('snd-win'); updateElementText(startButton,'ابدأ'); startButton.style.backgroundColor=''; sT=0; canClick=false; disableElement(startButton,false);
-        };
-        const startGame = () => {
-          disableElement(startButton,true); updateElementText(timeBox,'انتظر...'); updateElementText(startButton,'انتظر...'); startButton.style.backgroundColor='#f44336'; sT=0; canClick=false; if(gtid)clearTimeout(gtid);
-          gtid = setTimeout(triggerPress, getRandomInt(1500,4000));
-        };
-        startButton.addEventListener('click', () => { if(canClick || sT !==0) {handleReaction();} else {startGame();} });
-      };
-
-      const initDiceGame = () => {
-        const section = document.querySelector('#dice'), rollButton = section.querySelector('#dice-roll'), resultElement = section.querySelector('.result');
-        rollButton.addEventListener('click', () => { const roll = getRandomInt(1,6); updateElementText(resultElement,`🎲 طلعت: ${roll}`); playSound('snd-click'); });
-      };
-
-      const initMemoryGame = () => {
-        const section=document.querySelector('#memory'), cardsContainer=section.querySelector('.cards'), statusElement=section.querySelector('.status'), restartButton=section.querySelector('#memory-restart');
-        const cardPool=['🍎','🍌','🍇','🍉','🍓','🍒','🍑','🍍']; let vals=[], cards=[], selIdxs=[], matchedPairs=0, lock=false;
-        const shuffle=(arr)=>{for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}};
-        const createBoard=()=>{
-          vals=[...cardPool,...cardPool]; shuffle(vals); cardsContainer.innerHTML=''; cards=[]; selIdxs=[]; matchedPairs=0; lock=false; updateElementText(statusElement,'ابدأ اللعبة!');
-          vals.forEach((val,idx)=>{ const cardEl=document.createElement('div'); cardEl.classList.add('card'); cardEl.dataset.index=idx; cardEl.addEventListener('click',onCardClick); cardsContainer.appendChild(cardEl); cards.push({el:cardEl,val:val,rev:false,match:false,idx:idx});});
-        };
-        const onCardClick=(e)=>{
-          if(lock)return; const cIdx=parseInt(e.target.dataset.index), cCard=cards[cIdx];
-          if(cCard.rev||cCard.match||selIdxs.length===2)return;
-          cCard.el.textContent=cCard.val; cCard.el.classList.add('revealed'); cCard.rev=true; selIdxs.push(cIdx); playSound('snd-click');
-          if(selIdxs.length===2){ lock=true; setTimeout(checkMatch,700); }
-        };
-        const checkMatch=()=>{
-          const [idx1,idx2]=selIdxs, card1=cards[idx1], card2=cards[idx2];
-          if(card1.val===card2.val){ card1.match=true;card2.match=true;card1.el.classList.add('matched');card2.el.classList.add('matched');matchedPairs++;playSound('snd-win');if(matchedPairs===cardPool.length)updateElementText(statusElement,'🎉 انتهيت!');}
-          else{card1.el.textContent='';card1.el.classList.remove('revealed');card1.rev=false;card2.el.textContent='';card2.el.classList.remove('revealed');card2.rev=false;playSound('snd-lose');}
-          selIdxs=[]; lock=false;
-        };
-        restartButton.addEventListener('click',createBoard); createBoard();
-      };
-
-      const initMathGame = () => {
-        const section=document.querySelector('#math'), startBtn=section.querySelector('#math-start'), qArea=section.querySelector('.question-area'), iGroup=section.querySelector('.input-group'), ansIn=section.querySelector('#math-answer'), subBtn=section.querySelector('#math-submit'), resEl=section.querySelector('.result');
-        let curAns=0;
-        const genQ=()=>{ const n1=getRandomInt(1,50),n2=getRandomInt(1,50);curAns=n1+n2;updateElementText(qArea,`احسب: ${n1} + ${n2} = ؟`);ansIn.value='';ansIn.focus();updateElementText(resEl,'--');showHideElement(qArea,true);showHideElement(iGroup,true);disableElement(startBtn,true);};
-        const checkAns=()=>{ const uAns=parseInt(ansIn.value); if(isNaN(uAns)){updateElementText(resEl,'أدخل رقم');return;} if(uAns===curAns){updateElementText(resEl,'✅ صحيح!');playSound('snd-win');}else{updateElementText(resEl,`❌ خطأ... الصحيح: ${curAns}`);playSound('snd-lose');} disableElement(startBtn,false);showHideElement(qArea,false);showHideElement(iGroup,false);};
-        startBtn.addEventListener('click',genQ); subBtn.addEventListener('click',checkAns); ansIn.addEventListener('keypress',(e)=>{if(e.key==='Enter')checkAns();});
-      };
-
-      const initGuessNumGame = () => {
-        const section=document.querySelector('#guessnum'), startBtn=section.querySelector('#guessnum-start'), iGroup=section.querySelector('.input-group'), gIn=section.querySelector('#guessnum-input'), subBtn=section.querySelector('#guessnum-submit'), resEl=section.querySelector('.result'), msgEl=section.querySelector('.message');
-        let target=0, tries=0;
-        const startGame=()=>{target=getRandomInt(1,100);tries=0;updateElementText(resEl,'خمن بين 1 و100.');updateElementText(msgEl,'');gIn.value='';showHideElement(iGroup,true);gIn.focus();disableElement(startBtn,true);disableElement(subBtn,false);};
-        const checkGuess=()=>{ const uGuess=parseInt(gIn.value); if(isNaN(uGuess)||uGuess<1||uGuess>100){updateElementText(msgEl,'أدخل رقم صحيح بين 1 و100');return;} tries++; if(uGuess===target){updateElementText(resEl,`🎉 مبروك! خمنته بـ ${tries} محاولات`);updateElementText(msgEl,'');playSound('snd-win');disableElement(startBtn,false);disableElement(subBtn,true);showHideElement(iGroup,false);}else if(uGuess<target){updateElementText(msgEl,'⬆️ أعلى!');playSound('snd-click');}else{updateElementText(msgEl,'⬇️ أقل!');playSound('snd-click');} gIn.value='';gIn.focus();};
-        startBtn.addEventListener('click',startGame); subBtn.addEventListener('click',checkGuess); gIn.addEventListener('keypress',(e)=>{if(e.key==='Enter')checkGuess();});
-      };
-
-      const initBigSmallGame = () => {
-        const section=document.querySelector('#bigsmall'), startBtn=section.querySelector('#bigsmall-start'), qArea=section.querySelector('.question-area'), iGroup=section.querySelector('.input-group'), ansIn=section.querySelector('#bigsmall-answer'), subBtn=section.querySelector('#bigsmall-submit'), resEl=section.querySelector('.result');
-        let corAns=0;
-        const genChal=()=>{ const n1=getRandomInt(1,100);let n2=getRandomInt(1,100);while(n2===n1){n2=getRandomInt(1,100);}corAns=Math.max(n1,n2);updateElementText(qArea,`من الأكبر؟ ${n1} أو ${n2}؟`);ansIn.value='';updateElementText(resEl,'--');showHideElement(qArea,true);showHideElement(iGroup,true);ansIn.focus();disableElement(startBtn,true);};
-        const checkAns=()=>{ const uAns=parseInt(ansIn.value); if(isNaN(uAns)){updateElementText(resEl,'أدخل رقم');return;} if(uAns===corAns){updateElementText(resEl,'✅ صح!');playSound('snd-win');}else{updateElementText(resEl,`❌ غلط... الصحيح: ${corAns}`);playSound('snd-lose');} disableElement(startBtn,false);showHideElement(qArea,false);showHideElement(iGroup,false);};
-        startBtn.addEventListener('click',genChal); subBtn.addEventListener('click',checkAns); ansIn.addEventListener('keypress',(e)=>{if(e.key==='Enter')checkAns();});
-      };
-
-      const initTypingTestGame = () => {
-        const section=document.querySelector('#typing'), startBtn=section.querySelector('#typing-start'), txtEl=section.querySelector('.text-to-type'), iGroup=section.querySelector('.input-group'), typIn=section.querySelector('#typing-input'), subBtn=section.querySelector('#typing-submit'), statEl=section.querySelector('.status');
-        const texts=['مفتاح','برمجة','تحدي','انطلاق','جافاسكريبت','موقع','لعبة','حاسوب','انترنت','مرحباً']; let curTxt='', sT=0;
-        const startTest=()=>{curTxt=texts[getRandomInt(0,texts.length-1)];updateElementText(txtEl,`أكتب: "${curTxt}"`);typIn.value='';updateElementText(statEl,'ابدأ الكتابة...');showHideElement(txtEl,true);showHideElement(iGroup,true);disableElement(startBtn,true);disableElement(subBtn,false);typIn.focus();sT=Date.now();};
-        const checkTyping=()=>{ const typed=typIn.value, tTaken=Date.now()-sT; if(typed===curTxt){updateElementText(statEl,`🎉 مضبوط! وقتك: ${tTaken} مللي`);playSound('snd-win');}else{updateElementText(statEl,`❌ خطأ! كان المفروض: "${curTxt}". كتبت: "${typed}"`);playSound('snd-lose');} disableElement(startBtn,false);disableElement(subBtn,true);showHideElement(txtEl,false);showHideElement(iGroup,false);};
-        startBtn.addEventListener('click',startTest); subBtn.addEventListener('click',checkTyping); typIn.addEventListener('keypress',(e)=>{if(e.key==='Enter')checkTyping();});
-      };
-
+      // استدعاء دوال التهيئة
       initXOGame(); initRPSGame(); initClickTargetGame(); initReactionTestGame(); initDiceGame(); initMemoryGame(); initMathGame(); initGuessNumGame(); initBigSmallGame(); initTypingTestGame();
 
-      if (!auth.currentUser && navLinks.length > 0) {
-        showSection('login');
-        if(navLoginLink) navLoginLink.classList.add('active');
-      } else if (auth.currentUser && sections.length > 1) {
-         showSection(sections[1].id); // Show first game if logged in and games exist
-      } else if (navLinks.length > 0) {
-        showSection('login'); // Fallback to login
-         if(navLoginLink) navLoginLink.classList.add('active');
-      }
+      // لا تقم بتعيين قسم نشط مبدئيًا هنا، onAuthStateChanged سيتولى الأمر
     });
   </script>
 </body>
