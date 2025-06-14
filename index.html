@@ -1,46 +1,47 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF‑8">
-  <meta name="viewport" content="width=device‑width, initial‑scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🎮 موقع الألعاب الترفيهي</title>
   <style>
     body { margin:0; font-family: Arial, sans-serif; direction: rtl; background:#fafafa; color:#333; }
-    nav { background:#1976d2; padding:12px; text-align:center; position:sticky; top:0; z-index:10; }
-    nav a { color:white; margin:0 10px; text-decoration:none; font-size:1.1rem; }
+    nav { background:#1976d2; padding:12px; text-align:center; position:sticky; top:0; }
+    nav a { color:white; margin:0 8px; text-decoration:none; font-size:1rem; }
     nav a:hover, nav a.active { text-decoration:underline; }
-    section { display:none; padding:20px; max-width:500px; margin:20px auto; background:white; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+    section { display:none; padding:20px; max-width:480px; margin:20px auto; background:white; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
     section.active { display:block; }
     h2 { margin-top:0; }
-    button { padding:8px 16px; margin:5px; font-size:1rem; cursor:pointer; border:none; border-radius:6px; background:#0288d1; color:white; transition:background .2s; }
+    button { padding:8px 16px; margin:8px 4px; font-size:1rem; cursor:pointer; border:none; border-radius:6px; background:#0288d1; color:white; transition:background .2s; }
     button:hover { background:#026aa7; }
     .status, .result { margin:15px 0; font-size:1.1rem; }
-    .board { display:grid; grid-template-columns:repeat(3,100px); grid-gap:8px; justify-content:center; margin:15px auto; }
+    .board { display:grid; grid-template-columns:repeat(3,100px); gap:8px; justify-content:center; margin:15px auto; }
     .cell { width:100px; height:100px; border:2px solid #999; display:flex; align-items:center; justify-content:center; font-size:2rem; background:#fdfdfd; transition:background .2s; }
     .cell:hover { background:#f0f0f0; }
-    /* لعبات إضافية تنسيق بسيط */
-    .gamebox { margin:20px auto; text-align:center; }
-    .gamebox button { width:120px; }
+    .gamebox { text-align:center; margin:15px auto; }
     .timebox { font-size:2rem; margin:15px; }
-    .cards { display:grid; grid-template-columns:repeat(4,80px); grid-gap:10px; justify-content:center; }
+    .cards { display:grid; grid-template-columns:repeat(4,80px); gap:10px; justify-content:center; }
     .card { width:80px; height:80px; background:#eee; display:flex; align-items:center; justify-content:center; font-size:1.6rem; cursor:pointer; }
-    .hidden { background:#999; cursor:pointer; }
+    .hidden { background:#999; }
   </style>
 </head>
 <body>
 
   <nav>
-    <a href="#xo" class="active">❌⭕ XO</a>
-    <a href="#rps">✊🖐✌ حجر ورقة مقص</a>
-    <a href="#click">🎯 اصطياد طارگت</a>
-    <a href="#react">⌛ سرعة الضغط</a>
-    <a href="#dice">🎲 نرد</a>
-    <a href="#memory">🧠 ذاكرة بطاقات</a>
-    <a href="#math">🧮 جمع أرقام</a>
+    <a href="#xo" class="active">XO</a>
+    <a href="#rps">RPS</a>
+    <a href="#click">Target</a>
+    <a href="#react">Reaction</a>
+    <a href="#dice">Dice</a>
+    <a href="#memory">Memory</a>
+    <a href="#math">Math</a>
+    <a href="#guessnum">GuessNum</a>
+    <a href="#bigsmall">BigSmall</a>
+    <a href="#typing">Typing</a>
   </nav>
 
   <section id="xo" class="active">
-    <h2>❌⭕ لعبة XO</h2>
+    <h2>❌⭕ XO</h2>
     <div class="board"></div>
     <div class="status">الدور: ❌</div>
     <button>إعادة XO</button>
@@ -48,22 +49,20 @@
 
   <section id="rps">
     <h2>✊🖐✌ حجر ورقة مقص</h2>
-    <div class="choices">
-      <button>🪨</button>
-      <button>📄</button>
-      <button>✂️</button>
+    <div class="gamebox">
+      <button>🪨</button><button>📄</button><button>✂️</button>
     </div>
-    <div class="result">اختر لتبدأ!</div>
+    <div class="result">اختر لبدء!</div>
   </section>
 
   <section id="click">
-    <h2>🎯 اصطياد الطارگت</h2>
+    <h2>🎯 اصطياد الهدف</h2>
     <div class="gamebox"><button>ابدأ</button></div>
-    <div class="status">اضغط "ابدأ" للانطلاق</div>
+    <div class="status">اضغط "ابدأ"</div>
   </section>
 
   <section id="react">
-    <h2>⌛ سرعة الضغط</h2>
+    <h2>⌛ اختبار سرعة الضغط</h2>
     <div class="gamebox"><button>ابدأ</button></div>
     <div class="timebox">--</div>
   </section>
@@ -77,13 +76,31 @@
   <section id="memory">
     <h2>🧠 لعبة الذاكرة</h2>
     <div class="cards"></div>
-    <div class="status">اضغط على بطاقة للبدء</div>
+    <div class="status">اضغط بطاقة للبدء</div>
   </section>
 
   <section id="math">
-    <h2>🧮 جمع الأرقام بسرعة</h2>
+    <h2>🧮 جمع أرقام بسرعة</h2>
     <div class="gamebox"><button>ابدأ</button></div>
     <div class="result">--</div>
+  </section>
+
+  <section id="guessnum">
+    <h2>🔢 تخمين الرقم</h2>
+    <div class="gamebox"><button>ابدأ</button></div>
+    <div class="result">--</div>
+  </section>
+
+  <section id="bigsmall">
+    <h2>📏 من الأكبر؟</h2>
+    <div class="gamebox"><button>ابدأ</button></div>
+    <div class="result">--</div>
+  </section>
+
+  <section id="typing">
+    <h2>⌨️ اختبار الكتابة</h2>
+    <div class="gamebox"><button>ابدأ</button></div>
+    <div class="status">--</div>
   </section>
 
   <!-- الأصوات -->
@@ -91,122 +108,185 @@
   <audio id="snd-win" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
   <audio id="snd-lose" src="https://actions.google.com/sounds/v1/cartoon/cartoon_cowbell.ogg"></audio>
 
-  <!-- تابع الكود الجاي -->
   <script>
-    /* الكود مكثف لتنسيق الرد القصير */
-    // التنقل بشريط
     const secs = document.querySelectorAll('section'),
           navs = document.querySelectorAll('nav a'),
-          play = (id)=>{ secs.forEach(s=>s.id===id? s.classList.add('active'): s.classList.remove('active'));
-                         navs.forEach(a=>a.getAttribute('href')===('#'+id)? a.classList.add('active'): a.classList.remove('active')); };
-    navs.forEach(a=>a.onclick=e=>{ e.preventDefault(); play(a.getAttribute('href').slice(1)); playSound('snd-click'); });
+          snd = id => document.getElementById(id).play();
 
-    const snd=(id)=>document.getElementById(id).play();
-
-    // ===== XO
-    let xb=['','','','','','','','',''], cp='❌', over=false;
-    const bd = document.querySelector('#xo .board'),
-          st = document.querySelector('#xo .status'),
-          bxBtn = document.querySelector('#xo button');
-    bd.innerHTML = Array(9).fill().map((_,i)=>`<div class="cell" data-i="${i}"></div>`).join('');
-    bd.querySelectorAll('.cell').forEach(c=>c.onclick=()=>{
-      const i=c.dataset.i; if(xb[i]||over)return;
-      xb[i]=cp; c.textContent=cp; snd('snd-click');
-      const w=(()=>{
-        const ps=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-        for(let [a,b,c] of ps) if(xb[a] && xb[a]===xb[b]&&xb[a]===xb[c])return xb[a];
-        return xb.includes('')? null : 'draw';
-      })();
-      if(w){ over=true;
-        if(w==='draw') st.textContent='تعادل!'; else st.textContent=`فاز ${w}!`;
-        snd(w==='draw'?'snd-click':'snd-win'); }
-      else{ cp=cp==='❌'?'⭕':'❌'; st.textContent='الدور: '+cp; }
-    });
-    bxBtn.onclick=()=>{
-      xb=Array(9).fill(''); cp='❌'; over=false; st.textContent='الدور: ❌';
-      bd.querySelectorAll('.cell').forEach(c=>c.textContent=''); snd('snd-click');
-    };
-
-    // ===== RPS
-    const rsBtns = document.querySelectorAll('#rps .choices button'),
-          rsRes = document.querySelector('#rps .result'),
-          opt=['🪨','📄','✂️'];
-    rsBtns.forEach(b=>b.onclick=()=>{
-      const p=b.textContent, b2=opt[Math.floor(Math.random()*3)], msg=(p===b2?'تعادل': ((p==='🪨'&&b2==='✂️')||(p==='📄'&&b2==='🪨')||(p==='✂️'&&b2==='📄'))?'فزت':'خسرت');
-      rsRes.textContent=`${msg}! أنت:${p} الكمبيوتر:${b2}`; snd(msg==='فزت'?'snd-win': msg==='خسرت'?'snd-lose':'snd-click');
+    navs.forEach(a=>a.onclick=e=>{
+      e.preventDefault(); const id=a.getAttribute('href').slice(1);
+      secs.forEach(s=>s.id===id ? s.classList.add('active') : s.classList.remove('active'));
+      navs.forEach(b=>b===a ? b.classList.add('active') : b.classList.remove('active'));
+      snd('snd-click');
     });
 
-    // باقي الألعاب (بمصغرات):
-    const clickSec=document.querySelector('#click'), clickBtn=clickSec.querySelector('button'), clickSt=clickSec.querySelector('.status');
-    clickBtn.onclick=()=>{
-      clickBtn.disabled=true; clickSt.textContent='اضغط الهدف عند ظهوره...';
-      setTimeout(()=>{
-        const btnT=document.createElement('button');
-        btnT.textContent='🎯'; btnT.style.fontSize='2rem'; btnT.onclick=()=>{
-           const t=Date.now()-t0; clickSt.textContent=`ممتاز! زمنك: ${t}ملي ثانية`; snd('snd-win'); btnT.remove(); clickBtn.disabled=false;
-        };
-        const t0=Date.now();
-        clickSec.appendChild(btnT);
-      }, 1000+Math.random()*2000);
-    };
-
-    const reactSec=document.querySelector('#react'), reactBtn=reactSec.querySelector('button'), timeBox=reactSec.querySelector('.timebox');
-    reactBtn.onclick=()=>{
-      reactBtn.disabled=true; timeBox.textContent='انتظر...';
-      setTimeout(()=>{
-        const t0=Date.now();
-        timeBox.textContent='اضغط!'; reactBtn.textContent='اضغط الآن!';
-        reactBtn.disabled=false;
-        const listener=()=>{ const dt=Date.now()-t0; timeBox.textContent=`سرعتك: ${dt}ملي ثانية`; snd('snd-win'); reactBtn.textContent='ابدأ'; reactBtn.removeEventListener('click',listener); };
-        reactBtn.addEventListener('click', listener);
-      }, 500+Math.random()*2500);
-    };
-
-    const diceSec = document.querySelector('#dice'), diceBtn=diceSec.querySelector('button'), diceRes=diceSec.querySelector('.result');
-    diceBtn.onclick=()=>{ const n=1+Math.floor(Math.random()*6); diceRes.textContent=`طلعت: ${n}`; snd('snd-click'); };
-
-    const memSec = document.querySelector('#memory'), cardsDiv=memSec.querySelector('.cards'), memSt=memSec.querySelector('.status');
-    (() => {
-      let arr=[...Array(8).keys(),...Array(8).keys()], sel=[], matched=[];
-      function initMem(){
-        arr.sort(() => Math.random() - 0.5);
-        cardsDiv.innerHTML=arr.map(c=>`<div class="card"></div>`).join('');
-        cardsDiv.querySelectorAll('.card').forEach((cd,i)=>{
-          cd.onclick=()=>{
-            if(sel.length===2||matched.includes(i))return;
-            cd.textContent=arr[i]; cd.classList.add('hidden');
-            sel.push({i,cd});
-            if(sel.length===2){
-              setTimeout(()=>{
-                if(arr[sel[0].i]===arr[sel[1].i]){
-                  matched.push(sel[0].i,sel[1].i);
-                  snd('snd-win');
-                  if(matched.length===arr.length){ memSt.textContent='أنهيت! 👏'; }
-                } else {
-                  sel.forEach(o=>{ o.cd.textContent=''; o.cd.classList.remove('hidden'); });
-                  snd('snd-lose');
-                }
-                sel=[];
-              },500);
-            }
-          };
-        });
-        memSt.textContent='ابدأ اللعبة!';
-      }
-      initMem();
+    // XO
+    (()=>{
+      let board=Array(9).fill(''), player='❌', over=false;
+      const sec=document.querySelector('#xo'), bd=sec.querySelector('.board'), st=sec.querySelector('.status'), btn=sec.querySelector('button');
+      bd.innerHTML = Array(9).fill().map((_,i)=>`<div class="cell" data-i="${i}"></div>`).join('');
+      bd.querySelectorAll('.cell').forEach(c=>c.onclick=()=>{
+        const i=c.dataset.i; if(board[i]||over)return;
+        board[i]=player; c.textContent=player; snd('snd-click');
+        const winP=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        let winner=null;
+        winP.forEach(p=> { if(board[p[0]] && board[p[0]]===board[p[1]] && board[p[1]]===board[p[2]]) winner=board[p[0]]; });
+        if(winner||!board.includes('')){
+          over=true;
+          if(winner) { st.textContent=`فاز ${winner}`; snd('snd-win'); }
+          else { st.textContent='تعادل'; snd('snd-click'); }
+        } else {
+          player = player==='❌' ? '⭕' : '❌';
+          st.textContent = `الدور: ${player}`;
+        }
+      });
+      btn.onclick=()=>{
+        board.fill(''); player='❌'; over=false; st.textContent='الدور: ❌';
+        bd.querySelectorAll('.cell').forEach(c=>c.textContent=''); snd('snd-click');
+      };
     })();
 
-    const mathSec=document.querySelector('#math'), mathBtn=mathSec.querySelector('button'), mathRes=mathSec.querySelector('.result');
-    mathBtn.onclick=()=>{
-      const a=1+Math.floor(Math.random()*20), b=1+Math.floor(Math.random()*20), ans=a+b;
-      const user=prompt(`احسب: ${a} + ${b} = ؟`);
-      if(user===null)return;
-      if(parseInt(user)===ans){
-        mathRes.textContent='إجابة صحيحة! 🎉'; snd('snd-win');
-      } else {
-        mathRes.textContent=`خطأ... الصحيح هو: ${ans}`; snd('snd-lose');
+    // RPS
+    (()=>{
+      const sec=document.querySelector('#rps'), res=sec.querySelector('.result'),
+            opts=['🪨','📄','✂️'], btns=sec.querySelectorAll('button');
+      btns.forEach(b=>b.onclick=()=>{
+        const p=b.textContent, c=opts[Math.floor(Math.random()*3)];
+        let msg='تعادل'; if((p==='🪨'&&c==='✂️')||(p==='📄'&&c==='🪨')||(p==='✂️'&&c==='📄')) msg='فزت'; else if(p!==c) msg='خسرت';
+        res.textContent=`${msg}! أنت:${p} الكومبيوتر:${c}`;
+        snd(msg==='فزت'?'snd-win': msg==='خسرت'?'snd-lose':'snd-click');
+      });
+    })();
+
+    // Target
+    (()=>{
+      const sec=document.querySelector('#click'), btn=sec.querySelector('button'), st=sec.querySelector('.status');
+      btn.onclick=()=>{
+        btn.disabled=true; st.textContent='انتظر...';
+        setTimeout(()=>{
+          const t0=Date.now();
+          const tbtn=document.createElement('button');
+          tbtn.textContent='🎯'; tbtn.style.fontSize='2rem';
+          tbtn.onclick=()=>{
+            const t=Date.now()-t0; st.textContent=`زمنك: ${t} مللي`; snd('snd-win');
+            tbtn.remove(); btn.disabled=false;
+          };
+          sec.appendChild(tbtn);
+        },1000+Math.random()*2000);
+      };
+    })();
+
+    // Reaction
+    (()=>{
+      const sec=document.querySelector('#react'), btn=sec.querySelector('button'), box=sec.querySelector('.timebox');
+      btn.onclick=()=>{
+        btn.disabled=true; box.textContent='انتظر...';
+        setTimeout(()=>{
+          const t0=Date.now();
+          btn.textContent='اضغط!'; box.textContent='...';
+          btn.disabled=false;
+          const lis=()=>{ const dt=Date.now()-t0; box.textContent=`${dt} مللي`; snd('snd-win'); btn.textContent='ابدأ'; btn.removeEventListener('click', lis); };
+          btn.addEventListener('click', lis);
+        },500+Math.random()*2500);
+      };
+    })();
+
+    // Dice
+    (()=>{
+      const sec=document.querySelector('#dice'), btn=sec.querySelector('button'), res=sec.querySelector('.result');
+      btn.onclick=()=>{
+        const n=1+Math.floor(Math.random()*6);
+        res.textContent=`طلعت: ${n}`; snd('snd-click');
+      };
+    })();
+
+    // Memory
+    (()=>{
+      const sec=document.querySelector('#memory'), cardBox=sec.querySelector('.cards'), st=sec.querySelector('.status');
+      let arr=[...Array(8).keys(),...Array(8).keys()], sel=[], matched=[];
+      function init(){
+        arr.sort(()=>Math.random()-0.5);
+        cardBox.innerHTML = arr.map(()=>`<div class="card"></div>`).join('');
+        const cs=cardBox.querySelectorAll('.card');
+        cs.forEach((cd,i)=>cd.onclick=()=>{
+          if(sel.length===2||matched.includes(i))return;
+          cd.textContent=arr[i]; cd.classList.add('hidden'); sel.push({i,cd});
+          if(sel.length===2){
+            setTimeout(()=>{
+              if(arr[sel[0].i]===arr[sel[1].i]){
+                matched.push(sel[0].i,sel[1].i); snd('snd-win');
+                if(matched.length===arr.length) st.textContent='انتهيت!';
+              } else {
+                sel.forEach(o=>{ o.cd.textContent=''; o.cd.classList.remove('hidden'); });
+                snd('snd-lose');
+              }
+              sel=[];
+            },400);
+          }
+        });
+        matched=[]; sel=[]; st.textContent='ابدأ اللعبة!';
       }
-    };
+      init();
+    })();
+
+    // Math
+    (()=>{
+      const sec=document.querySelector('#math'), btn=sec.querySelector('button'), res=sec.querySelector('.result');
+      btn.onclick=()=>{
+        const a=1+Math.floor(Math.random()*50), b=1+Math.floor(Math.random()*50), ans=a+b;
+        const u=prompt(`احسب: ${a} + ${b} = ؟`);
+        if(u===null) return;
+        if(parseInt(u)===ans){ res.textContent='صحيح!'; snd('snd-win'); }
+        else { res.textContent=`خطأ... الإجابة: ${ans}`; snd('snd-lose'); }
+      };
+    })();
+
+    // Guess Number
+    (()=>{
+      const sec=document.querySelector('#guessnum'), btn=sec.querySelector('button'), res=sec.querySelector('.result');
+      btn.onclick=()=>{
+        const target=1+Math.floor(Math.random()*100);
+        let tries=0, guess;
+        do{
+          guess=prompt('خمن رقم بين 1 و100');
+          if(guess===null) return;
+          tries++;
+          if(guess<target) alert('أعلى!');
+          else if(guess>target) alert('أقل!');
+        } while(parseInt(guess)!==target);
+        res.textContent=`مبروك! خمنته بـ ${tries} محاولات`; snd('snd-win');
+      };
+    })();
+
+    // BigSmall
+    (()=>{
+      const sec=document.querySelector('#bigsmall'), btn=sec.querySelector('button'), res=sec.querySelector('.result');
+      btn.onclick=()=>{
+        const a=1+Math.floor(Math.random()*100), b=1+Math.floor(Math.random()*100);
+        const u=prompt(`من الأكبر؟ ${a} أو ${b}؟ اكتب الأكبر`);
+        if(u===null) return;
+        const correct = a>b ? a : b;
+        if(parseInt(u)===correct){ res.textContent='صح!'; snd('snd-win'); }
+        else { res.textContent=`غلط... الصحيح: ${correct}`; snd('snd-lose'); }
+      };
+    })();
+
+    // Typing Test
+    (()=>{
+      const sec=document.querySelector('#typing'), btn=sec.querySelector('button'), st=sec.querySelector('.status');
+      const texts=['مفتاح','برمجة','تحدي','انطلاق','ابدأ الآن'];
+      btn.onclick=()=>{
+        const txt=texts[Math.floor(Math.random()*texts.length)];
+        alert(`أكتب الكلمة التالية: \n\n"${txt}"`);
+        const t0=Date.now();
+        const u=prompt('اكتبها هنا');
+        if(u===null) return;
+        const dt=Date.now()-t0;
+        if(u===txt){ st.textContent=`مضبوط! وقتك: ${dt} مللي`; snd('snd-win'); }
+        else { st.textContent=`خطأ! كان المفروض: ${txt}`; snd('snd-lose'); }
+      };
+    })();
+
   </script>
 </body>
 </html>
