@@ -147,6 +147,8 @@
         font-size: 1.1rem;
         line-height: 1.6;
         background-color: #f8f9fa;
+        direction: rtl; /* Ensure text is RTL */
+        text-align: right; /* Ensure text aligns to the right */
     }
     #typing-input {
         width: 100%;
@@ -154,6 +156,8 @@
         font-size: 1rem;
         border-radius: 8px;
         border: 1px solid #ccc;
+        direction: rtl; /* For RTL typing input */
+        text-align: right; /* Align text to right in input */
     }
     .input-group { text-align: center; } /* For math, guessnum etc. */
     .input-group input { margin: 0 auto 10px auto; display: block; max-width: 250px; text-align: center; padding:10px; border-radius: 8px; border:1px solid #ccc; }
@@ -215,11 +219,10 @@
 
   <script>
     const firebaseConfig = {
-        // ضع هنا إعدادات Firebase الخاصة بك
         apiKey: "AIzaSyDLzpa2HYzJZdZvY_YuviKZ6Zg0FhWTfJw", // استبدل بمفتاحك
         authDomain: "my-site-cdd00.firebaseapp.com",
         projectId: "my-site-cdd00",
-        storageBucket: "my-site-cdd00.firebasestorage.app",
+        storageBucket: "my-site-cdd00.appspot.com", // Corrected domain
         messagingSenderId: "514123463555",
         appId: "1:514123463555:web:8499c5bde152537a3dd4b6",
         measurementId: "G-3Y7SYCE0NZ"
@@ -277,19 +280,16 @@
           if (isVerified) {
             updateElementText(authStatusDiv, userEmail, 'success');
           } else {
-             // START MODIFICATION: Update message if logged in but not verified (though signOut should prevent this state often)
             updateElementText(authStatusDiv, `تم تسجيل الدخول كـ ${userEmail}. يرجى التحقق من بريدك الإلكتروني للوصول الكامل.`, 'info');
-             // END MODIFICATION
           }
           navLoginLink.textContent = 'تسجيل الخروج';
           navLoginLink.onclick = (e) => { e.preventDefault(); btnLogout.click(); };
-          // START MODIFICATION: Only show games if verified
+          
           if (isVerified) {
             gameSections.forEach(gs => gs.classList.remove('hidden-by-auth'));
           } else {
             gameSections.forEach(gs => { gs.classList.add('hidden-by-auth'); gs.classList.remove('active'); });
           }
-          // END MODIFICATION
         } else {
           isLoginMode = true; 
           updateLoginModeUI(); 
@@ -298,7 +298,7 @@
           navLoginLink.onclick = handleNavLinkClick;
           gameSections.forEach(gs => { gs.classList.add('hidden-by-auth'); gs.classList.remove('active'); });
         }
-        updateNavigationDOM(isLoggedIn && isVerified); // Pass verification status
+        updateNavigationDOM(isLoggedIn && isVerified);
       };
 
       const updateLoginModeUI = () => {
@@ -336,18 +336,13 @@
         if (isLoginMode) { // Login
             auth.signInWithEmailAndPassword(email, password)
               .then((userCredential) => {
-                // START MODIFICATION: Check email verification on login
                 if (userCredential.user && !userCredential.user.emailVerified) {
                   updateElementText(authStatusDiv, "لقد سجلت الدخول، ولكن يجب التحقق من بريدك الإلكتروني أولاً. تم إرسال رسالة تحقق.", 'error');
-                  // يمكنك إعادة إرسال بريد التحقق إذا أردت، أو تطلب من المستخدم التحقق من بريده
-                  // userCredential.user.sendEmailVerification(); // لإعادة الإرسال
-                  auth.signOut(); // تسجيل الخروج حتى يتحقق
+                  // userCredential.user.sendEmailVerification(); // Optionally re-send
+                  auth.signOut(); 
                 } else {
-                  // البريد مُتحقق منه، onAuthStateChanged سيتولى الباقي
                   loginEmailInput.value = ''; loginPasswordInput.value = '';
-                  // updateElementText(authStatusDiv, 'تم تسجيل الدخول بنجاح!', 'success'); // يمكن تركها لـ onAuthStateChanged
                 }
-                // END MODIFICATION
               })
               .catch((error) => {
                 let msg = "حدث خطأ. حاول مرة أخرى.";
@@ -361,21 +356,19 @@
         } else { // Register (Create Account)
             auth.createUserWithEmailAndPassword(email, password)
               .then((userCredential) => {
-                // START MODIFICATION: Send verification email on registration
                 if (userCredential.user) {
                   userCredential.user.sendEmailVerification()
                     .then(() => {
                       updateElementText(authStatusDiv, 'تم إنشاء الحساب بنجاح! تم إرسال رسالة تحقق إلى بريدك الإلكتروني. يرجى التحقق منها ثم تسجيل الدخول.', 'success');
-                      auth.signOut(); // تسجيل الخروج فورًا ليقوم بالتحقق
+                      auth.signOut(); 
                     })
                     .catch((error) => {
                       console.error("Error sending verification email:", error);
                       updateElementText(authStatusDiv, 'تم إنشاء الحساب، ولكن فشل إرسال بريد التحقق. حاول تسجيل الدخول لاحقًا.', 'error');
-                       auth.signOut(); // تسجيل الخروج على أي حال
+                       auth.signOut(); 
                     });
                 }
                 loginEmailInput.value = ''; loginPasswordInput.value = '';
-                // END MODIFICATION
               })
               .catch((error) => {
                 let msg = "حدث خطأ. حاول مرة أخرى.";
@@ -394,15 +387,12 @@
       mainActionButton.addEventListener('click', handleAuthAction);
       btnLogout.addEventListener('click', () => { 
         auth.signOut().catch(e => console.error('Logout error', e)); 
-        // START MODIFICATION: Ensure auth status reflects logout immediately
         updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
-        // END MODIFICATION
       });
 
       auth.onAuthStateChanged(user => {
         const loginSectionElement = document.getElementById('login');
         if (user) {
-          // START MODIFICATION: Check email verification in onAuthStateChanged
           if (user.emailVerified) {
             updateAuthUI(true, user.email, true);
             showHideElement(loginSectionElement, false);
@@ -412,18 +402,12 @@
               showSection(gameNavLinksData[0].href.slice(1), true); 
             }
           } else {
-            // إذا كان المستخدم موجودًا ولكن بريده غير مُتحقق منه
-            // (هذا قد يحدث إذا أغلق النافذة بعد التسجيل وقبل الضغط على رابط التحقق ثم عاد)
-            updateAuthUI(true, user.email, false); // اعرض واجهة المستخدم كمسجل دخول ولكن غير متحقق
-            showHideElement(loginSectionElement, true); // أبقِ قسم تسجيل الدخول ظاهرًا
+            updateAuthUI(true, user.email, false); 
+            showHideElement(loginSectionElement, true); 
             updateElementText(authStatusDiv, `تم تسجيل حسابك (${user.email}) ولكن لم يتم التحقق من البريد الإلكتروني. يرجى التحقق من بريدك لتتمكن من اللعب.`, 'info');
-            // لا تعرض الألعاب
              gameSections.forEach(gs => { gs.classList.add('hidden-by-auth'); gs.classList.remove('active'); });
-             updateNavigationDOM(false); // لا تعرض روابط الألعاب
-             // يمكنك أن تقرر تسجيل خروجه هنا أيضًا إذا أردت فرض التحقق قبل أي شيء آخر
-             // auth.signOut();
+             updateNavigationDOM(false); 
           }
-          // END MODIFICATION
         } else {
           updateAuthUI(false);
           showHideElement(loginSectionElement, true);
@@ -431,14 +415,12 @@
         }
       });
 
-      const updateNavigationDOM = (isLoggedInAndVerified) => { // Modified parameter
+      const updateNavigationDOM = (isLoggedInAndVerified) => { 
         currentNavLinksElements.forEach(link => { if (link !== navLoginLink) link.remove(); });
         currentNavLinksElements = [navLoginLink];
-        // START MODIFICATION: Only add game links if logged in AND verified
         if (isLoggedInAndVerified) {
           gameNavLinksData.forEach(data => { const l = document.createElement('a'); l.href=data.href; l.textContent=data.text; l.addEventListener('click',handleNavLinkClick); mainNav.appendChild(l); currentNavLinksElements.push(l); });
         }
-        // END MODIFICATION
       };
 
       const showSection = (targetId, isGame = false) => {
@@ -447,32 +429,27 @@
         if (sectionToShow) sectionToShow.classList.add('active');
         currentNavLinksElements.forEach(a => { if(a) a.classList.toggle('active', a.getAttribute('href') === `#${targetId}`); });
         
-        // START MODIFICATION: Check auth and verification before playing sound for game section
         const currentUser = auth.currentUser;
         if ( (isGame && currentUser && currentUser.emailVerified) || (targetId === 'login' && !currentUser) ) {
              if (targetId !== 'login' || !currentUser) playSound('snd-click');
         }
-        // END MODIFICATION
       };
 
       const handleNavLinkClick = (e) => {
           e.preventDefault(); const id = e.target.getAttribute('href').slice(1);
           const isGame = Array.from(gameSections).some(gs => gs.id === id);
           
-          // START MODIFICATION: Check auth and verification for game links
           const currentUser = auth.currentUser;
           if (isGame && (!currentUser || !currentUser.emailVerified)) { 
             updateElementText(authStatusDiv, "يجب تسجيل الدخول والتحقق من بريدك الإلكتروني أولاً للعب.", "error"); 
             showSection('login', false); 
             return; 
           }
-          // END MODIFICATION
           showSection(id, isGame);
       };
       navLoginLink.addEventListener('click', handleNavLinkClick);
       
-      // --- Game Initializations (لا تغييرات هنا) ---
-      const initXOGame=()=>{const s=document.querySelector('#xo');if(!s)return;const bE=s.querySelector('.board'),sE=s.querySelector('.status'),rB=s.querySelector('#xo-restart');let b=Array(9).fill(''),cP='❌',gA=true;const wP=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];const cW=()=>{for(const p of wP){const [x,y,z]=p;if(b[x]&&b[x]===b[y]&&b[x]===b[z])return b[x];}return null;};const hC=(idx)=>{if(!gA||b[idx]||!auth.currentUser||!auth.currentUser.emailVerified)return;b[idx]=cP;bE.children[idx].textContent=cP;const w=cW();if(w){updateElementText(sE,`فاز ${w}`);playSound('snd-win');gA=false;}else if(!b.includes('')){updateElementText(sE,'تعادل');playSound('snd-lose');gA=false;}else{cP=cP==='❌'?'⭕':'❌';updateElementText(sE,`الدور: ${cP}`);playSound('snd-click');}};const rG=()=>{b.fill('');cP='❌';gA=true;updateElementText(sE,'الدور: ❌');Array.from(bE.children).forEach(c=>c.textContent='');playSound('snd-click');};if(bE){bE.innerHTML=Array(9).fill().map((_,i)=>`<div class="cell" data-index="${i}"></div>`).join('');Array.from(bE.children).forEach((c,i)=>c.addEventListener('click',()=>hC(i)));}if(rB)rB.addEventListener('click',rG);if(sE)updateElementText(sE,'الدور: ❌');};
+      const initXOGame=()=>{const s=document.querySelector('#xo');if(!s)return;const bE=s.querySelector('.board'),sE=s.querySelector('.status'),rB=s.querySelector('#xo-restart');let b=Array(9).fill(''),cP='❌',gA=true;const wP=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];const cW=()=>{for(const p of wP){const [x,y,z]=p;if(b[x]&&b[x]===b[y]&&b[x]===b[z])return b[x];}return null;};const hC=(idx)=>{if(!auth.currentUser||!auth.currentUser.emailVerified){updateElementText(sE,'يرجى التحقق من بريدك للعب.','info');return;}if(!gA||b[idx])return;b[idx]=cP;bE.children[idx].textContent=cP;const w=cW();if(w){updateElementText(sE,`فاز ${w}`);playSound('snd-win');gA=false;}else if(!b.includes('')){updateElementText(sE,'تعادل');playSound('snd-lose');gA=false;}else{cP=cP==='❌'?'⭕':'❌';updateElementText(sE,`الدور: ${cP}`);playSound('snd-click');}};const rG=()=>{if(!auth.currentUser||!auth.currentUser.emailVerified){updateElementText(sE,'يرجى التحقق من بريدك للعب.','info');return;}b.fill('');cP='❌';gA=true;updateElementText(sE,'الدور: ❌');Array.from(bE.children).forEach(c=>c.textContent='');playSound('snd-click');};if(bE){bE.innerHTML=Array(9).fill().map((_,i)=>`<div class="cell" data-index="${i}"></div>`).join('');Array.from(bE.children).forEach((c,i)=>c.addEventListener('click',()=>hC(i)));}if(rB)rB.addEventListener('click',rG);if(sE)updateElementText(sE,'الدور: ❌');};
       
       const initRPSGame = () => { 
         const section = document.querySelector('#rps'); if(!section) return;
@@ -481,7 +458,7 @@
         const options = ['🧱', '📄', '✂️']; 
         if(resultElement) updateElementText(resultElement, 'اختر لبدء!');
         choiceButtons.forEach(button => button.addEventListener('click', () => {
-          if(!auth.currentUser||!auth.currentUser.emailVerified) return; // Added verification check
+          if(!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.','info'); return;}
           const playerChoice = button.dataset.choice;
           const computerChoice = options[Math.floor(Math.random() * options.length)];
           let message = 'تعادل';
@@ -510,6 +487,7 @@
             targetElement.style.top = Math.random() * (areaRect.height - targetSize) + 'px';
             targetElement.style.left = Math.random() * (areaRect.width - targetSize) + 'px';
             targetElement.onclick = () => {
+                if(!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.','info'); return;}
                 score++;
                 updateElementText(statusElement, `النقاط: ${score}`);
                 playSound('snd-click');
@@ -519,7 +497,7 @@
         };
 
         const startGame = () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified) return; // Added verification check
+            if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.','info'); return;}
             score = 0;
             updateElementText(statusElement, 'النقاط: 0');
             showHideElement(startButton, false);
@@ -547,7 +525,7 @@
         let startTime, timeoutId, waitingForClick = false;
 
         const startGame = () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified) return; // Added verification check
+            if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(reactBox, 'يرجى التحقق من بريدك للعب.','info'); return;}
             if (waitingForClick) { 
                 if (reactBox.classList.contains('ready')) { 
                     const reactionTime = Date.now() - startTime;
@@ -560,7 +538,7 @@
                 waitingForClick = false;
                 clearTimeout(timeoutId);
                 reactBox.classList.remove('waiting', 'ready');
-                 updateElementText(reactBox, 'اضغط للبدء', null); 
+                updateElementText(reactBox, 'اضغط للبدء'); 
                 return;
             }
             
@@ -577,7 +555,7 @@
         };
         if(reactBox) {
             reactBox.addEventListener('click', startGame);
-            updateElementText(reactBox, 'اضغط للبدء', null); 
+            updateElementText(reactBox, 'اضغط للبدء'); 
         }
       };
 
@@ -588,11 +566,12 @@
         const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 
         if(rollButton) rollButton.addEventListener('click', () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified) return; // Added verification check
+            if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(resultElement, '--', 'info'); alert('يرجى التحقق من بريدك للعب.'); return;}
             const roll = Math.floor(Math.random() * 6);
             updateElementText(resultElement, diceFaces[roll]);
             playSound('snd-click');
         });
+        if(resultElement) updateElementText(resultElement, '--');
       };
 
       const initMemoryGame = () => {
@@ -607,16 +586,21 @@
         let matchedPairs = 0;
         let canFlip = true;
 
-        function shuffle(array) { /* ... */ return array; } // Keep shuffle as is
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
 
         function createBoard() {
-            if(!cardsContainer) return;
-            // START MODIFICATION: Ensure game doesn't start or reset if not verified
-            if (auth.currentUser && !auth.currentUser.emailVerified && gameCards.length > 0) { // Don't clear board if not verified but was already there
-                updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.');
+            if(!cardsContainer || !statusElement) return;
+            if (auth.currentUser && !auth.currentUser.emailVerified) { 
+                updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info');
+                // cardsContainer.innerHTML = ''; // Optionally clear board
                 return;
             }
-            // END MODIFICATION
 
             cardsContainer.innerHTML = '';
             matchedPairs = 0;
@@ -625,11 +609,34 @@
             gameCards = [];
             canFlip = true; 
 
-            items.forEach(value => { /* ... */ }); // Keep card creation as is
+            items.forEach(value => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.value = value;
+
+                const cardFaceFront = document.createElement('div');
+                cardFaceFront.classList.add('card-face', 'card-front');
+                // cardFaceFront.textContent = '?'; // Optional: symbol for card front
+
+                const cardFaceBack = document.createElement('div');
+                cardFaceBack.classList.add('card-face', 'card-back');
+                cardFaceBack.textContent = value;
+
+                card.appendChild(cardFaceFront);
+                card.appendChild(cardFaceBack);
+                
+                card.addEventListener('click', () => flipCard(card));
+                cardsContainer.appendChild(card);
+                gameCards.push(card);
+            });
         }
-        createBoard(); // Initial call
+        
          function flipCard(card) {
-            if (!canFlip || card.classList.contains('flipped') || card.classList.contains('matched') || !auth.currentUser || !auth.currentUser.emailVerified) return; // Added verification check
+            if (!auth.currentUser || !auth.currentUser.emailVerified) {
+                if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info');
+                return;
+            }
+            if (!canFlip || card.classList.contains('flipped') || card.classList.contains('matched')) return;
             
             card.classList.add('flipped');
             flippedCards.push(card);
@@ -641,16 +648,38 @@
             }
         }
 
-        function checkForMatch() { /* ... */ } // Keep as is
+        function checkForMatch() {
+            const [card1, card2] = flippedCards;
+            const isMatch = card1.dataset.value === card2.dataset.value;
+
+            if (isMatch) {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                matchedPairs++;
+                playSound('snd-win');
+                if (matchedPairs === cardValues.length) {
+                    if(statusElement) updateElementText(statusElement, 'أحسنت! لقد وجدت كل الأزواج.', 'success');
+                }
+            } else {
+                playSound('snd-lose');
+                setTimeout(() => {
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                }, 1000);
+            }
+            flippedCards = [];
+            setTimeout(() => { canFlip = true; }, isMatch ? 200 : 1000);
+        }
 
         if(restartButton) restartButton.addEventListener('click', () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified) { // Added verification check
-                updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.');
+            if (!auth.currentUser||!auth.currentUser.emailVerified) {
+                if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info');
                 return;
             }
             createBoard();
+            playSound('snd-click');
         });
-        // createBoard(); // Already called above
+        createBoard(); 
       };
       
       const initMathQuizGame = () => {
@@ -663,17 +692,50 @@
         const inputGroup = section.querySelector('.input-group');
         let correctAnswer;
 
-        const generateQuestion = () => { /* ... */ }; // Keep as is
+        const generateQuestion = () => {
+            const num1 = Math.floor(Math.random() * 10) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            correctAnswer = num1 + num2;
+            if(questionArea) questionArea.textContent = `${num1} + ${num2} = ?`;
+            if(answerInput) answerInput.value = '';
+            if(resultElement) updateElementText(resultElement, '--');
+        };
         const startGame = () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified) return; // Added verification check
-            showHideElement(startButton, false); /* ... rest of function as is */
+            if (!auth.currentUser || !auth.currentUser.emailVerified) {
+                if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
+            }
+            showHideElement(startButton, false);
+            showHideElement(questionArea, true);
+            showHideElement(inputGroup, true, 'block'); 
+            generateQuestion();
+            if(answerInput) answerInput.focus();
+            playSound('snd-click');
         };
         const checkAnswer = () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified || !answerInput) return; // Added verification check
-            /* ... rest of function as is */
+            if (!auth.currentUser || !auth.currentUser.emailVerified || !answerInput || !resultElement) {
+                 if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
+            }
+            const userAnswer = parseInt(answerInput.value);
+            if (isNaN(userAnswer)) {
+                updateElementText(resultElement, 'الرجاء إدخال رقم صحيح.', 'error');
+                return;
+            }
+            if (userAnswer === correctAnswer) {
+                updateElementText(resultElement, 'صحيح! 🎉', 'success');
+                playSound('snd-win');
+                setTimeout(() => { 
+                    if (section.classList.contains('active') && auth.currentUser && auth.currentUser.emailVerified) generateQuestion(); 
+                }, 1500);
+            } else {
+                updateElementText(resultElement, `خطأ. الإجابة الصحيحة: ${correctAnswer}`, 'error');
+                playSound('snd-lose');
+            }
         };
 
-        if(startButton) startButton.addEventListener('click', startGame); /* ... rest of listeners as is */
+        if(startButton) startButton.addEventListener('click', startGame);
+        if(submitButton) submitButton.addEventListener('click', checkAnswer);
+        if(answerInput) answerInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAnswer(); });
+        if(resultElement) updateElementText(resultElement, '--');
       };
 
       const initGuessNumberGame = () => {
@@ -685,16 +747,63 @@
         const messageElement = section.querySelector('.message');
         const inputGroup = section.querySelector('.input-group');
         let secretNumber, attempts;
+        const maxAttempts = 7;
 
         const startGame = () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified) return; // Added verification check
-            /* ... rest of function as is */
+            if (!auth.currentUser || !auth.currentUser.emailVerified) {
+                if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
+            }
+            secretNumber = Math.floor(Math.random() * 100) + 1;
+            attempts = 0;
+            showHideElement(startButton, false);
+            showHideElement(inputGroup, true, 'block');
+            if(inputField) inputField.value = '';
+            if(messageElement) updateElementText(messageElement, `خمن رقمًا بين 1 و 100. لديك ${maxAttempts} محاولات.`);
+            if(resultElement) updateElementText(resultElement, '--');
+            if(inputField) inputField.focus();
+            disableElement(submitButton, false);
+            disableElement(inputField, false);
+            playSound('snd-click');
         };
         const checkGuess = () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified || !inputField) return; // Added verification check
-            /* ... rest of function as is */
+            if (!auth.currentUser || !auth.currentUser.emailVerified || !inputField || !resultElement || !messageElement) {
+                if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
+            }
+            const guess = parseInt(inputField.value);
+            if (isNaN(guess) || guess < 1 || guess > 100) {
+                updateElementText(resultElement, 'الرجاء إدخال رقم بين 1 و 100.', 'error');
+                return;
+            }
+            attempts++;
+            if (guess === secretNumber) {
+                updateElementText(resultElement, `أحسنت! لقد خمنت الرقم ${secretNumber} في ${attempts} محاولات.`, 'success');
+                playSound('snd-win');
+                showHideElement(startButton, true);
+                disableElement(submitButton, true);
+                disableElement(inputField, true);
+            } else {
+                playSound('snd-click');
+                const remainingAttempts = maxAttempts - attempts;
+                if (remainingAttempts <= 0) {
+                    updateElementText(resultElement, `للأسف انتهت محاولاتك. الرقم الصحيح كان ${secretNumber}.`, 'error');
+                    playSound('snd-lose');
+                    showHideElement(startButton, true);
+                    disableElement(submitButton, true);
+                    disableElement(inputField, true);
+                } else {
+                    updateElementText(resultElement, guess < secretNumber ? 'أعلى!' : 'أقل!', 'info');
+                    updateElementText(messageElement, `محاولات متبقية: ${remainingAttempts}`);
+                }
+            }
+            if(inputField) {
+                 inputField.value = '';
+                 inputField.focus();
+            }
         };
-        if(startButton) startButton.addEventListener('click', startGame); /* ... rest of listeners as is */
+        if(startButton) startButton.addEventListener('click', startGame);
+        if(submitButton) submitButton.addEventListener('click', checkGuess);
+        if(inputField) inputField.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkGuess(); });
+        if(resultElement) updateElementText(resultElement, '--');
       };
 
       const initBigSmallGame = () => {
@@ -707,16 +816,51 @@
         const inputGroup = section.querySelector('.input-group');
         let num1, num2, biggerNum;
 
-        const generateNumbers = () => { /* ... */ }; // Keep as is
+        const generateNumbers = () => {
+            num1 = Math.floor(Math.random() * 100) + 1;
+            do {
+                num2 = Math.floor(Math.random() * 100) + 1;
+            } while (num1 === num2); 
+            biggerNum = Math.max(num1, num2);
+            if(questionArea) questionArea.textContent = `أي الرقمين أكبر: ${num1} أم ${num2}؟`;
+            if(answerInput) answerInput.value = '';
+            if(resultElement) updateElementText(resultElement, '--');
+        };
         const startGame = () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified) return; // Added verification check
-            /* ... rest of function as is */
+            if (!auth.currentUser || !auth.currentUser.emailVerified) {
+                if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
+            }
+            showHideElement(startButton, false);
+            showHideElement(questionArea, true);
+            showHideElement(inputGroup, true, 'block');
+            generateNumbers();
+            if(answerInput) answerInput.focus();
+            playSound('snd-click');
         };
         const checkAnswer = () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified || !answerInput) return; // Added verification check
-            /* ... rest of function as is */
+            if (!auth.currentUser || !auth.currentUser.emailVerified || !answerInput || !resultElement) {
+                if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
+            }
+            const userAnswer = parseInt(answerInput.value);
+            if (isNaN(userAnswer)) {
+                updateElementText(resultElement, 'الرجاء إدخال رقم.', 'error');
+                return;
+            }
+            if (userAnswer === biggerNum) {
+                updateElementText(resultElement, 'صحيح! 🎉', 'success');
+                playSound('snd-win');
+                 setTimeout(() => { 
+                    if (section.classList.contains('active') && auth.currentUser && auth.currentUser.emailVerified) generateNumbers();
+                }, 1500);
+            } else {
+                updateElementText(resultElement, `خطأ. الرقم الأكبر كان ${biggerNum}.`, 'error');
+                playSound('snd-lose');
+            }
         };
-        if(startButton) startButton.addEventListener('click', startGame); /* ... rest of listeners as is */
+        if(startButton) startButton.addEventListener('click', startGame);
+        if(submitButton) submitButton.addEventListener('click', checkAnswer);
+        if(answerInput) answerInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAnswer(); });
+        if(resultElement) updateElementText(resultElement, '--');
       };
 
       const initTypingTestGame = () => {
@@ -728,18 +872,66 @@
         const statusElement = section.querySelector('.status');
         const inputGroup = section.querySelector('.input-group');
 
-        const sampleText = "أهلاً بك في اختبار الكتابة السريع. حاول أن تكتب هذه الجملة بدقة وسرعة.";
+        const sampleTexts = [
+            "أهلاً بك في اختبار الكتابة السريع. حاول أن تكتب هذه الجملة بدقة وسرعة.",
+            "ممارسة الكتابة بانتظام تحسن من مهارتك بشكل ملحوظ.",
+            "الألعاب الإلكترونية وسيلة رائعة للترفيه وتنمية بعض المهارات الذهنية.",
+            "البرمجة هي لغة المستقبل، وتعلمها يفتح آفاقاً واسعة.",
+            "الذكاء الاصطناعي يتطور بسرعة ويغير حياتنا اليومية."
+        ];
+        let currentTextToType = "";
         let startTime;
 
         const startGame = () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified) return; // Added verification check
-            /* ... rest of function as is */
+            if (!auth.currentUser || !auth.currentUser.emailVerified) {
+                if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
+            }
+            currentTextToType = sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
+            if(textToTypeElement) textToTypeElement.textContent = currentTextToType;
+            if(inputField) inputField.value = '';
+            showHideElement(startButton, false);
+            showHideElement(textToTypeElement, true);
+            showHideElement(inputGroup, true, 'block'); 
+            showHideElement(submitButton, true); 
+            disableElement(inputField, false);
+            disableElement(submitButton, false);
+            if(statusElement) updateElementText(statusElement, 'ابدأ الكتابة...');
+            if(inputField) inputField.focus();
+            startTime = new Date();
+            playSound('snd-click');
         };
         const checkTyping = () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified || !inputField) return; // Added verification check
-            /* ... rest of function as is */
+            if (!auth.currentUser || !auth.currentUser.emailVerified || !inputField || !textToTypeElement || !statusElement) {
+                if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
+            }
+            const typedText = inputField.value;
+            const originalText = textToTypeElement.textContent;
+            const endTime = new Date();
+            const timeTaken = (endTime - startTime) / 1000; 
+
+            let errors = 0;
+            for (let i = 0; i < originalText.length; i++) {
+                if (i >= typedText.length || typedText[i] !== originalText[i]) {
+                    errors++;
+                }
+            }
+            if (typedText.length > originalText.length) {
+                errors += (typedText.length - originalText.length);
+            }
+
+            const words = originalText.split(/\s+/).filter(Boolean).length; // More robust word count
+            const wpm = timeTaken > 0 ? Math.round((words / timeTaken) * 60) : 0;
+            const accuracy = originalText.length > 0 ? Math.round(((originalText.length - errors) / originalText.length) * 100) : 0;
+            
+            updateElementText(statusElement, `الوقت: ${timeTaken.toFixed(1)} ثانية, السرعة: ${wpm} ك/د, الدقة: ${Math.max(0, accuracy)}%, الأخطاء: ${errors}`);
+            playSound(accuracy > 80 ? 'snd-win' : 'snd-lose');
+            showHideElement(startButton, true);
+            disableElement(inputField, true);
+            disableElement(submitButton, true);
         };
-        if(startButton) startButton.addEventListener('click', startGame); /* ... rest of listeners as is */
+        if(startButton) startButton.addEventListener('click', startGame);
+        if(submitButton) submitButton.addEventListener('click', checkTyping);
+        if(statusElement) updateElementText(statusElement, 'اضغط "ابدأ الاختبار"');
       };
 
 
