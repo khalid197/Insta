@@ -73,7 +73,8 @@
         margin-bottom: 30px;
     }
 
-    section:not(#login):not(#game-launcher) button { padding:10px 20px; margin:8px 4px; font-size:1rem; cursor:pointer; border:none; border-radius:8px; background:#005A9C; color:white; transition:background .2s; }
+    section:not(#login):not(#game-launcher) button { padding:10px 15px; margin:8px 4px; font-size:0.9rem; cursor:pointer; border:none; border-radius:8px; background:#005A9C; color:white; transition:background .2s; }
+    section#xo .xo-options button { font-size: 0.9rem; padding: 10px 12px;} /* Slightly smaller buttons for XO options to fit */
     section:not(#login):not(#game-launcher) button:hover { background:#003B73; }
     section:not(#login):not(#game-launcher) button:disabled { background:#ccc; cursor:not-allowed; }
     .status, .result, .message, .timebox { margin:15px 0; font-size:1.1rem; min-height: 1.2em; text-align: center;}
@@ -90,7 +91,6 @@
         grid-template-columns:repeat(3,100px); 
         gap:8px; 
         justify-content:center; 
-        /* Removed margin here, handled by container */
     }
     .cell { 
         width:100px; 
@@ -104,7 +104,7 @@
         transition:background .2s; 
         cursor:pointer; 
         border-radius: 8px;
-        color: #333; /* Make X O colors more visible */
+        color: #333; 
     }
     .cell:hover { background:#e9e9e9; }
     #xo-winning-line-canvas {
@@ -113,10 +113,10 @@
         left: 0;
         width: 100%;
         height: 100%;
-        pointer-events: none; /* Allows clicks to pass through to the board */
+        pointer-events: none; 
     }
     .xo-options { margin-bottom: 15px; text-align: center; }
-    .xo-options button { margin: 0 5px; }
+    .xo-options button { margin: 0 3px; } /* Adjust margin if needed */
 
 
     .gamebox, 
@@ -200,7 +200,8 @@
     <h2>إكس أو (XO)</h2>
     <div class="xo-options">
         <button id="xo-pvp">لاعب ضد لاعب</button>
-        <button id="xo-pvc">لاعب ضد كمبيوتر</button> 
+        <button id="xo-pvc-normal">لاعب ضد كمبيوتر</button> 
+        <button id="xo-pvc-hard">لاعب ضد كمبيوتر</button> 
     </div>
     <div class="xo-board-container">
         <div class="board"></div> 
@@ -526,8 +527,9 @@
           const boardElement = section.querySelector('.board');
           const statusElement = section.querySelector('.status');
           const restartButton = section.querySelector('#xo-restart');
-          const pvpButton = section.querySelector('#xo-pvp'); // Re-added
-          const pvcButton = section.querySelector('#xo-pvc'); 
+          const pvpButton = section.querySelector('#xo-pvp');
+          const pvcNormalButton = section.querySelector('#xo-pvc-normal'); 
+          const pvcHardButton = section.querySelector('#xo-pvc-hard'); 
           const canvas = section.querySelector('#xo-winning-line-canvas');
           const ctx = canvas.getContext('2d');
           const boardContainer = section.querySelector('.xo-board-container');
@@ -535,7 +537,7 @@
           let boardState = Array(9).fill('');
           let currentPlayer = '❌';
           let gameActive = false;
-          let gameMode = null; // 'pvp' or 'pvc'
+          let gameMode = null; // 'pvp', 'pvc-normal', 'pvc-hard'
           const playerSymbol = '❌';
           const computerSymbol = '⭕';
 
@@ -626,17 +628,30 @@
               currentPlayer = (currentPlayer === playerSymbol) ? computerSymbol : playerSymbol;
               updateElementText(statusElement, `الدور: ${currentPlayer}`);
 
-              if (gameActive && gameMode === 'pvc' && currentPlayer === computerSymbol) {
+              if (gameActive && currentPlayer === computerSymbol) {
                   disableBoardInteraction(true);
-                  let moveDelay = 300 + Math.random() * 400;
-                  
-                  setTimeout(() => {
-                      const moveIndex = computerMoveHard(); 
-                      if (moveIndex !== -1 && boardState[moveIndex] === '') { 
-                          handleClick(moveIndex); 
-                      }
-                      disableBoardInteraction(false);
-                  }, moveDelay);
+                  let moveDelay = 500 + Math.random() * 500;
+                  let computerMoveFunction;
+
+                  if (gameMode === 'pvc-normal') {
+                      computerMoveFunction = computerMoveNormal;
+                      moveDelay = 400 + Math.random() * 300; // Slightly faster for "normal"
+                  } else if (gameMode === 'pvc-hard') {
+                      computerMoveFunction = computerMoveHard;
+                      moveDelay = 300 + Math.random() * 200; // Slightly faster for "hard"
+                  }
+
+                  if (computerMoveFunction) {
+                    setTimeout(() => {
+                        const moveIndex = computerMoveFunction();
+                        if (moveIndex !== -1 && boardState[moveIndex] === '') { 
+                            handleClick(moveIndex); 
+                        }
+                        disableBoardInteraction(false);
+                    }, moveDelay);
+                  } else {
+                       disableBoardInteraction(false); 
+                  }
               }
           };
           
@@ -645,6 +660,21 @@
                 cell.style.pointerEvents = disable ? 'none' : 'auto';
             });
           };
+
+          const computerMoveNormal = () => { // Simpler AI
+              if (!gameActive) return -1;
+              let availableCells = [];
+              boardState.forEach((cell, index) => {
+                  if (cell === '') availableCells.push(index);
+              });
+
+              if (availableCells.length > 0) {
+                  const randomIndex = Math.floor(Math.random() * availableCells.length);
+                  return availableCells[randomIndex];
+              }
+              return -1; // No move available
+          };
+
 
           const computerMoveHard = () => { 
             if (!gameActive) return -1;
@@ -696,7 +726,7 @@
             return -1; 
           };
 
-          const startGameMode = (mode) => { // Accepts 'pvp' or 'pvc'
+          const startGameMode = (mode) => {
               if (!auth.currentUser || !auth.currentUser.emailVerified) {
                   updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info');
                   return;
@@ -731,7 +761,8 @@
           Array.from(boardElement.children).forEach((cell, i) => cell.addEventListener('click', () => handleClick(i)));
           
           if(pvpButton) pvpButton.addEventListener('click', () => startGameMode('pvp'));
-          if(pvcButton) pvcButton.addEventListener('click', () => startGameMode('pvc')); 
+          if(pvcNormalButton) pvcNormalButton.addEventListener('click', () => startGameMode('pvc-normal')); 
+          if(pvcHardButton) pvcHardButton.addEventListener('click', () => startGameMode('pvc-hard')); 
           if(restartButton) restartButton.addEventListener('click', resetGame);
 
           window.addEventListener('resize', resizeCanvas);
