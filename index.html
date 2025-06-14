@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <style>
-    /* === CSS الأصلي الذي أرسلته لواجهة تسجيل الدخول === */
     @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;700;800;900&display=swap");
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
     body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat; background-size: cover; background-position: center; }
@@ -20,13 +19,27 @@
     .remember-forgot label input { accent-color: #fff; margin-left: 3px; }
     .remember-forgot a { color: #fff; text-decoration: none; }
     .remember-forgot a:hover { text-decoration: underline; }
-    .wrapper .btn { width: 100%; height: 45px; background: #fff; border: none; outline: none; border-radius: 40px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); cursor: pointer; font-size: 16px; color: #333; font-weight: 600; margin-top: 15px; }
+    .wrapper .btn {
+      width: 100%; height: 45px; background: #fff; border: none; outline: none;
+      border-radius: 40px;
+      /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */ /* <-- تم تعليق/إزالة الظل */
+      cursor: pointer; font-size: 16px; color: #333; font-weight: 600; margin-top: 15px;
+      display: flex; /* لتوسيط الإيموجي والنص */
+      align-items: center;
+      justify-content: center;
+    }
+    .wrapper .btn .emoji { /* لتنسيق الإيموجي إذا أردت */
+        margin-left: 8px; /* مسافة بين الإيموجي والنص في RTL */
+    }
+    html[dir="ltr"] .wrapper .btn .emoji {
+        margin-right: 8px; /* مسافة في LTR */
+    }
+
     .wrapper .btn:disabled { background: #aaa; color: #666; cursor: not-allowed; }
     .wrapper .register-link { text-align: center; font-size: 14px; margin: 20px 0 15px; }
     .wrapper .register-link p a { color: #fff; text-decoration: none; font-weight: 600; }
     .wrapper .register-link p a:hover { text-decoration: underline; }
 
-    /* --- أنماط إضافية للموقع العام والألعاب --- */
     #auth-status { margin-top:15px; padding: 10px; border-radius: 8px; font-weight: 500; min-height: 1.5em; text-align: center; color: #fff; }
     #auth-status.success { background-color: rgba(40, 167, 69, 0.3); border: 1px solid rgba(40, 167, 69, 0.6); }
     #auth-status.error { background-color: rgba(220, 53, 69, 0.3); border: 1px solid rgba(220, 53, 69, 0.6); }
@@ -68,7 +81,10 @@
                     <i class='bx bxs-lock-alt'></i>
                 </div>
             </div>
-            <button type="button" class="btn" id="btn-main-action">تسجيل الدخول</button>
+            <button type="button" class="btn" id="btn-main-action">
+                <span class="button-text">تسجيل الدخول</span>
+                <span class="emoji">🧱</span>
+            </button>
             <div class="register-link">
                 <p id="toggle-auth-mode-text">ليس لديك حساب؟ <a href="#" id="toggle-auth-mode-link-inner">إنشاء حساب</a></p>
             </div>
@@ -103,10 +119,10 @@
       apiKey: "AIzaSyDLzpa2HYzJZdZvY_YuviKZ6Zg0FhWTfJw",
       authDomain: "my-site-cdd00.firebaseapp.com",
       projectId: "my-site-cdd00",
-      storageBucket: "my-site-cdd00.firebasestorage.app", // تأكد أن هذه القيمة صحيحة من Firebase console (أحيانًا تكون .appspot.com)
+      storageBucket: "my-site-cdd00.firebasestorage.app",
       messagingSenderId: "514123463555",
       appId: "1:514123463555:web:8499c5bde152537a3dd4b6",
-      measurementId: "G-3Y7SYCE0NZ" // اختياري للمصادقة الأساسية
+      measurementId: "G-3Y7SYCE0NZ"
     };
     // -----------------------------------------------------------
 
@@ -115,6 +131,21 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       const playSound = (id) => { const s = document.getElementById(id); if (s) { s.currentTime = 0; s.play().catch(e => {}); } };
+      const updateButtonTextWithEmoji = (buttonElement, baseText, emoji) => {
+          if (buttonElement) {
+              const textSpan = buttonElement.querySelector('.button-text') || document.createElement('span');
+              textSpan.className = 'button-text';
+              textSpan.textContent = baseText;
+
+              const emojiSpan = buttonElement.querySelector('.emoji') || document.createElement('span');
+              emojiSpan.className = 'emoji';
+              emojiSpan.textContent = emoji;
+
+              buttonElement.innerHTML = ''; // Clear previous content
+              buttonElement.appendChild(textSpan);
+              buttonElement.appendChild(emojiSpan);
+          }
+      };
       const updateElementText = (el, txt, type) => { if(el) { el.textContent = txt; el.className = 'info'; if(type && el.id === 'auth-status') el.classList.add(type); }};
       const showHideElement = (el, show, disp = 'block') => { if(el) el.style.display = show ? disp : 'none'; };
       const disableElement = (el, dis) => { if(el) el.disabled = dis; };
@@ -161,12 +192,15 @@
 
       const updateLoginModeUI = () => {
         const linkId = 'toggle-auth-mode-link-inner';
+        const emoji = "🧱"; // إيموجي الصخرة
         if (isLoginMode) {
-          updateElementText(loginTitle, 'تسجيل الدخول'); updateElementText(mainActionButton, 'تسجيل الدخول');
+          updateElementText(loginTitle, 'تسجيل الدخول');
+          updateButtonTextWithEmoji(mainActionButton, 'تسجيل الدخول', emoji);
           toggleAuthModeText.innerHTML = `ليس لديك حساب؟ <a href="#" id="${linkId}">إنشاء حساب</a>`;
           loginPasswordInput.placeholder = "كلمة المرور";
         } else {
-          updateElementText(loginTitle, 'إنشاء حساب جديد'); updateElementText(mainActionButton, 'إنشاء حساب');
+          updateElementText(loginTitle, 'إنشاء حساب جديد');
+          updateButtonTextWithEmoji(mainActionButton, 'إنشاء حساب', emoji);
           toggleAuthModeText.innerHTML = `لديك حساب بالفعل؟ <a href="#" id="${linkId}">تسجيل الدخول</a>`;
           loginPasswordInput.placeholder = "كلمة المرور (6+ حروف)";
         }
