@@ -40,9 +40,41 @@
     section:not(#login) button:hover { background:#003B73; }
     section:not(#login) button:disabled { background:#ccc; cursor:not-allowed; }
     .status, .result, .message { margin:15px 0; font-size:1.1rem; min-height: 1.2em; text-align: center;}
-    .board { display:grid; grid-template-columns:repeat(3,100px); gap:8px; justify-content:center; margin: 0 auto 20px auto; } /* <-- التعديل هنا */
+    
+    .board { 
+        display:grid; 
+        grid-template-columns:repeat(3,100px); 
+        gap:8px; 
+        justify-content:center; 
+        margin: 0 auto 20px auto; /* هامش علوي 0، سفلي 20، وتوسيط أفقي */
+    }
     .cell { width:100px; height:100px; border:2px solid #aaa; display:flex; align-items:center; justify-content:center; font-size:2.8rem; background:#f9f9f9; transition:background .2s; cursor:pointer; border-radius: 8px;}
     .cell:hover { background:#e9e9e9; }
+
+    .gamebox, /* لمعظم الألعاب التي تستخدم هذا الكلاس لمنطقة اللعب أو الأزرار الرئيسية */
+    .cards /* للعبة الذاكرة حيث .cards هي منطقة اللعب الرئيسية */ {
+      margin-top: 0; /* للتأكيد على عدم وجود هامش علوي إضافي */
+      margin-right: auto; /* للتوسيط الأفقي إذا كان العنصر block */
+      margin-bottom: 20px; /* لإضافة مسافة سفلية متناسقة */
+      margin-left: auto; /* للتوسيط الأفقي */
+      /* إذا كانت محتويات gamebox تحتاج إلى توسيط (مثل الأزرار): */
+      text-align: center;
+    }
+    /* قد تحتاج .cards إلى خصائص عرض خاصة بها مثل grid أو flex لاحقًا لتخطيط البطاقات */
+    .cards {
+        display: grid; /* أو flex, حسب تصميم لعبة الذاكرة */
+        /* مثال: grid-template-columns: repeat(4, 1fr); */
+        gap: 10px; /* مثال للمسافة بين البطاقات */
+    }
+    /* إذا كانت بعض gamebox لا تحتاج text-align: center, يمكن تخصيصها */
+    #click-target-area { /* مثال: منطقة الهدف قد لا تحتاج text-align إذا كان الهدف يملؤها */
+        text-align: left; /* أو إزالة text-align إذا لم تكن هناك عناصر نصية لتوسيطها */
+        min-height: 150px; /* مثال لارتفاع منطقة الهدف */
+        background-color: #e0e0e0; /* مثال لخلفية منطقة الهدف */
+        position: relative; /* ضروري لتحريك الهدف داخلها */
+    }
+
+
     .hidden-by-auth { display: none !important; }
     .button-text { margin: 0 5px; }
   </style>
@@ -69,7 +101,6 @@
             </div>
             <button type="button" class="btn" id="btn-main-action">
                  <span class="button-text">تسجيل الدخول</span>
-                 <!-- تم إزالة الإيموجي من هنا -->
             </button>
             <div class="register-link">
                 <p id="toggle-auth-mode-text">ليس لديك حساب؟ <a href="#" id="toggle-auth-mode-link-inner">إنشاء حساب</a></p>
@@ -116,16 +147,16 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       const playSound = (id) => { const s = document.getElementById(id); if (s) { s.currentTime = 0; s.play().catch(e => {}); } };
-      const updateButtonText = (buttonElement, baseText) => { // تم تبسيط هذه الدالة لإزالة الإيموجي
+      const updateButtonText = (buttonElement, baseText) => { 
           if (buttonElement) {
               const textSpan = buttonElement.querySelector('.button-text') || document.createElement('span');
               textSpan.className = 'button-text';
               textSpan.textContent = baseText;
-              buttonElement.innerHTML = ''; // Clear previous content
+              buttonElement.innerHTML = ''; 
               buttonElement.appendChild(textSpan);
           }
       };
-      const updateElementText = (el, txt, type) => { if(el) { el.textContent = txt; el.className = 'info'; if(type && el.id === 'auth-status') el.classList.add(type); }};
+      const updateElementText = (el, txt, type) => { if(el) { el.textContent = txt; if (el.id === 'auth-status' || el.classList.contains('status') || el.classList.contains('result') || el.classList.contains('message') || el.classList.contains('timebox')) { el.className = el.id === 'auth-status' ? 'info' : el.className.split(' ')[0]; if (type) el.classList.add(type); } }};
       const showHideElement = (el, show, disp = 'block') => { if(el) el.style.display = show ? disp : 'none'; };
       const disableElement = (el, dis) => { if(el) el.disabled = dis; };
 
@@ -133,7 +164,6 @@
       const gameSections = document.querySelectorAll('.game-section');
       const mainNav = document.getElementById('main-nav');
       const navLoginLink = document.getElementById('nav-login-link');
-      // تعريب أسماء الألعاب هنا
       const gameNavLinksData = [
           { href: "#xo", text: "إكس أو" }, { href: "#rps", text: "حجر ورقة مقص" },
           { href: "#click", text: "اصطياد الهدف" }, { href: "#react", text: "سرعة الضغط" },
@@ -144,7 +174,6 @@
       let currentNavLinksElements = [navLoginLink];
       let isLoginMode = true;
 
-      const loginWrapper = document.querySelector('#login .wrapper');
       const loginTitle = document.getElementById('login-title');
       const mainActionButton = document.getElementById('btn-main-action');
       const toggleAuthModeText = document.getElementById('toggle-auth-mode-text');
@@ -180,12 +209,12 @@
         const linkId = 'toggle-auth-mode-link-inner';
         if (isLoginMode) {
           loginTitle.textContent = 'تسجيل الدخول';
-          updateButtonText(mainActionButton, 'تسجيل الدخول'); // استخدام الدالة المبسطة
+          updateButtonText(mainActionButton, 'تسجيل الدخول'); 
           toggleAuthModeText.innerHTML = `ليس لديك حساب؟ <a href="#" id="${linkId}">إنشاء حساب</a>`;
           loginPasswordInput.placeholder = "كلمة المرور";
         } else {
           loginTitle.textContent = 'إنشاء حساب جديد';
-          updateButtonText(mainActionButton, 'إنشاء حساب'); // استخدام الدالة المبسطة
+          updateButtonText(mainActionButton, 'إنشاء حساب'); 
           toggleAuthModeText.innerHTML = `لديك حساب بالفعل؟ <a href="#" id="${linkId}">تسجيل الدخول</a>`;
           loginPasswordInput.placeholder = "كلمة المرور (6+ حروف)";
         }
@@ -225,7 +254,11 @@
         if (user) {
           updateAuthUI(true, user.email);
           showHideElement(loginSectionElement, false);
-          if (gameNavLinksData.length > 0) showSection(gameNavLinksData[0].href.slice(1), true);
+          if (gameNavLinksData.length > 0 && gameNavLinksData.some(link => link.href === "#xo")) { // Check if XO exists
+            showSection('xo', true); // Default to XO if logged in and XO exists
+          } else if (gameNavLinksData.length > 0) {
+            showSection(gameNavLinksData[0].href.slice(1), true); // Fallback to first game
+          }
         } else {
           updateAuthUI(false);
           showHideElement(loginSectionElement, true);
@@ -259,15 +292,16 @@
       };
       navLoginLink.addEventListener('click', handleNavLinkClick);
       
-      // --- كود تهيئة الألعاب ---
-      const initXOGame=()=>{const s=document.querySelector('#xo');if(!s)return;const bE=s.querySelector('.board'),sE=s.querySelector('.status'),rB=s.querySelector('#xo-restart');let b=Array(9).fill(''),cP='❌',gA=true;const wP=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];const cW=()=>{for(const p of wP){const [x,y,z]=p;if(b[x]&&b[x]===b[y]&&b[x]===b[z])return b[x];}return null;};const hC=(idx)=>{if(!gA||b[idx]||!auth.currentUser)return;b[idx]=cP;bE.children[idx].textContent=cP;const w=cW();if(w){updateElementText(sE,`فاز ${w}`);gA=false;}else if(!b.includes('')){updateElementText(sE,'تعادل');gA=false;}else{cP=cP==='❌'?'⭕':'❌';updateElementText(sE,`الدور: ${cP}`);}};const rG=()=>{b.fill('');cP='❌';gA=true;updateElementText(sE,'الدور: ❌');Array.from(bE.children).forEach(c=>c.textContent='');};if(bE){bE.innerHTML=Array(9).fill().map((_,i)=>`<div class="cell" data-index="${i}"></div>`).join('');Array.from(bE.children).forEach((c,i)=>c.addEventListener('click',()=>hC(i)));}if(rB)rB.addEventListener('click',rG);if(bE)rG();};
+      const initXOGame=()=>{const s=document.querySelector('#xo');if(!s)return;const bE=s.querySelector('.board'),sE=s.querySelector('.status'),rB=s.querySelector('#xo-restart');let b=Array(9).fill(''),cP='❌',gA=true;const wP=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];const cW=()=>{for(const p of wP){const [x,y,z]=p;if(b[x]&&b[x]===b[y]&&b[x]===b[z])return b[x];}return null;};const hC=(idx)=>{if(!gA||b[idx]||!auth.currentUser)return;b[idx]=cP;bE.children[idx].textContent=cP;const w=cW();if(w){updateElementText(sE,`فاز ${w}`);playSound('snd-win');gA=false;}else if(!b.includes('')){updateElementText(sE,'تعادل');playSound('snd-lose');gA=false;}else{cP=cP==='❌'?'⭕':'❌';updateElementText(sE,`الدور: ${cP}`);playSound('snd-click');}};const rG=()=>{b.fill('');cP='❌';gA=true;updateElementText(sE,'الدور: ❌');Array.from(bE.children).forEach(c=>c.textContent='');playSound('snd-click');};if(bE){bE.innerHTML=Array(9).fill().map((_,i)=>`<div class="cell" data-index="${i}"></div>`).join('');Array.from(bE.children).forEach((c,i)=>c.addEventListener('click',()=>hC(i)));}if(rB)rB.addEventListener('click',rG);if(sE)updateElementText(sE,'الدور: ❌');};
       
-      const initRPSGame = () => { // تم تعديل هذه اللعبة
+      const initRPSGame = () => { 
         const section = document.querySelector('#rps'); if(!section) return;
         const resultElement = section.querySelector('.result');
         const choiceButtons = section.querySelectorAll('.gamebox button');
-        const options = ['🧱', '📄', '✂️']; // الصخرة هنا
+        const options = ['🧱', '📄', '✂️']; 
+        if(resultElement) updateElementText(resultElement, 'اختر لبدء!');
         choiceButtons.forEach(button => button.addEventListener('click', () => {
+          if(!auth.currentUser) return;
           const playerChoice = button.dataset.choice;
           const computerChoice = options[Math.floor(Math.random() * options.length)];
           let message = 'تعادل';
@@ -277,14 +311,18 @@
           playSound(message === 'فزت' ? 'snd-win' : message === 'خسرت' ? 'snd-lose' : 'snd-click');
         }));
       };
-      // استدعِ بقية دوال تهيئة الألعاب هنا كما كانت في الردود السابقة...
-      // initClickTargetGame(); initReactionTestGame(); ... etc.
-
+      
       initXOGame();
-      initRPSGame(); // تأكد من استدعاء اللعبة المعدلة
-      // initClickTargetGame(); ... استدعِ الباقي
+      initRPSGame(); 
 
       if (!auth.currentUser) { showSection('login', false); }
+       else { // If user is already logged in on page load, try to show XO or first game
+        if (gameNavLinksData.length > 0 && gameNavLinksData.some(link => link.href === "#xo")) {
+            showSection('xo', true);
+        } else if (gameNavLinksData.length > 0) {
+            showSection(gameNavLinksData[0].href.slice(1), true);
+        }
+      }
     });
   </script>
 </body>
