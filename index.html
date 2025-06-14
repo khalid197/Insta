@@ -74,15 +74,15 @@
     }
 
     section:not(#login):not(#game-launcher) button { padding:10px 15px; margin:8px 4px; font-size:0.9rem; cursor:pointer; border:none; border-radius:8px; background:#005A9C; color:white; transition:background .2s; }
-    section#xo .xo-options button { font-size: 0.9rem; padding: 10px 12px;} /* Slightly smaller buttons for XO options to fit */
+    section#xo .xo-options button, section#memory .memory-options button { font-size: 0.9rem; padding: 10px 12px;} 
     section:not(#login):not(#game-launcher) button:hover { background:#003B73; }
     section:not(#login):not(#game-launcher) button:disabled { background:#ccc; cursor:not-allowed; }
     .status, .result, .message, .timebox { margin:15px 0; font-size:1.1rem; min-height: 1.2em; text-align: center;}
     
     /* XO Game Specific Styles */
     .xo-board-container {
-        position: relative; /* For positioning the canvas */
-        width: 316px; /* 3 * 100px cells + 2 * 8px gaps */
+        position: relative; 
+        width: 316px; 
         height: 316px;
         margin: 0 auto 20px auto;
     }
@@ -115,8 +115,8 @@
         height: 100%;
         pointer-events: none; 
     }
-    .xo-options { margin-bottom: 15px; text-align: center; }
-    .xo-options button { margin: 0 3px; } /* Adjust margin if needed */
+    .xo-options, .memory-options { margin-bottom: 15px; text-align: center; }
+    .xo-options button, .memory-options button { margin: 0 3px; } 
 
 
     .gamebox, 
@@ -133,8 +133,9 @@
     .card .card-front { background-color: #005A9C; } 
     .card .card-back { background-color: #f0f0f0; color: #333; transform: rotateY(180deg); }
     .card.flipped { transform: rotateY(180deg); }
-    .card.matched { background-color: #28a745 !important; cursor: default; }
+    .card.matched { background-color: #28a745 !important; cursor: default; opacity: 0.7; }
     .card.matched .card-front { background-color: #28a745 !important; } 
+    .memory-scores { margin-bottom: 10px; font-weight: bold; }
 
     #click-target-area { text-align: left; min-height: 200px; background-color: #e9ecef; position: relative; border-radius: 8px; overflow: hidden; }
     #clickable-target { width: 50px; height: 50px; background-color: red; border-radius: 50%; position: absolute; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: all 0.1s; }
@@ -211,12 +212,28 @@
     <button id="xo-restart" style="display:none;">إعادة اللعبة</button> 
   </section>
 
+  <section id="memory" class="game-section"> 
+    <h2>لعبة الذاكرة 🧠</h2> 
+    <div class="memory-options">
+        <button id="memory-pvp">لاعب ضد لاعب</button>
+        <button id="memory-pvc">لاعب ضد كمبيوتر</button>
+    </div>
+    <div class="memory-scores" style="display:none;">
+        <span id="memory-player1-score">اللاعب 1: 0</span> | 
+        <span id="memory-player2-score">اللاعب 2: 0</span>
+    </div>
+    <div class="cards" style="display:none;"></div> 
+    <div class="status">اختر نمط اللعبة</div> 
+    <div class="gamebox">
+        <button id="memory-restart" style="display:none;">إعادة اللعبة</button>
+    </div> 
+  </section>
+
   <!-- ... (باقي أقسام الألعاب كما هي) ... -->
   <section id="rps" class="game-section"> <h2>حجر ورقة مقص 🧱📄✂️</h2> <div class="gamebox"> <button data-choice="🧱">🧱</button> <button data-choice="📄">📄</button> <button data-choice="✂️">✂️</button> </div> <div class="result">اختر لبدء!</div> </section>
   <section id="click" class="game-section"> <h2>اصطياد الهدف 🎯</h2> <div class="gamebox"><button id="click-start">ابدأ</button></div> <div id="click-target-area" class="gamebox" style="display:none;"></div> <div class="status">اضغط "ابدأ"</div> </section>
   <section id="react" class="game-section"> <h2>اختبار سرعة الضغط ⌛</h2> <div class="timebox" id="react-box">اضغط للبدء</div> </section>
   <section id="dice" class="game-section"> <h2>لعبة النرد 🎲</h2> <div class="gamebox"><button id="dice-roll">رمي النرد</button></div> <div class="result" id="dice-result" style="font-size: 3rem;">--</div> </section>
-  <section id="memory" class="game-section"> <h2>لعبة الذاكرة 🧠</h2> <div class="cards"></div> <div class="status">اضغط بطاقة للبدء</div> <div class="gamebox"><button id="memory-restart">إعادة اللعبة</button></div> </section>
   <section id="math" class="game-section"> <h2>جمع الأرقام 🧮</h2> <div class="gamebox"><button id="math-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none; font-size: 1.5rem; margin-bottom: 15px; text-align:center;"></div> <div class="input-group" style="display:none;"> <input type="number" id="math-answer" placeholder="أدخل إجابتك"/> <button id="math-submit">تحقق</button> </div> <div class="result">--</div> </section>
   <section id="guessnum" class="game-section"> <h2>تخمين الرقم 🔢</h2> <div class="gamebox"><button id="guessnum-start">ابدأ اللعبة</button></div> <div class="input-group" style="display:none;"> <input type="number" id="guessnum-input" placeholder="خمن بين 1 و100"/> <button id="guessnum-submit">خمن</button> </div> <div class="result">--</div> <div class="message">خمن رقمًا بين 1 و 100</div> </section>
   <section id="bigsmall" class="game-section"> <h2>من الأكبر؟ 📏</h2> <div class="gamebox"><button id="bigsmall-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none; font-size: 1.5rem; margin-bottom: 15px; text-align:center;"></div> <div class="input-group" style="display:none;"> <input type="number" id="bigsmall-answer" placeholder="اكتب الرقم الأكبر"/> <button id="bigsmall-submit">تحقق</button> </div> <div class="result">--</div> </section>
@@ -484,7 +501,7 @@
                 if (window.location.hash !== '#game-launcher') window.location.hash = 'game-launcher';
             }
         } else {
-            if (hash !== 'login' && hash !== '') { // Allow empty hash to default to login if not verified
+            if (hash !== 'login' && hash !== '') { 
                  if (window.location.hash !== '#login') window.location.hash = 'login';
                  targetIdToShow = 'login';
             } else {
@@ -635,10 +652,10 @@
 
                   if (gameMode === 'pvc-normal') {
                       computerMoveFunction = computerMoveNormal;
-                      moveDelay = 400 + Math.random() * 300; // Slightly faster for "normal"
+                      moveDelay = 400 + Math.random() * 300; 
                   } else if (gameMode === 'pvc-hard') {
                       computerMoveFunction = computerMoveHard;
-                      moveDelay = 300 + Math.random() * 200; // Slightly faster for "hard"
+                      moveDelay = 300 + Math.random() * 200; 
                   }
 
                   if (computerMoveFunction) {
@@ -661,7 +678,7 @@
             });
           };
 
-          const computerMoveNormal = () => { // Simpler AI
+          const computerMoveNormal = () => { 
               if (!gameActive) return -1;
               let availableCells = [];
               boardState.forEach((cell, index) => {
@@ -672,7 +689,7 @@
                   const randomIndex = Math.floor(Math.random() * availableCells.length);
                   return availableCells[randomIndex];
               }
-              return -1; // No move available
+              return -1; 
           };
 
 
@@ -784,8 +801,327 @@
           resetGame(); 
       };
       
-      // ... (init functions for RPS, ClickTarget, React, Dice, Memory, Math, GuessNum, BigSmall, Typing)
-      // These remain largely the same, ensure they check auth.currentUser and auth.currentUser.emailVerified
+      const initMemoryGame = () => {
+        const section = document.querySelector('#memory'); if (!section) return;
+        const cardsContainer = section.querySelector('.cards');
+        const statusElement = section.querySelector('.status');
+        const restartButton = section.querySelector('#memory-restart');
+        const pvpButtonMemory = section.querySelector('#memory-pvp');
+        const pvcButtonMemory = section.querySelector('#memory-pvc');
+        const optionsDivMemory = section.querySelector('.memory-options');
+        const scoresDivMemory = section.querySelector('.memory-scores');
+        const player1ScoreEl = section.querySelector('#memory-player1-score');
+        const player2ScoreEl = section.querySelector('#memory-player2-score');
+
+
+        const cardValues = ['🧠', '🎮', '🎯', '🎲', '💡', '💻', '🌟', '🚀'];
+        let gameCards = [];
+        let flippedCards = [];
+        let canFlip = true;
+        let gameActiveMemory = false;
+        let gameModeMemory = null; // 'pvp-memory', 'pvc-memory'
+        let currentPlayerMemory = null; // 'player1', 'player2', 'computer'
+        let scoresMemory = { player1: 0, player2: 0, computer: 0 };
+        let revealedByComputer = []; // For computer's memory {index: val}
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function updateScoresDisplay() {
+            if (gameModeMemory === 'pvp-memory') {
+                player1ScoreEl.textContent = `اللاعب 1: ${scoresMemory.player1}`;
+                player2ScoreEl.textContent = `اللاعب 2: ${scoresMemory.player2}`;
+            } else if (gameModeMemory === 'pvc-memory') {
+                player1ScoreEl.textContent = `أنت: ${scoresMemory.player1}`;
+                player2ScoreEl.textContent = `الكمبيوتر: ${scoresMemory.computer}`;
+            }
+        }
+        
+        function updateStatus() {
+            if (!gameActiveMemory) {
+                updateElementText(statusElement, "اختر نمط اللعبة");
+                return;
+            }
+            let turnText = "";
+            if (gameModeMemory === 'pvp-memory') {
+                turnText = currentPlayerMemory === 'player1' ? "دور اللاعب 1" : "دور اللاعب 2";
+            } else if (gameModeMemory === 'pvc-memory') {
+                turnText = currentPlayerMemory === 'player1' ? "دورك" : "دور الكمبيوتر";
+            }
+            updateElementText(statusElement, `${turnText}`);
+        }
+
+        function startGameMemory(mode) {
+            if (!auth.currentUser || !auth.currentUser.emailVerified) {
+                updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info');
+                return;
+            }
+            gameModeMemory = mode;
+            gameActiveMemory = true;
+            canFlip = true;
+            flippedCards = [];
+            scoresMemory = { player1: 0, player2: 0, computer: 0 };
+            revealedByComputer = []; // Reset computer's memory
+            
+            currentPlayerMemory = 'player1'; // Player 1 (or human player) always starts
+
+            showHideElement(optionsDivMemory, false);
+            showHideElement(scoresDivMemory, true);
+            showHideElement(cardsContainer, true, 'grid');
+            showHideElement(restartButton, true);
+            
+            updateScoresDisplay();
+            createMemoryBoard();
+            updateStatus();
+            playSound('snd-click');
+        }
+
+
+        function createMemoryBoard() {
+            if(!cardsContainer) return;
+            cardsContainer.innerHTML = '';
+            let items = shuffle([...cardValues, ...cardValues]); 
+            gameCards = [];
+
+            items.forEach((value, index) => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.value = value;
+                card.dataset.index = index; // Keep track of original index for computer
+                const cardFaceFront = document.createElement('div');
+                cardFaceFront.classList.add('card-face', 'card-front');
+                const cardFaceBack = document.createElement('div');
+                cardFaceBack.classList.add('card-face', 'card-back');
+                cardFaceBack.textContent = value;
+                card.appendChild(cardFaceFront);
+                card.appendChild(cardFaceBack);
+                card.addEventListener('click', () => flipCardMemory(card));
+                cardsContainer.appendChild(card);
+                gameCards.push(card);
+            });
+        }
+        
+         function flipCardMemory(card) {
+            if (!auth.currentUser || !auth.currentUser.emailVerified) {
+                updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info');
+                return;
+            }
+            if (!canFlip || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+            if (gameModeMemory === 'pvc-memory' && currentPlayerMemory === 'computer') return; // Prevent clicking during computer's turn
+
+            card.classList.add('flipped');
+            flippedCards.push(card);
+            playSound('snd-click');
+
+            // Add to computer's revealed memory if not already there and not matched
+            if (gameModeMemory === 'pvc-memory') {
+                const cardIndex = parseInt(card.dataset.index);
+                const cardValue = card.dataset.value;
+                if (!revealedByComputer.find(c => c.index === cardIndex) && !card.classList.contains('matched')) {
+                    revealedByComputer.push({ index: cardIndex, value: cardValue, element: card });
+                }
+            }
+
+
+            if (flippedCards.length === 2) {
+                canFlip = false; 
+                checkForMatchMemory();
+            }
+        }
+
+        function checkForMatchMemory() {
+            const [card1, card2] = flippedCards;
+            const isMatch = card1.dataset.value === card2.dataset.value;
+
+            if (isMatch) {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                
+                if (currentPlayerMemory === 'player1') scoresMemory.player1++;
+                else if (currentPlayerMemory === 'player2') scoresMemory.player2++;
+                else if (currentPlayerMemory === 'computer') scoresMemory.computer++;
+                
+                updateScoresDisplay();
+                playSound('snd-win');
+
+                const totalPairs = cardValues.length;
+                const matchedPairsCount = (scoresMemory.player1 + scoresMemory.player2 + scoresMemory.computer);
+
+                if (matchedPairsCount === totalPairs) {
+                    gameActiveMemory = false;
+                    let winnerMsg = "انتهت اللعبة! ";
+                    if (gameModeMemory === 'pvp-memory') {
+                        if (scoresMemory.player1 > scoresMemory.player2) winnerMsg += "فاز اللاعب 1!";
+                        else if (scoresMemory.player2 > scoresMemory.player1) winnerMsg += "فاز اللاعب 2!";
+                        else winnerMsg += "تعادل!";
+                    } else { // pvc-memory
+                        if (scoresMemory.player1 > scoresMemory.computer) winnerMsg += "لقد فزت!";
+                        else if (scoresMemory.computer > scoresMemory.player1) winnerMsg += "فاز الكمبيوتر!";
+                        else winnerMsg += "تعادل!";
+                    }
+                    updateElementText(statusElement, winnerMsg, 'success');
+                    showHideElement(restartButton, true); 
+                } else {
+                    // Player/Computer gets another turn
+                    flippedCards = [];
+                    canFlip = true;
+                    if (gameModeMemory === 'pvc-memory' && currentPlayerMemory === 'computer' && gameActiveMemory) {
+                         disableElement(cardsContainer, true); // Disable clicks during computer's potential next move
+                         setTimeout(computerTurnMemory, 1000); // Computer takes another turn
+                    } else if (gameActiveMemory) {
+                        updateStatus(); // Update status for human player's next turn
+                    }
+                }
+            } else {
+                // No match
+                playSound('snd-lose');
+                setTimeout(() => {
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                    flippedCards = [];
+                    canFlip = true;
+                    if (gameActiveMemory) switchPlayerMemory();
+                }, 1000);
+            }
+        }
+
+        function switchPlayerMemory() {
+            if (gameModeMemory === 'pvp-memory') {
+                currentPlayerMemory = currentPlayerMemory === 'player1' ? 'player2' : 'player1';
+            } else if (gameModeMemory === 'pvc-memory') {
+                currentPlayerMemory = currentPlayerMemory === 'player1' ? 'computer' : 'player1';
+            }
+            updateStatus();
+
+            if (gameModeMemory === 'pvc-memory' && currentPlayerMemory === 'computer' && gameActiveMemory) {
+                disableElement(cardsContainer, true);
+                setTimeout(computerTurnMemory, 1000); // Add a delay for computer's turn
+            } else {
+                 disableElement(cardsContainer, false);
+            }
+        }
+
+        function computerTurnMemory() {
+            if (!gameActiveMemory || !canFlip) return;
+            canFlip = false; // Computer is "thinking"
+
+            let firstCardToFlip = null;
+            let secondCardToFlip = null;
+
+            // Strategy 1: Find a known match
+            for (let i = 0; i < revealedByComputer.length; i++) {
+                for (let j = i + 1; j < revealedByComputer.length; j++) {
+                    const cardA = revealedByComputer[i];
+                    const cardB = revealedByComputer[j];
+                    if (cardA.value === cardB.value && !cardA.element.classList.contains('matched') && !cardB.element.classList.contains('matched')) {
+                        firstCardToFlip = cardA.element;
+                        secondCardToFlip = cardB.element;
+                        break;
+                    }
+                }
+                if (firstCardToFlip) break;
+            }
+
+            // Strategy 2: Pick one known unmatched card and one new random card
+            if (!firstCardToFlip) {
+                const knownUnmatched = revealedByComputer.filter(rc => !rc.element.classList.contains('matched'));
+                if (knownUnmatched.length > 0) {
+                    firstCardToFlip = knownUnmatched[Math.floor(Math.random() * knownUnmatched.length)].element;
+                    
+                    let availableNewCards = gameCards.filter(gc => 
+                        !gc.classList.contains('flipped') && 
+                        !gc.classList.contains('matched') &&
+                        gc !== firstCardToFlip 
+                    );
+                    if (availableNewCards.length > 0) {
+                        secondCardToFlip = availableNewCards[Math.floor(Math.random() * availableNewCards.length)];
+                    } else { // If no other new card, pick another known one if possible (less ideal)
+                        const otherKnown = knownUnmatched.filter(rc => rc.element !== firstCardToFlip);
+                        if(otherKnown.length > 0) secondCardToFlip = otherKnown[0].element;
+                    }
+                }
+            }
+
+            // Strategy 3: Pick two new random cards
+            if (!firstCardToFlip || !secondCardToFlip) {
+                let availableCards = gameCards.filter(gc => !gc.classList.contains('flipped') && !gc.classList.contains('matched'));
+                if (availableCards.length >= 2) {
+                    shuffle(availableCards);
+                    firstCardToFlip = availableCards[0];
+                    secondCardToFlip = availableCards[1];
+                } else if (availableCards.length === 1 && knownUnmatched.length > 0 && knownUnmatched[0].element !== availableCards[0]) {
+                     // one new, one known
+                    firstCardToFlip = availableCards[0];
+                    secondCardToFlip = knownUnmatched[0].element;
+                }
+            }
+            
+            // If still couldn't find two cards (should be rare, e.g. only one card left unmatched)
+            // This part might need refinement if only one card is left, but game should end before.
+            if (!firstCardToFlip || !secondCardToFlip || firstCardToFlip === secondCardToFlip) {
+                // Fallback, something is wrong or game is over.
+                canFlip = true;
+                disableElement(cardsContainer, false);
+                if (gameActiveMemory) switchPlayerMemory(); // Give turn back if game is stuck
+                return;
+            }
+
+
+            // Simulate computer flipping
+            setTimeout(() => {
+                if (firstCardToFlip && !firstCardToFlip.classList.contains('flipped')) {
+                    flipCardMemory(firstCardToFlip);
+                }
+                setTimeout(() => {
+                    if (secondCardToFlip && !secondCardToFlip.classList.contains('flipped')) {
+                         flipCardMemory(secondCardToFlip); // This will trigger checkForMatchMemory
+                    }
+                    // Re-enable player clicks if computer didn't get a match and it's player's turn next.
+                    // checkForMatchMemory will handle canFlip and turn switching.
+                    if (currentPlayerMemory !== 'computer') {
+                         disableElement(cardsContainer, false);
+                    }
+                }, 700); // Delay for second card flip
+            }, 700); // Delay for first card flip
+        }
+        
+        function resetMemoryGame() {
+            gameActiveMemory = false;
+            gameModeMemory = null;
+            cardsContainer.innerHTML = '';
+            showHideElement(optionsDivMemory, true);
+            showHideElement(cardsContainer, false);
+            showHideElement(scoresDivMemory, false);
+            showHideElement(restartButton, false);
+            updateElementText(statusElement, 'اختر نمط اللعبة');
+            playSound('snd-click');
+        }
+
+        if(pvpButtonMemory) pvpButtonMemory.addEventListener('click', () => startGameMemory('pvp-memory'));
+        if(pvcButtonMemory) pvcButtonMemory.addEventListener('click', () => startGameMemory('pvc-memory'));
+        if(restartButton) restartButton.addEventListener('click', resetMemoryGame);
+        
+        // Initial state
+        resetMemoryGame();
+
+        const observer = new MutationObserver((mutationsList, obs) => {
+            for(const mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if (section.classList.contains('active') && !gameActiveMemory) {
+                       resetMemoryGame();
+                    }
+                }
+            }
+        });
+        if(section) observer.observe(section, { attributes: true });
+      };
+      
+      // ... (init functions for RPS, ClickTarget, React, Dice, Math, GuessNum, BigSmall, Typing)
       const initRPSGame = () => { 
         const section = document.querySelector('#rps'); if(!section) return;
         const resultElement = section.querySelector('.result');
@@ -912,121 +1248,6 @@
             playSound('snd-click');
         });
         if(resultElement) updateElementText(resultElement, '--');
-      };
-
-      const initMemoryGame = () => {
-        const section = document.querySelector('#memory'); if (!section) return;
-        const cardsContainer = section.querySelector('.cards');
-        const statusElement = section.querySelector('.status');
-        const restartButton = section.querySelector('#memory-restart');
-
-        const cardValues = ['🧠', '🎮', '🎯', '🎲', '💡', '💻', '🌟', '🚀'];
-        let gameCards = [];
-        let flippedCards = [];
-        let matchedPairs = 0;
-        let canFlip = true;
-
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function createBoard() {
-            if(!cardsContainer || !statusElement) return;
-            if (auth.currentUser && !auth.currentUser.emailVerified) { 
-                updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info');
-                cardsContainer.innerHTML = '';
-                return;
-            }
-
-            cardsContainer.innerHTML = '';
-            matchedPairs = 0;
-            updateElementText(statusElement, 'جد الأزواج المتطابقة.');
-            let items = shuffle([...cardValues, ...cardValues]); 
-            gameCards = [];
-            canFlip = true; 
-
-            items.forEach(value => {
-                const card = document.createElement('div');
-                card.classList.add('card');
-                card.dataset.value = value;
-                const cardFaceFront = document.createElement('div');
-                cardFaceFront.classList.add('card-face', 'card-front');
-                const cardFaceBack = document.createElement('div');
-                cardFaceBack.classList.add('card-face', 'card-back');
-                cardFaceBack.textContent = value;
-                card.appendChild(cardFaceFront);
-                card.appendChild(cardFaceBack);
-                card.addEventListener('click', () => flipCard(card));
-                cardsContainer.appendChild(card);
-                gameCards.push(card);
-            });
-        }
-        
-         function flipCard(card) {
-            if (!auth.currentUser || !auth.currentUser.emailVerified) {
-                if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info');
-                return;
-            }
-            if (!canFlip || card.classList.contains('flipped') || card.classList.contains('matched')) return;
-            
-            card.classList.add('flipped');
-            flippedCards.push(card);
-            playSound('snd-click');
-
-            if (flippedCards.length === 2) {
-                canFlip = false; 
-                checkForMatch();
-            }
-        }
-
-        function checkForMatch() {
-            const [card1, card2] = flippedCards;
-            const isMatch = card1.dataset.value === card2.dataset.value;
-
-            if (isMatch) {
-                card1.classList.add('matched');
-                card2.classList.add('matched');
-                matchedPairs++;
-                playSound('snd-win');
-                if(statusElement) updateElementText(statusElement, `أزواج متطابقة: ${matchedPairs}/${cardValues.length}`);
-                if (matchedPairs === cardValues.length) {
-                    if(statusElement) updateElementText(statusElement, 'أحسنت! لقد وجدت كل الأزواج!', 'success');
-                }
-            } else {
-                playSound('snd-lose');
-                setTimeout(() => {
-                    card1.classList.remove('flipped');
-                    card2.classList.remove('flipped');
-                }, 1000);
-            }
-            flippedCards = [];
-            setTimeout(() => { canFlip = true; }, isMatch ? 200 : 1000); 
-        }
-
-        if(restartButton) restartButton.addEventListener('click', () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified) {
-                if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info');
-                return;
-            }
-            createBoard();
-            playSound('snd-click');
-        });
-        const observer = new MutationObserver((mutationsList, obs) => {
-            for(const mutation of mutationsList) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                    if (section.classList.contains('active') && auth.currentUser && auth.currentUser.emailVerified) {
-                        if (cardsContainer.children.length === 0 || matchedPairs === cardValues.length) { 
-                           createBoard();
-                        }
-                    }
-                }
-            }
-        });
-        if(section) observer.observe(section, { attributes: true });
       };
       
       const initMathQuizGame = () => {
