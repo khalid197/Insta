@@ -8,7 +8,7 @@
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;700;800;900&display=swap");
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-    body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat; background-size: cover; background-position: center; overflow-y: auto;} /* Added overflow-y */
+    body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat; background-size: cover; background-position: center; overflow-y: auto;}
     .wrapper { margin-top: 80px; width: 420px; background-color: transparent; border: 2px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(15px); box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); color: #fff; border-radius: 16px; padding: 20px 30px; direction: rtl; }
     .wrapper h1 { font-size: 30px; text-align: center; margin-bottom:20px;}
     .wrapper .input-box { width: 100%; height: 50px; position: relative; margin: 30px 0; }
@@ -35,7 +35,7 @@
     nav a:hover, nav a.active-nav-link { text-decoration:underline; font-weight: bold; }
     
     section {
-      display: none;
+      display: none; /* sections are hidden by default */
       padding: 20px; 
       max-width: 600px;
       margin: 20px auto; 
@@ -46,7 +46,8 @@
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
       direction: rtl;
     }
-    section.active { display:block; }
+    section.active { display:block !important; } /* Ensure .active overrides display: none */
+
     section#login.active, section#game-launcher.active { 
         background: transparent; 
         box-shadow: none; 
@@ -71,7 +72,6 @@
         margin-bottom: 30px;
     }
 
-
     section:not(#login):not(#game-launcher) button { padding:10px 20px; margin:8px 4px; font-size:1rem; cursor:pointer; border:none; border-radius:8px; background:#005A9C; color:white; transition:background .2s; }
     section:not(#login):not(#game-launcher) button:hover { background:#003B73; }
     section:not(#login):not(#game-launcher) button:disabled { background:#ccc; cursor:not-allowed; }
@@ -95,7 +95,6 @@
       margin-left: auto; 
       text-align: center;
     }
-    /* --- Memory Game Specific --- */
     .cards {
         display: grid; 
         grid-template-columns: repeat(4, 1fr); 
@@ -122,8 +121,6 @@
     .card.matched { background-color: #28a745 !important; cursor: default; }
     .card.matched .card-front { background-color: #28a745 !important; } 
 
-
-    /* --- Click Target Game Specific --- */
     #click-target-area { 
         text-align: left; 
         min-height: 200px; 
@@ -142,7 +139,6 @@
         font-size: 1.5rem;
         transition: all 0.1s;
     }
-     /* --- Reaction Test Specific --- */
     .timebox {
         padding: 20px;
         background-color: #6c757d; 
@@ -155,7 +151,6 @@
     .timebox.waiting { background-color: #dc3545; } 
     .timebox.ready { background-color: #28a745; } 
 
-    /* --- Typing Test Specific --- */
     .text-to-type {
         padding: 15px;
         border: 1px solid #ccc;
@@ -179,11 +174,9 @@
     .input-group { text-align: center; } 
     .input-group input { margin: 0 auto 10px auto; display: block; max-width: 250px; text-align: center; padding:10px; border-radius: 8px; border:1px solid #ccc; }
 
-
-    .hidden-by-auth { display: none !important; }
+    .hidden-by-auth { display: none !important; } /* Ensure this has high specificity */
     .button-text { margin: 0 5px; }
 
-    /* --- Game Launcher Styles --- */
     .game-icons-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -226,17 +219,15 @@
         font-size: 1rem;
         font-weight: 500;
     }
-
   </style>
 </head>
 <body>
 
   <nav id="main-nav">
     <a href="#login" id="nav-login-link">تسجيل الدخول</a>
-    <!-- "Games" link will be added here by JS -->
   </nav>
 
-  <section id="login" class="active">
+  <section id="login"> <!-- Initially, login might be active by default if no hash -->
     <div class="wrapper">
         <form action="javascript:void(0);">
             <h1 id="login-title">تسجيل الدخول</h1>
@@ -262,24 +253,23 @@
     </div>
   </section>
 
-  <section id="game-launcher" class="hidden-by-auth">
+  <section id="game-launcher">
     <h2>اختر لعبتك المفضلة!</h2>
     <div class="game-icons-grid" id="game-icons-grid-container">
-        <!-- Game icons will be populated here by JavaScript -->
     </div>
   </section>
 
 
-  <section id="xo" class="game-section hidden-by-auth"> <h2>إكس أو (XO)</h2> <div class="board"></div> <div class="status">الدور: ❌</div> <button id="xo-restart">إعادة XO</button> </section>
-  <section id="rps" class="game-section hidden-by-auth"> <h2>حجر ورقة مقص 🧱📄✂️</h2> <div class="gamebox"> <button data-choice="🧱">🧱</button> <button data-choice="📄">📄</button> <button data-choice="✂️">✂️</button> </div> <div class="result">اختر لبدء!</div> </section>
-  <section id="click" class="game-section hidden-by-auth"> <h2>اصطياد الهدف 🎯</h2> <div class="gamebox"><button id="click-start">ابدأ</button></div> <div id="click-target-area" class="gamebox" style="display:none;"></div> <div class="status">اضغط "ابدأ"</div> </section>
-  <section id="react" class="game-section hidden-by-auth"> <h2>اختبار سرعة الضغط ⌛</h2> <div class="timebox" id="react-box">اضغط للبدء</div> </section>
-  <section id="dice" class="game-section hidden-by-auth"> <h2>لعبة النرد 🎲</h2> <div class="gamebox"><button id="dice-roll">رمي النرد</button></div> <div class="result" id="dice-result" style="font-size: 3rem;">--</div> </section>
-  <section id="memory" class="game-section hidden-by-auth"> <h2>لعبة الذاكرة 🧠</h2> <div class="cards"></div> <div class="status">اضغط بطاقة للبدء</div> <div class="gamebox"><button id="memory-restart">إعادة اللعبة</button></div> </section>
-  <section id="math" class="game-section hidden-by-auth"> <h2>جمع الأرقام 🧮</h2> <div class="gamebox"><button id="math-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none; font-size: 1.5rem; margin-bottom: 15px; text-align:center;"></div> <div class="input-group" style="display:none;"> <input type="number" id="math-answer" placeholder="أدخل إجابتك"/> <button id="math-submit">تحقق</button> </div> <div class="result">--</div> </section>
-  <section id="guessnum" class="game-section hidden-by-auth"> <h2>تخمين الرقم 🔢</h2> <div class="gamebox"><button id="guessnum-start">ابدأ اللعبة</button></div> <div class="input-group" style="display:none;"> <input type="number" id="guessnum-input" placeholder="خمن بين 1 و100"/> <button id="guessnum-submit">خمن</button> </div> <div class="result">--</div> <div class="message">خمن رقمًا بين 1 و 100</div> </section>
-  <section id="bigsmall" class="game-section hidden-by-auth"> <h2>من الأكبر؟ 📏</h2> <div class="gamebox"><button id="bigsmall-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none; font-size: 1.5rem; margin-bottom: 15px; text-align:center;"></div> <div class="input-group" style="display:none;"> <input type="number" id="bigsmall-answer" placeholder="اكتب الرقم الأكبر"/> <button id="bigsmall-submit">تحقق</button> </div> <div class="result">--</div> </section>
-  <section id="typing" class="game-section hidden-by-auth"> <h2>اختبار الكتابة ⌨️</h2> <div class="gamebox"><button id="typing-start">ابدأ الاختبار</button></div> <div class="text-to-type" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="text" id="typing-input" placeholder="اكتب النص هنا"/> <button id="typing-submit">تحقق</button> </div> <div class="status">--</div> </section>
+  <section id="xo" class="game-section"> <h2>إكس أو (XO)</h2> <div class="board"></div> <div class="status">الدور: ❌</div> <button id="xo-restart">إعادة XO</button> </section>
+  <section id="rps" class="game-section"> <h2>حجر ورقة مقص 🧱📄✂️</h2> <div class="gamebox"> <button data-choice="🧱">🧱</button> <button data-choice="📄">📄</button> <button data-choice="✂️">✂️</button> </div> <div class="result">اختر لبدء!</div> </section>
+  <section id="click" class="game-section"> <h2>اصطياد الهدف 🎯</h2> <div class="gamebox"><button id="click-start">ابدأ</button></div> <div id="click-target-area" class="gamebox" style="display:none;"></div> <div class="status">اضغط "ابدأ"</div> </section>
+  <section id="react" class="game-section"> <h2>اختبار سرعة الضغط ⌛</h2> <div class="timebox" id="react-box">اضغط للبدء</div> </section>
+  <section id="dice" class="game-section"> <h2>لعبة النرد 🎲</h2> <div class="gamebox"><button id="dice-roll">رمي النرد</button></div> <div class="result" id="dice-result" style="font-size: 3rem;">--</div> </section>
+  <section id="memory" class="game-section"> <h2>لعبة الذاكرة 🧠</h2> <div class="cards"></div> <div class="status">اضغط بطاقة للبدء</div> <div class="gamebox"><button id="memory-restart">إعادة اللعبة</button></div> </section>
+  <section id="math" class="game-section"> <h2>جمع الأرقام 🧮</h2> <div class="gamebox"><button id="math-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none; font-size: 1.5rem; margin-bottom: 15px; text-align:center;"></div> <div class="input-group" style="display:none;"> <input type="number" id="math-answer" placeholder="أدخل إجابتك"/> <button id="math-submit">تحقق</button> </div> <div class="result">--</div> </section>
+  <section id="guessnum" class="game-section"> <h2>تخمين الرقم 🔢</h2> <div class="gamebox"><button id="guessnum-start">ابدأ اللعبة</button></div> <div class="input-group" style="display:none;"> <input type="number" id="guessnum-input" placeholder="خمن بين 1 و100"/> <button id="guessnum-submit">خمن</button> </div> <div class="result">--</div> <div class="message">خمن رقمًا بين 1 و 100</div> </section>
+  <section id="bigsmall" class="game-section"> <h2>من الأكبر؟ 📏</h2> <div class="gamebox"><button id="bigsmall-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none; font-size: 1.5rem; margin-bottom: 15px; text-align:center;"></div> <div class="input-group" style="display:none;"> <input type="number" id="bigsmall-answer" placeholder="اكتب الرقم الأكبر"/> <button id="bigsmall-submit">تحقق</button> </div> <div class="result">--</div> </section>
+  <section id="typing" class="game-section"> <h2>اختبار الكتابة ⌨️</h2> <div class="gamebox"><button id="typing-start">ابدأ الاختبار</button></div> <div class="text-to-type" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="text" id="typing-input" placeholder="اكتب النص هنا"/> <button id="typing-submit">تحقق</button> </div> <div class="status">--</div> </section>
 
   <audio id="snd-click" src="https://actions.google.com/sounds/v1/alarms/button_click.ogg"></audio>
   <audio id="snd-win" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
@@ -303,22 +293,14 @@
     const auth = firebase.auth();
 
     document.addEventListener('DOMContentLoaded', () => {
+      // Helper functions (playSound, updateButtonText, etc.) remain the same
       const playSound = (id) => { const s = document.getElementById(id); if (s) { s.currentTime = 0; s.play().catch(e => console.warn(`Sound ${id} play failed:`, e)); } };
-      const updateButtonText = (buttonElement, baseText) => { 
-          if (buttonElement) {
-              const textSpan = buttonElement.querySelector('.button-text') || document.createElement('span');
-              textSpan.className = 'button-text';
-              textSpan.textContent = baseText;
-              buttonElement.innerHTML = ''; 
-              buttonElement.appendChild(textSpan);
-          }
-      };
+      const updateButtonText = (buttonElement, baseText) => { if (buttonElement) { const textSpan = buttonElement.querySelector('.button-text') || document.createElement('span'); textSpan.className = 'button-text'; textSpan.textContent = baseText; buttonElement.innerHTML = ''; buttonElement.appendChild(textSpan); }};
       const updateElementText = (el, txt, type) => { if(el) { el.textContent = txt; const baseClasses = el.className.split(' ').filter(c => !['info','success','error','waiting','ready'].includes(c)).join(' '); el.className = baseClasses; if (type) el.classList.add(type); }};
       const showHideElement = (el, show, disp = 'block') => { if(el) el.style.display = show ? disp : 'none'; };
       const disableElement = (el, dis) => { if(el) el.disabled = dis; };
 
       const allSections = document.querySelectorAll('section');
-      const gameSections = document.querySelectorAll('.game-section'); // Game sections specifically
       const mainNav = document.getElementById('main-nav');
       const navLoginLink = document.getElementById('nav-login-link');
       const gameLauncherSection = document.getElementById('game-launcher');
@@ -348,8 +330,8 @@
       const btnLogout = document.getElementById('btn-logout');
       const authStatusDiv = document.getElementById('auth-status');
 
-
-      const updateAuthUI = (isLoggedIn, userEmail = '', isVerified = true) => {
+      // --- AUTH LOGIC (updateAuthUI, updateLoginModeUI, toggleMode, handleAuthAction) ---
+       const updateAuthUI = (isLoggedIn, userEmail = '', isVerified = true) => {
         showHideElement(authFormFields, !isLoggedIn);
         showHideElement(mainActionButton, !isLoggedIn);
         showHideElement(toggleAuthModeText.parentElement, !isLoggedIn);
@@ -358,17 +340,16 @@
         const currentActiveSection = document.querySelector('section.active');
         const activeSectionId = currentActiveSection ? currentActiveSection.id : 'login';
 
-
         if (isLoggedIn) {
           loginTitle.textContent = `أهلاً بك`;
           if (isVerified) {
             updateElementText(authStatusDiv, userEmail, 'success');
-            gameLauncherSection.classList.remove('hidden-by-auth');
-            if(gameIconsGridContainer.children.length === 0) populateGameLauncher(); // Populate only if empty
+            // gameLauncherSection.classList.remove('hidden-by-auth'); // Will be handled by showSection
+            if(gameIconsGridContainer && gameIconsGridContainer.children.length === 0) populateGameLauncher();
           } else {
             updateElementText(authStatusDiv, `تم تسجيل الدخول كـ ${userEmail}. يرجى التحقق من بريدك الإلكتروني للوصول الكامل.`, 'info');
-            gameLauncherSection.classList.add('hidden-by-auth');
-            gameIconsGridContainer.innerHTML = ''; 
+            // gameLauncherSection.classList.add('hidden-by-auth'); // Will be handled by showSection
+            if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
           }
           navLoginLink.textContent = 'تسجيل الخروج';
           navLoginLink.href = "#logout"; 
@@ -381,9 +362,11 @@
           navLoginLink.textContent = 'تسجيل الدخول';
           navLoginLink.href = "#login";
           navLoginLink.onclick = handleNavLinkClick;
-          gameLauncherSection.classList.add('hidden-by-auth');
-          gameIconsGridContainer.innerHTML = ''; 
-          gameSections.forEach(gs => { gs.classList.add('hidden-by-auth'); gs.classList.remove('active'); });
+          // gameLauncherSection.classList.add('hidden-by-auth'); // Will be handled by showSection
+          if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
+          allSections.forEach(s => { // Hide all sections except login if not logged in
+                if(s.id !== 'login') s.classList.remove('active');
+          });
         }
         updateNavigationDOM(isLoggedIn && isVerified, activeSectionId); 
       };
@@ -428,6 +411,7 @@
                   auth.signOut(); 
                 } else {
                   loginEmailInput.value = ''; loginPasswordInput.value = '';
+                  // onAuthStateChanged will handle UI update and navigation
                 }
               })
               .catch((error) => {
@@ -468,45 +452,24 @@
               .finally(() => { disableElement(mainActionButton, false); });
         }
       };
+      // --- END AUTH LOGIC ---
 
       updateLoginModeUI(); 
       mainActionButton.addEventListener('click', handleAuthAction);
       btnLogout.addEventListener('click', () => { 
         auth.signOut().catch(e => console.error('Logout error', e)); 
         updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
+        window.location.hash = 'login'; // Go to login on logout
       });
 
-      auth.onAuthStateChanged(user => {
-        const loginSectionElement = document.getElementById('login');
-        if (user) {
-          if (user.emailVerified) {
-            updateAuthUI(true, user.email, true);
-            showHideElement(loginSectionElement, false);
-            // If no specific game was active before (e.g., direct login), show launcher
-            const currentActiveGame = Array.from(gameSections).find(s => s.classList.contains('active'));
-            if (!currentActiveGame) {
-                showSection('game-launcher'); 
-            }
-          } else {
-            updateAuthUI(true, user.email, false); 
-            showHideElement(loginSectionElement, true); 
-            updateElementText(authStatusDiv, `تم تسجيل حسابك (${user.email}) ولكن لم يتم التحقق من البريد الإلكتروني. يرجى التحقق من بريدك لتتمكن من اللعب.`, 'info');
-            showSection('login'); 
-          }
-        } else {
-          updateAuthUI(false);
-          showHideElement(loginSectionElement, true);
-          showSection('login');
-        }
-      });
-      
+      // --- NAVIGATION AND SECTION DISPLAY ---
       const populateGameLauncher = () => {
         if (!gameIconsGridContainer) return;
         gameIconsGridContainer.innerHTML = ''; 
         gameNavLinksData.forEach(game => {
             const card = document.createElement('div');
             card.className = 'game-icon-card';
-            card.dataset.targetId = game.id; // Store target ID
+            card.dataset.targetId = game.id;
             
             const icon = document.createElement('i');
             icon.className = `bx ${game.icon}`;
@@ -517,15 +480,15 @@
             card.appendChild(icon);
             card.appendChild(nameSpan);
             
-            card.addEventListener('click', (e) => { // Modified here
+            card.addEventListener('click', (e) => {
                 const targetId = e.currentTarget.dataset.targetId;
                 const currentUser = auth.currentUser;
                 if (currentUser && currentUser.emailVerified) {
                     playSound('snd-click');
-                    showSection(targetId, true);
+                    window.location.hash = targetId; // Change hash to navigate
                 } else {
                     updateElementText(authStatusDiv, "يجب تسجيل الدخول والتحقق من بريدك الإلكتروني أولاً للعب.", "error");
-                    showSection('login');
+                    window.location.hash = 'login';
                 }
             });
             gameIconsGridContainer.appendChild(card);
@@ -539,79 +502,94 @@
         }
 
         if (isLoggedInAndVerified) {
-            const isGameActive = gameNavLinksData.some(game => game.id === activeSectionId);
-            const isLauncherActive = activeSectionId === 'game-launcher';
-
-            if (isGameActive && !isLauncherActive) { // Show "Games" link only if inside a game
+            const isGameSectionActive = gameNavLinksData.some(game => game.id === activeSectionId);
+            if (isGameSectionActive) { 
                 navGamesLink = document.createElement('a');
                 navGamesLink.href = "#game-launcher";
                 navGamesLink.textContent = "الألعاب";
                 navGamesLink.id = "nav-games-launcher-link";
-                navGamesLink.addEventListener('click', handleNavLinkClick);
-                mainNav.appendChild(navGamesLink); // Append to end or specific position
+                navGamesLink.onclick = handleNavLinkClick; // Use onclick for nav links to avoid hash change conflicts initially
+                mainNav.appendChild(navGamesLink);
             }
         }
         if (!mainNav.contains(navLoginLink)) {
             mainNav.insertBefore(navLoginLink, mainNav.firstChild);
         }
-         // Highlight active nav link
         Array.from(mainNav.children).forEach(a => {
             if (a) a.classList.remove('active-nav-link');
             if (a && a.getAttribute('href') === `#${activeSectionId}`) {
                 a.classList.add('active-nav-link');
             }
         });
-        if (activeSectionId === 'login' || (auth.currentUser && activeSectionId !== 'login' && !auth.currentUser.emailVerified) ) {
+         if (activeSectionId === 'login' || (auth.currentUser && activeSectionId !== 'login' && !auth.currentUser.emailVerified) ) {
             if(navLoginLink) navLoginLink.classList.add('active-nav-link');
+        } else if (navLoginLink) {
+             navLoginLink.classList.remove('active-nav-link');
         }
       };
 
+      const showSectionByHash = () => {
+        const hash = window.location.hash.slice(1) || 'login'; // Default to login if no hash
+        console.log("Attempting to show section for hash:", hash);
 
-      const showSection = (targetId, isGameSection = false) => {
-        allSections.forEach(s => s.classList.remove('active'));
-        const sectionToShow = document.getElementById(targetId);
-        
-        if (sectionToShow) {
-            sectionToShow.classList.add('active');
-            // console.log(`Showing section: ${targetId}`);
-        } else {
-            console.error(`Section with ID '${targetId}' not found.`);
-            showSection('login'); // Fallback to login if section not found
-            return;
-        }
-        
         const currentUser = auth.currentUser;
         const isVerified = currentUser && currentUser.emailVerified;
+        let targetIdToShow = 'login'; // Default
 
-        updateNavigationDOM(isVerified, targetId);
-
-        // Sound logic is now handled by the click handlers (nav links or game icons)
+        if (isVerified) {
+            if (hash === 'game-launcher' || gameNavLinksData.some(game => game.id === hash)) {
+                targetIdToShow = hash;
+            } else if (hash === 'login'){ // If hash is login but user is verified, go to launcher
+                 targetIdToShow = 'game-launcher';
+                 window.location.hash = 'game-launcher'; // Correct the hash
+            }
+             else { // If hash is invalid for a verified user, go to launcher
+                targetIdToShow = 'game-launcher';
+                window.location.hash = 'game-launcher'; // Correct the hash
+            }
+        } else { // Not verified or not logged in
+            if (hash !== 'login') {
+                 window.location.hash = 'login'; // Force login hash
+                 targetIdToShow = 'login'; // and show login
+            } else {
+                targetIdToShow = 'login';
+            }
+        }
+        
+        console.log("Final targetIdToShow:", targetIdToShow);
+        allSections.forEach(s => {
+            if (s.id === targetIdToShow) {
+                s.classList.add('active');
+                 console.log(`Section ${s.id} activated.`);
+            } else {
+                s.classList.remove('active');
+            }
+        });
+        updateNavigationDOM(isVerified, targetIdToShow);
       };
+      
+      auth.onAuthStateChanged(user => {
+        updateAuthUI(user, user ? user.email : '', user ? user.emailVerified : false);
+        showSectionByHash(); // Update view based on auth state and current hash
+      });
+
 
       const handleNavLinkClick = (e) => {
           e.preventDefault(); 
-          const targetId = e.currentTarget.getAttribute('href').slice(1);
+          const targetHash = e.currentTarget.getAttribute('href'); // #login, #logout, #game-launcher
           
-          if (targetId === 'logout') { 
+          if (targetHash === '#logout') { 
              btnLogout.click();
              return;
            }
-
-          const isGame = gameNavLinksData.some(game => game.id === targetId);
-          const currentUser = auth.currentUser;
-
-          if ( (isGame || targetId === 'game-launcher') && (!currentUser || !currentUser.emailVerified)) { 
-            updateElementText(authStatusDiv, "يجب تسجيل الدخول والتحقق من بريدك الإلكتروني أولاً.", "error"); 
-            showSection('login'); 
-            return; 
-          }
-          
-          playSound('snd-click'); 
-          showSection(targetId, isGame);
+          window.location.hash = targetHash; // This will trigger hashchange
       };
-      navLoginLink.addEventListener('click', handleNavLinkClick);
+      navLoginLink.addEventListener('click', handleNavLinkClick); // For "Login" / "Logout"
       
-      // --- Game Initializations (All game init functions are defined below as in previous correct version) ---
+      window.addEventListener('hashchange', showSectionByHash);
+
+      // --- Game Initializations (All game init functions are defined below) ---
+      // (The game init functions themselves remain largely the same, ensuring they check auth status before allowing interaction)
       const initXOGame=()=>{const s=document.querySelector('#xo');if(!s)return;const bE=s.querySelector('.board'),sE=s.querySelector('.status'),rB=s.querySelector('#xo-restart');let b=Array(9).fill(''),cP='❌',gA=true;const wP=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];const cW=()=>{for(const p of wP){const [x,y,z]=p;if(b[x]&&b[x]===b[y]&&b[x]===b[z])return b[x];}return null;};const hC=(idx)=>{if(!auth.currentUser||!auth.currentUser.emailVerified){updateElementText(sE,'يرجى التحقق من بريدك للعب.','info');return;}if(!gA||b[idx])return;b[idx]=cP;bE.children[idx].textContent=cP;const w=cW();if(w){updateElementText(sE,`فاز ${w}`);playSound('snd-win');gA=false;}else if(!b.includes('')){updateElementText(sE,'تعادل');playSound('snd-lose');gA=false;}else{cP=cP==='❌'?'⭕':'❌';updateElementText(sE,`الدور: ${cP}`);playSound('snd-click');}};const rG=()=>{if(!auth.currentUser||!auth.currentUser.emailVerified){updateElementText(sE,'يرجى التحقق من بريدك للعب.','info');return;}b.fill('');cP='❌';gA=true;updateElementText(sE,'الدور: ❌');Array.from(bE.children).forEach(c=>c.textContent='');playSound('snd-click');};if(bE){bE.innerHTML=Array(9).fill().map((_,i)=>`<div class="cell" data-index="${i}"></div>`).join('');Array.from(bE.children).forEach((c,i)=>c.addEventListener('click',()=>hC(i)));}if(rB)rB.addEventListener('click',rG);if(sE)updateElementText(sE,'الدور: ❌');};
       
       const initRPSGame = () => { 
@@ -641,14 +619,14 @@
         const gameDuration = 15000; 
 
         const spawnTarget = () => {
-            if(!targetArea) return; // Guard
+            if(!targetArea) return; 
             if (targetElement) targetElement.remove();
             targetElement = document.createElement('div');
             targetElement.id = 'clickable-target';
             targetElement.textContent = '🎯';
             const areaRect = targetArea.getBoundingClientRect();
             const targetSize = 50;
-             if (areaRect.height <= targetSize || areaRect.width <= targetSize) { // Area not ready
+             if (areaRect.height <= targetSize || areaRect.width <= targetSize) { 
                 // console.warn("Target area too small or not visible for spawnTarget.");
                 return; 
             }
@@ -671,9 +649,7 @@
             showHideElement(startButton, false);
             showHideElement(targetArea, true);
             disableElement(startButton, true);
-            // Delay spawn slightly to ensure targetArea is rendered
             setTimeout(spawnTarget, 50);
-
 
             clearTimeout(gameTimerId);
             gameTimerId = setTimeout(() => {
@@ -846,19 +822,22 @@
             createBoard();
             playSound('snd-click');
         });
-        // Initial board creation if section becomes active
         const observer = new MutationObserver((mutationsList, obs) => {
             for(const mutation of mutationsList) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     if (section.classList.contains('active') && auth.currentUser && auth.currentUser.emailVerified) {
-                        if (cardsContainer.children.length === 0 || matchedPairs === cardValues.length) { // Create only if empty or game finished
+                        if (cardsContainer.children.length === 0 || matchedPairs === cardValues.length) { 
                            createBoard();
                         }
+                    } else if (!section.classList.contains('active')) {
+                        // Optionally clear the board or reset game state when section becomes inactive
+                        // cardsContainer.innerHTML = '';
+                        // matchedPairs = 0;
                     }
                 }
             }
         });
-        observer.observe(section, { attributes: true });
+        if(section) observer.observe(section, { attributes: true });
       };
       
       const initMathQuizGame = () => {
@@ -868,7 +847,6 @@
         const answerInput = section.querySelector('#math-answer');
         const submitButton = section.querySelector('#math-submit');
         const resultElement = section.querySelector('.result');
-        const inputGroup = section.querySelector('.input-group');
         let correctAnswer;
 
         const generateQuestion = () => {
@@ -885,7 +863,7 @@
             }
             showHideElement(startButton, false);
             showHideElement(questionArea, true);
-            showHideElement(inputGroup, true, 'block'); 
+            showHideElement(section.querySelector('.input-group'), true, 'block'); 
             generateQuestion();
             if(answerInput) answerInput.focus();
             playSound('snd-click');
@@ -925,7 +903,6 @@
         const submitButton = section.querySelector('#guessnum-submit');
         const resultElement = section.querySelector('.result');
         const messageElement = section.querySelector('.message');
-        const inputGroup = section.querySelector('.input-group');
         let secretNumber, attempts;
         const maxAttempts = 7;
 
@@ -936,7 +913,7 @@
             secretNumber = Math.floor(Math.random() * 100) + 1;
             attempts = 0;
             showHideElement(startButton, false);
-            showHideElement(inputGroup, true, 'block');
+            showHideElement(section.querySelector('.input-group'), true, 'block');
             if(inputField) inputField.value = '';
             if(messageElement) updateElementText(messageElement, `خمن رقمًا بين 1 و 100. لديك ${maxAttempts} محاولات.`);
             if(resultElement) updateElementText(resultElement, '--');
@@ -995,7 +972,6 @@
         const answerInput = section.querySelector('#bigsmall-answer');
         const submitButton = section.querySelector('#bigsmall-submit');
         const resultElement = section.querySelector('.result');
-        const inputGroup = section.querySelector('.input-group');
         let num1, num2, biggerNum;
 
         const generateNumbers = () => {
@@ -1014,7 +990,7 @@
             }
             showHideElement(startButton, false);
             showHideElement(questionArea, true);
-            showHideElement(inputGroup, true, 'block');
+            showHideElement(section.querySelector('.input-group'), true, 'block');
             generateNumbers();
             if(answerInput) answerInput.focus();
             playSound('snd-click');
@@ -1053,7 +1029,6 @@
         const inputField = section.querySelector('#typing-input');
         const submitButton = section.querySelector('#typing-submit'); 
         const statusElement = section.querySelector('.status');
-        const inputGroup = section.querySelector('.input-group');
 
         const sampleTexts = [
             "أهلاً بك في اختبار الكتابة السريع. حاول أن تكتب هذه الجملة بدقة وسرعة.",
@@ -1074,7 +1049,7 @@
             if(inputField) inputField.value = '';
             showHideElement(startButton, false);
             showHideElement(textToTypeElement, true);
-            showHideElement(inputGroup, true, 'block'); 
+            showHideElement(section.querySelector('.input-group'), true, 'block'); 
             showHideElement(submitButton, true); 
             disableElement(inputField, false);
             disableElement(submitButton, false);
@@ -1122,50 +1097,13 @@
         if(submitButton) submitButton.addEventListener('click', checkTyping);
         if(statusElement) updateElementText(statusElement, 'اضغط "ابدأ الاختبار"');
       };
-
+      // --- END GAME INITIALIZATIONS ---
 
       // Call all game init functions
       initXOGame(); initRPSGame(); initClickTargetGame(); initReactionTestGame(); initDiceRollGame(); initMemoryGame(); initMathQuizGame(); initGuessNumberGame(); initBigSmallGame(); initTypingTestGame();
 
-      // Initial state check
-      const currentUser = auth.currentUser;
-      if (!currentUser || !currentUser.emailVerified) { 
-        showSection('login'); 
-      } else { 
-        // If user is logged in and verified, check if a game was bookmarked (via hash)
-        const hash = window.location.hash.slice(1);
-        const isValidGameHash = gameNavLinksData.some(game => game.id === hash);
-        if (isValidGameHash) {
-            showSection(hash, true);
-        } else {
-            showSection('game-launcher'); // Default to launcher
-        }
-      }
-      // Handle hash changes for navigation (e.g., back/forward button)
-        window.addEventListener('hashchange', () => {
-            const hash = window.location.hash.slice(1);
-            const currentUser = auth.currentUser;
-            if (currentUser && currentUser.emailVerified) {
-                const isValidGameHash = gameNavLinksData.some(game => game.id === hash);
-                const isLauncherHash = hash === 'game-launcher';
-                if (isValidGameHash) {
-                    showSection(hash, true);
-                } else if (isLauncherHash || hash === '') { // Allow empty hash to go to launcher
-                    showSection('game-launcher');
-                } else if (hash === 'login' && !currentUser) { // Allow going to login if logged out
-                     showSection('login');
-                }
-                 // If hash is something else and user is logged in, default to launcher
-                else if(hash !== 'login') { 
-                    showSection('game-launcher');
-                }
-            } else if (hash === 'login' || hash === '') {
-                showSection('login');
-            } else { // If not verified or logged out and hash is not login, redirect to login
-                window.location.hash = 'login'; // This will trigger hashchange again
-            }
-        });
-
+      // Initial page load logic
+      showSectionByHash(); 
     });
   </script>
 </body>
