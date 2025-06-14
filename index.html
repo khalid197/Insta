@@ -199,13 +199,14 @@
   <section id="xo" class="game-section"> 
     <h2>إكس أو (XO)</h2>
     <div class="xo-options">
+        <button id="xo-pvp">لاعب ضد لاعب</button>
         <button id="xo-pvc">لاعب ضد كمبيوتر</button> 
     </div>
     <div class="xo-board-container">
         <div class="board"></div> 
         <canvas id="xo-winning-line-canvas"></canvas>
     </div>
-    <div class="status">اضغط "لاعب ضد كمبيوتر" للبدء</div> 
+    <div class="status">اختر نمط اللعبة</div> 
     <button id="xo-restart" style="display:none;">إعادة اللعبة</button> 
   </section>
 
@@ -525,7 +526,8 @@
           const boardElement = section.querySelector('.board');
           const statusElement = section.querySelector('.status');
           const restartButton = section.querySelector('#xo-restart');
-          const pvcButton = section.querySelector('#xo-pvc'); // Renamed
+          const pvpButton = section.querySelector('#xo-pvp'); // Re-added
+          const pvcButton = section.querySelector('#xo-pvc'); 
           const canvas = section.querySelector('#xo-winning-line-canvas');
           const ctx = canvas.getContext('2d');
           const boardContainer = section.querySelector('.xo-board-container');
@@ -533,7 +535,7 @@
           let boardState = Array(9).fill('');
           let currentPlayer = '❌';
           let gameActive = false;
-          let gameMode = null; // Will be 'pvc'
+          let gameMode = null; // 'pvp' or 'pvc'
           const playerSymbol = '❌';
           const computerSymbol = '⭕';
 
@@ -624,12 +626,12 @@
               currentPlayer = (currentPlayer === playerSymbol) ? computerSymbol : playerSymbol;
               updateElementText(statusElement, `الدور: ${currentPlayer}`);
 
-              if (gameActive && currentPlayer === computerSymbol && gameMode === 'pvc') {
+              if (gameActive && gameMode === 'pvc' && currentPlayer === computerSymbol) {
                   disableBoardInteraction(true);
                   let moveDelay = 300 + Math.random() * 400;
                   
                   setTimeout(() => {
-                      const moveIndex = computerMoveHard(); // Always use hard AI
+                      const moveIndex = computerMoveHard(); 
                       if (moveIndex !== -1 && boardState[moveIndex] === '') { 
                           handleClick(moveIndex); 
                       }
@@ -644,7 +646,7 @@
             });
           };
 
-          const computerMoveHard = () => { // This is the "hard" AI logic
+          const computerMoveHard = () => { 
             if (!gameActive) return -1;
 
             const findStrategicMove = (player, currentBoardState) => {
@@ -694,12 +696,12 @@
             return -1; 
           };
 
-          const startGame = () => { // Simplified to one mode
+          const startGameMode = (mode) => { // Accepts 'pvp' or 'pvc'
               if (!auth.currentUser || !auth.currentUser.emailVerified) {
                   updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info');
                   return;
               }
-              gameMode = 'pvc'; // Only one mode now
+              gameMode = mode;
               gameActive = true;
               boardState.fill('');
               currentPlayer = playerSymbol; 
@@ -718,7 +720,7 @@
               currentPlayer = playerSymbol;
               Array.from(boardElement.children).forEach(cell => cell.textContent = '');
               ctx.clearRect(0, 0, canvas.width, canvas.height);
-              updateElementText(statusElement, 'اضغط "لاعب ضد كمبيوتر" للبدء');
+              updateElementText(statusElement, 'اختر نمط اللعبة');
               showHideElement(restartButton, false);
               showHideElement(section.querySelector('.xo-options'), true);
               disableBoardInteraction(false); 
@@ -728,7 +730,8 @@
           boardElement.innerHTML = Array(9).fill().map((_, i) => `<div class="cell" data-index="${i}"></div>`).join('');
           Array.from(boardElement.children).forEach((cell, i) => cell.addEventListener('click', () => handleClick(i)));
           
-          if(pvcButton) pvcButton.addEventListener('click', startGame); // Only one start button now
+          if(pvpButton) pvpButton.addEventListener('click', () => startGameMode('pvp'));
+          if(pvcButton) pvcButton.addEventListener('click', () => startGameMode('pvc')); 
           if(restartButton) restartButton.addEventListener('click', resetGame);
 
           window.addEventListener('resize', resizeCanvas);
