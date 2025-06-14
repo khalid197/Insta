@@ -128,7 +128,9 @@
       text-align: center;
     }
     .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 380px; }
-    .cards.disabled .card { pointer-events: none; opacity: 0.8; } /* Style for disabled board */
+    .cards.disabled { pointer-events: none; /* Prevent clicks when computer is "thinking" or game not active for player */ }
+    .cards.disabled .card:not(.matched) { opacity: 0.8; }
+
 
     .card { width: 80px; height: 80px; background-color: #007bff; color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; border-radius: 8px; cursor: pointer; transition: transform 0.3s, background-color 0.3s; transform-style: preserve-3d; }
     .card .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
@@ -821,10 +823,9 @@
         let flippedCards = [];
         let canFlip = true;
         let gameActiveMemory = false;
-        let gameModeMemory = null; // 'pvp-memory', 'pvc-memory'
-        let currentPlayerMemory = null; // 'player1', 'player2', 'computer'
+        let gameModeMemory = null; 
+        let currentPlayerMemory = null; 
         let scoresMemory = { player1: 0, player2: 0, computer: 0 };
-        // Store objects like {index: original_index, value: card_value, element: cardElement, revealedOnce: boolean}
         let revealedByComputer = []; 
 
         function shuffle(array) {
@@ -896,7 +897,7 @@
                 const card = document.createElement('div');
                 card.classList.add('card');
                 card.dataset.value = value;
-                card.dataset.id = index; // Unique ID for each card instance
+                card.dataset.id = index; 
                 const cardFaceFront = document.createElement('div');
                 cardFaceFront.classList.add('card-face', 'card-front');
                 const cardFaceBack = document.createElement('div');
@@ -928,7 +929,7 @@
             if (!computerMemoryEntry) {
                  revealedByComputer.push({ id: cardId, value: cardValue, element: card, revealedOnce: true });
             } else {
-                computerMemoryEntry.revealedOnce = true; // Mark as seen again if it was flipped back
+                computerMemoryEntry.revealedOnce = true; 
             }
 
 
@@ -953,9 +954,7 @@
                 updateScoresDisplay();
                 playSound('snd-win');
 
-                // Remove matched cards from computer's "active" memory (it knows they are matched)
                 revealedByComputer = revealedByComputer.filter(rc => rc.id !== parseInt(card1.dataset.id) && rc.id !== parseInt(card2.dataset.id));
-
 
                 const totalPairs = cardValues.length;
                 const matchedPairsCount = (scoresMemory.player1 + scoresMemory.player2 + scoresMemory.computer);
@@ -977,11 +976,11 @@
                     showHideElement(restartButton, true); 
                 } else {
                     flippedCards = [];
-                    canFlip = true;
-                    updateStatus(); // Update status for current player's next turn (if they got a match)
+                    canFlip = true; // Current player gets another turn
+                    updateStatus(); 
                     if (gameModeMemory === 'pvc-memory' && currentPlayerMemory === 'computer' && gameActiveMemory) {
                          cardsContainer.classList.add('disabled');
-                         setTimeout(computerTurnMemory, 1200); 
+                         setTimeout(computerTurnMemory, 1500); // Computer's next turn after a match
                     } else {
                         cardsContainer.classList.remove('disabled');
                     }
@@ -993,8 +992,9 @@
                     card1.classList.remove('flipped');
                     card2.classList.remove('flipped');
                     flippedCards = [];
-                    if (gameActiveMemory) switchPlayerMemory(); // Switch turn only if no match
-                }, 1000);
+                    // canFlip will be set in switchPlayerMemory or at the start of computerTurnMemory
+                    if (gameActiveMemory) switchPlayerMemory(); 
+                }, 1200); // Increased delay to see cards before they flip back
             }
         }
 
@@ -1007,19 +1007,19 @@
                 currentPlayerMemory = currentPlayerMemory === 'player1' ? 'computer' : 'player1';
             }
             updateStatus();
-            canFlip = true; // Allow next player/computer to flip
+            canFlip = true; 
 
             if (gameModeMemory === 'pvc-memory' && currentPlayerMemory === 'computer' && gameActiveMemory) {
-                cardsContainer.classList.add('disabled'); // Disable player clicks
-                setTimeout(computerTurnMemory, 1200); 
+                cardsContainer.classList.add('disabled'); 
+                setTimeout(computerTurnMemory, 1800); // Increased delay before computer plays
             } else {
-                cardsContainer.classList.remove('disabled'); // Enable player clicks
+                cardsContainer.classList.remove('disabled'); 
             }
         }
 
         function computerTurnMemory() {
             if (!gameActiveMemory || currentPlayerMemory !== 'computer' || !canFlip) {
-                cardsContainer.classList.remove('disabled'); // Ensure board is enabled if computer turn aborts
+                cardsContainer.classList.remove('disabled'); 
                 return;
             }
             canFlip = false; 
@@ -1029,7 +1029,6 @@
             let firstCardToFlip = null;
             let secondCardToFlip = null;
 
-            // Strategy 1: Find a known match from cards revealed at least once and not yet matched
             const potentialMatches = revealedByComputer.filter(rc => rc.revealedOnce && !rc.element.classList.contains('matched'));
             for (let i = 0; i < potentialMatches.length; i++) {
                 for (let j = i + 1; j < potentialMatches.length; j++) {
@@ -1042,7 +1041,6 @@
                 if (firstCardToFlip) break;
             }
 
-            // Strategy 2: Pick one known unmatched card and one new random card
             if (!firstCardToFlip) {
                 const knownUnmatched = revealedByComputer.filter(rc => rc.revealedOnce && !rc.element.classList.contains('matched') && !rc.element.classList.contains('flipped'));
                 if (knownUnmatched.length > 0) {
@@ -1062,56 +1060,51 @@
                 }
             }
 
-            // Strategy 3: Pick two new random cards if no better option
             if (!firstCardToFlip || !secondCardToFlip || firstCardToFlip === secondCardToFlip) {
                 let availableCards = gameCards.filter(gc => !gc.classList.contains('flipped') && !gc.classList.contains('matched'));
                 if (availableCards.length >= 2) {
                     shuffle(availableCards);
                     firstCardToFlip = availableCards[0];
                     secondCardToFlip = availableCards[1];
-                } else if (availableCards.length === 1) { // Only one card left to pick randomly
+                } else if (availableCards.length === 1) { 
                      firstCardToFlip = availableCards[0];
-                     // try to find a second one from revealed ones not yet matched
                      const knownButNotFlipped = revealedByComputer.filter(rc => rc.revealedOnce && !rc.element.classList.contains('matched') && !rc.element.classList.contains('flipped') && rc.element !== firstCardToFlip);
                      if (knownButNotFlipped.length > 0) {
                         secondCardToFlip = knownButNotFlipped[0].element;
-                     } else { // No other choice
-                        secondCardToFlip = null; // Computer might only flip one card if it's the very last one.
+                     } else { 
+                        secondCardToFlip = null; 
                      }
                 }
             }
             
-            if (!firstCardToFlip) { // Should only happen if all cards are matched.
+            if (!firstCardToFlip) { 
                 canFlip = true;
                 cardsContainer.classList.remove('disabled');
                 if (gameActiveMemory) switchPlayerMemory(); 
                 return;
             }
 
-            setTimeout(() => {
+            setTimeout(() => { 
                 if (firstCardToFlip && !firstCardToFlip.classList.contains('flipped')) {
-                    // console.log("Computer flips 1:", firstCardToFlip.dataset.value, firstCardToFlip.dataset.id);
                     firstCardToFlip.classList.add('flipped');
                     flippedCards.push(firstCardToFlip);
-                     // Update computer's memory that this card is now flipped
                     const entry1 = revealedByComputer.find(c => c.id === parseInt(firstCardToFlip.dataset.id));
                     if (entry1) entry1.revealedOnce = true; else revealedByComputer.push({id: parseInt(firstCardToFlip.dataset.id), value: firstCardToFlip.dataset.value, element: firstCardToFlip, revealedOnce: true});
                     playSound('snd-click');
                 }
 
-                if (!secondCardToFlip && flippedCards.length === 1) { // Only one card was available/chosen
+                if (!secondCardToFlip && flippedCards.length === 1) { 
                     setTimeout(() => {
-                        firstCardToFlip.classList.remove('flipped'); // Flip back if only one card
+                        firstCardToFlip.classList.remove('flipped'); 
                         flippedCards = [];
                         if (gameActiveMemory) switchPlayerMemory();
-                    }, 1000);
+                    }, 1200); 
                     return;
                 }
                 
                 if (secondCardToFlip) {
-                    setTimeout(() => {
+                    setTimeout(() => { 
                         if (secondCardToFlip && !secondCardToFlip.classList.contains('flipped')) {
-                            // console.log("Computer flips 2:", secondCardToFlip.dataset.value, secondCardToFlip.dataset.id);
                             secondCardToFlip.classList.add('flipped');
                             flippedCards.push(secondCardToFlip);
                             const entry2 = revealedByComputer.find(c => c.id === parseInt(secondCardToFlip.dataset.id));
@@ -1119,12 +1112,12 @@
                             playSound('snd-click');
                         }
                         if(flippedCards.length === 2) checkForMatchMemory();
-                        else { // Something went wrong, not 2 cards flipped by computer
+                        else { 
                              if (gameActiveMemory) switchPlayerMemory();
                         }
-                    }, 700); 
+                    }, 1000); 
                 }
-            }, 700); 
+            }, 1000); 
         }
         
         function resetMemoryGame() {
