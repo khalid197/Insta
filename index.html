@@ -1,26 +1,45 @@
 <!DOCTYPE html>
-<html lang="ar" dir="ltr"> <!-- الاتجاه العام ltr مبدئيًا لواجهة تسجيل الدخول -->
+<html lang="ar"> <!-- سيتم تعديل dir بواسطة JS -->
 <head>
   <meta charset="UTF-8">
   <title>🎮 موقع الألعاب</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <style>
-    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;700;800;900&display=swap");
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-
     /* --- أنماط واجهة تسجيل الدخول (Glassmorphism) --- */
-    body.login-interface-active {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat;
-      background-size: cover;
-      background-position: center;
-      direction: ltr; /* LTR for login form base */
+    /* هذه الأنماط ستُطبق فقط عندما يكون body.login-interface-active */
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;700;800;900&display=swap");
+
+    body.login-interface-active, body.login-interface-active * {
+      /* تطبيق Poppins فقط لواجهة تسجيل الدخول إذا لزم الأمر بشكل أكثر تحديدًا */
+      /* font-family: "Poppins", sans-serif;  <-- Poppins سيُطبق من خلال * أدناه إذا لم يكن هناك تعارض */
     }
-    .login-wrapper { /* هذا سيكون قسم تسجيل الدخول الرئيسي */
+    body.login-interface-active * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif !important; }
+
+
+    body.login-interface-active {
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      min-height: 100vh !important;
+      background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat !important;
+      background-size: cover !important;
+      background-position: center !important;
+      direction: ltr !important; /* LTR for login form base */
+    }
+    .login-wrapper-container { /* حاوية إضافية للتحكم في العرض */
+        display: none; /* يبدأ مخفيًا */
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    body.login-interface-active .login-wrapper-container {
+        display: flex !important;
+    }
+
+    .login-wrapper {
       width: 420px;
       background-color: transparent;
       border: 2px solid rgba(255, 255, 255, 0.2);
@@ -29,141 +48,122 @@
       color: #fff;
       border-radius: 16px;
       padding: 20px 30px;
-      direction: rtl; /* المحتوى الداخلي RTL */
-      display: none; /* يبدأ مخفيًا حتى يتم التحكم به بواسطة JS */
+      /* direction: rtl;  سيتم التحكم بالمحتوى الداخلي إذا لزم الأمر */
     }
-    body.login-interface-active .login-wrapper {
-        display: block; /* يظهر فقط عندما تكون واجهة تسجيل الدخول نشطة */
-    }
-    .login-wrapper h1 { font-size: 30px; text-align: center; margin-bottom:20px;}
+    .login-wrapper h1 { font-size: 30px; text-align: center; margin-bottom: 20px;}
     .login-wrapper .input-box { width: 100%; height: 50px; position: relative; margin: 30px 0; }
-    .login-wrapper .input-box input { width: 100%; height: 100%; background: transparent; border: none; outline: none; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 40px; font-size: 16px; color: #fff; padding: 20px 45px 20px 20px; text-align: right; direction: rtl; }
-    .login-wrapper .input-box input::placeholder { color: #fff; text-align: right; }
-    .login-wrapper .input-box i { position: absolute; top: 50%; transform: translateY(-50%); font-size: 20px; left: 20px; }
-    .login-wrapper .remember-forgot { display: flex; justify-content: space-between; font-size: 14px; margin: -15px 0 15px; direction: rtl; }
-    .login-wrapper .remember-forgot label input { accent-color: #fff; margin-left: 3px; }
+    .login-wrapper .input-box input { width: 100%; height: 100%; background: transparent; border: none; outline: none; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 40px; font-size: 16px; color: #fff; padding: 20px 45px 20px 20px; /* LTR padding */ }
+    .login-wrapper .input-box input::placeholder { color: #fff; }
+    .login-wrapper .input-box i { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-size: 20px; }
+    .login-wrapper .remember-forgot { display: flex; justify-content: space-between; font-size: 14px; margin: -15px 0 15px; }
+    .login-wrapper .remember-forgot label input { accent-color: #fff; margin-right: 3px; }
     .login-wrapper .remember-forgot a { color: #fff; text-decoration: none; }
     .login-wrapper .remember-forgot a:hover { text-decoration: underline; }
-    .login-wrapper .btn { width: 100%; height: 45px; background: #fff; border: none; outline: none; border-radius: 40px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); cursor: pointer; font-size: 16px; color: #333; font-weight: 600; margin-top: 15px; display: flex; align-items: center; justify-content: center;}
-    .login-wrapper .btn:disabled { background: #aaa; color: #666; cursor: not-allowed; }
+    .login-wrapper .btn { width: 100%; height: 45px; background: #fff; border: none; outline: none; border-radius: 40px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); cursor: pointer; font-size: 16px; color: #333; font-weight: 600; margin-top: 15px;}
+    .login-wrapper .btn:disabled { background: #aaa !important; color: #666 !important; cursor: not-allowed !important; }
     .login-wrapper .register-link { text-align: center; font-size: 14px; margin: 20px 0 15px; }
     .login-wrapper .register-link p a { color: #fff; text-decoration: none; font-weight: 600; }
     .login-wrapper .register-link p a:hover { text-decoration: underline; }
-    .login-wrapper #auth-status { margin-top:10px; padding: 8px; border-radius: 8px; font-weight: 500; min-height: 1.5em; text-align: center; color: #fff; font-size: 0.9em;}
-    .login-wrapper #auth-status.success { background-color: rgba(40, 167, 69, 0.3); border: 1px solid rgba(40, 167, 69, 0.6); }
-    .login-wrapper #auth-status.error { background-color: rgba(220, 53, 69, 0.3); border: 1px solid rgba(220, 53, 69, 0.6); }
-    .login-wrapper #auth-status.info { background-color: rgba(23, 162, 184, 0.3); border: 1px solid rgba(23, 162, 184, 0.6); }
+    .login-wrapper #auth-status-login { margin-top:10px; padding: 8px; border-radius: 8px; font-weight: 500; min-height: 1.5em; text-align: center; color: #fff; font-size: 0.9em;}
+    .login-wrapper #auth-status-login.success { background-color: rgba(40, 167, 69, 0.4); border: 1px solid rgba(40, 167, 69, 0.7); }
+    .login-wrapper #auth-status-login.error { background-color: rgba(220, 53, 69, 0.4); border: 1px solid rgba(220, 53, 69, 0.7); }
+    .login-wrapper #auth-status-login.info { background-color: rgba(23, 162, 184, 0.4); border: 1px solid rgba(23, 162, 184, 0.7); }
     /* --- نهاية أنماط واجهة تسجيل الدخول --- */
 
-
-    /* --- أنماط واجهة الألعاب (الشكل القديم) --- */
+    /* --- أنماط واجهة الألعاب (القديمة الخالصة) --- */
+    /* هذه الأنماط ستُطبق فقط عندما يكون body.games-interface-active */
     body.games-interface-active {
-      margin:0; /* إعادة تعيين margin */
-      font-family: Arial, sans-serif; /* الخط القديم */
-      direction: rtl; /* الاتجاه العربي الافتراضي للألعاب */
-      background:#fafafa; /* الخلفية البيضاء القديمة */
-      color:#333; /* لون النص القديم */
-      display: block; /* إلغاء flex وتوسيط body */
-      min-height: auto; /* إلغاء min-height */
-      align-items: stretch; /* إلغاء align-items */
-      justify-content: flex-start; /* إلغاء justify-content */
+      margin:0 !important;
+      font-family: Arial, sans-serif !important;
+      direction: rtl !important;
+      background:#fafafa !important;
+      color:#333 !important;
+      display: block !important;
+      min-height: auto !important;
+      align-items: stretch !important;
+      justify-content: flex-start !important;
     }
-    body.games-interface-active nav {
-      background:#1976d2; /* لون شريط التنقل القديم */
-      padding:12px; text-align:center; position:sticky; top:0; z-index: 1000;
-      display: block !important; /* تأكيد ظهور شريط التنقل */
+    nav#games-nav { /* شريط تنقل خاص بالألعاب */
+      background:#1976d2; padding:12px; text-align:center; position:sticky; top:0; z-index: 1000;
+      display: none; /* يبدأ مخفيًا */
     }
-    body.games-interface-active nav a { color:white; margin:0 8px; text-decoration:none; font-size:1rem; }
-    body.games-interface-active nav a:hover, body.games-interface-active nav a.active { text-decoration:underline; }
+    body.games-interface-active nav#games-nav { display: block !important; }
+    body.games-interface-active nav#games-nav a { color:white; margin:0 8px; text-decoration:none; font-size:1rem; }
+    body.games-interface-active nav#games-nav a:hover, body.games-interface-active nav#games-nav a.active { text-decoration:underline; }
 
-    body.games-interface-active section.game-section { /* الأقسام في واجهة الألعاب */
-      display:none; /* تبدأ مخفية ويتم التحكم بها بـ .active */
-      padding:20px; max-width:480px; margin:20px auto; background:white;
-      border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);
-      color:#333;
-      direction: rtl;
+    div#games-container { display: none; } /* حاوية الألعاب تبدأ مخفية */
+    body.games-interface-active div#games-container { display: block !important; }
+
+    body.games-interface-active section.game-section {
+      display:none; padding:20px; max-width:480px; margin:20px auto; background:white;
+      border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1); color:#333; direction: rtl;
     }
-    body.games-interface-active section.game-section.active { display:block; }
-    body.games-interface-active section.game-section h2 { margin-top:0; color:#333; text-align:right; margin-bottom: 15px;}
-    body.games-interface-active section.game-section button { /* أزرار الألعاب */
-      padding:8px 16px; margin:8px 4px; font-size:1rem; cursor:pointer;
+    body.games-interface-active section.game-section.active { display:block !important; }
+    body.games-interface-active section.game-section h2 { margin-top:0; font-family: Arial, sans-serif !important; color:#333 !important; text-align:right; margin-bottom: 15px;}
+    body.games-interface-active section.game-section button {
+      padding:8px 16px; margin:8px 4px; font-size:1rem; cursor:pointer; font-family: Arial, sans-serif !important;
       border:none; border-radius:6px; background:#0288d1; color:white; transition:background .2s;
     }
     body.games-interface-active section.game-section button:hover { background:#026aa7; }
-    body.games-interface-active section.game-section button:disabled { background:#ccc; cursor:not-allowed; }
-
+    body.games-interface-active section.game-section button:disabled { background:#ccc !important; color: #666 !important; cursor:not-allowed !important; }
     body.games-interface-active .status, body.games-interface-active .result, body.games-interface-active .message { margin:15px 0; font-size:1.1rem; min-height: 1.2em; text-align: right;}
     body.games-interface-active .board { display:grid; grid-template-columns:repeat(3,100px); gap:8px; justify-content:center; margin:15px auto; }
     body.games-interface-active .cell { width:100px; height:100px; border:2px solid #999; display:flex; align-items:center; justify-content:center; font-size:2.5rem; background:#fdfdfd; transition:background .2s; cursor:pointer; border-radius: 4px;}
     body.games-interface-active .cell:hover { background:#f0f0f0; }
-    body.games-interface-active .cards { display:grid; grid-template-columns:repeat(4,80px); gap:10px; justify-content:center; margin-bottom: 15px; }
-    body.games-interface-active .card { width:80px; height:80px; background:#eee; display:flex; align-items:center; justify-content:center; font-size:1.6rem; cursor:pointer; border-radius: 4px; border: 1px solid #ccc; }
-    body.games-interface-active .card.revealed { background:#fff; cursor:default; }
-    body.games-interface-active .card.matched { background: #c8e6c9; }
-    body.games-interface-active .input-group { margin: 10px 0; } /* أنماط حقول إدخال الألعاب */
-    body.games-interface-active .input-group label { display: block; margin-bottom: 5px; font-weight: normal;}
     body.games-interface-active .input-group input[type="text"],
     body.games-interface-active .input-group input[type="number"] {
-      padding: 8px; border-radius: 4px; border: 1px solid #ccc; margin-left: 5px; font-size: 1rem; width: auto; box-sizing: content-box; direction: rtl; text-align: right;
+      padding: 8px; border-radius: 4px; border: 1px solid #ccc; margin-left: 5px; font-size: 1rem; direction: rtl; text-align: right; font-family: Arial, sans-serif !important;
     }
-     body.games-interface-active .question-area { margin-bottom:10px; font-size: 1.2rem; font-weight: normal; text-align: right; }
-     body.games-interface-active .timebox { font-size:2rem; margin:15px; text-align: center; }
     /* --- نهاية أنماط واجهة الألعاب --- */
-
-    /* إخفاء شريط التنقل مبدئيًا */
-    nav#main-nav { display: none; }
-    .hidden-initially { display: none !important; } /* لإخفاء أقسام الألعاب مبدئيًا */
-    .button-text { margin: 0 5px; } /* لتوسيط النص في الزر */
-
   </style>
 </head>
 <body>
 
-  <!-- شريط التنقل (سيظهر فقط مع واجهة الألعاب) -->
-  <nav id="main-nav">
-    <a href="#login" id="nav-login-link-games">تسجيل الخروج</a>
-    <!-- روابط الألعاب ستتم إضافتها هنا بواسطة JavaScript -->
-  </nav>
-
-  <!-- حاوية لواجهة تسجيل الدخول -->
-  <div id="login-interface-container">
+  <!-- واجهة تسجيل الدخول (Glassmorphism) -->
+  <div class="login-wrapper-container" id="login-interface-container">
     <div class="wrapper">
         <form action="javascript:void(0);">
-            <h1 id="login-title">تسجيل الدخول</h1>
-            <div id="auth-form-fields">
+            <h1 id="login-title-glass">Login</h1> <!-- ID مختلف للعنوان -->
+            <div id="auth-form-fields-glass">
                 <div class="input-box">
-                    <input type="email" placeholder="البريد الإلكتروني" id="login-email" required>
+                    <input type="email" placeholder="البريد الإلكتروني" id="login-email-glass" required style="text-align: right; direction: rtl;">
                     <i class='bx bxs-user'></i>
                 </div>
                 <div class="input-box">
-                    <input type="password" placeholder="كلمة المرور" id="login-password" required>
+                    <input type="password" placeholder="كلمة المرور" id="login-password-glass" required style="text-align: right; direction: rtl;">
                     <i class='bx bxs-lock-alt'></i>
                 </div>
             </div>
-            <button type="button" class="btn" id="btn-main-action">
-                 <span class="button-text">تسجيل الدخول</span>
-            </button>
+            <!-- <div class="remember-forgot">
+                <label><input type="checkbox" id="remember-me-glass">Remember me</label>
+                <a href="#" id="forgot-password-link-glass">Forgot password?</a>
+            </div> -->
+            <button type="button" class="btn" id="btn-main-action-glass">Login</button>
             <div class="register-link">
-                <p id="toggle-auth-mode-text">ليس لديك حساب؟ <a href="#" id="toggle-auth-mode-link-inner">إنشاء حساب</a></p>
+                <p id="toggle-auth-mode-text-glass">Don't have an account? <a href="#" id="toggle-auth-mode-link-inner-glass">Register</a></p>
             </div>
-            <button type="button" class="btn" id="btn-logout-from-login" style="display:none; margin-top: 10px;">تسجيل الخروج</button> <!-- زر خروج احتياطي إذا لزم الأمر -->
+            <button type="button" class="btn" id="btn-logout-glass" style="display:none; margin-top: 10px;">Logout</button>
         </form>
-        <div id="auth-status" class="info">يرجى تسجيل الدخول أو إنشاء حساب جديد.</div>
+        <div id="auth-status-login" class="info">يرجى تسجيل الدخول أو إنشاء حساب جديد.</div>
     </div>
   </div>
 
-  <!-- حاوية لواجهة الألعاب (ستظهر بعد تسجيل الدخول) -->
-  <div id="games-interface-container" style="display: none; width:100%;">
-      <section id="xo" class="game-section hidden-initially"> <h2>إكس أو (XO)</h2> <div class="board"></div> <div class="status">الدور: ❌</div> <button id="xo-restart">إعادة XO</button> </section>
-      <section id="rps" class="game-section hidden-initially"> <h2>حجر ورقة مقص 🧱📄✂️</h2> <div class="gamebox"> <button data-choice="🧱">🧱</button> <button data-choice="📄">📄</button> <button data-choice="✂️">✂️</button> </div> <div class="result">اختر لبدء!</div> </section>
-      <section id="click" class="game-section hidden-initially"> <h2>اصطياد الهدف 🎯</h2> <div class="gamebox"><button id="click-start">ابدأ</button></div> <div id="click-target-area" class="gamebox"></div> <div class="status">اضغط "ابدأ"</div> </section>
-      <section id="react" class="game-section hidden-initially"> <h2>اختبار سرعة الضغط ⌛</h2> <div class="gamebox"><button id="react-start">ابدأ</button></div> <div class="timebox">--</div> </section>
-      <section id="dice" class="game-section hidden-initially"> <h2>لعبة النرد 🎲</h2> <div class="gamebox"><button id="dice-roll">رمي النرد</button></div> <div class="result">--</div> </section>
-      <section id="memory" class="game-section hidden-initially"> <h2>لعبة الذاكرة 🧠</h2> <div class="cards"></div> <div class="status">اضغط بطاقة للبدء</div> <div class="gamebox"><button id="memory-restart">إعادة اللعبة</button></div> </section>
-      <section id="math" class="game-section hidden-initially"> <h2>جمع الأرقام 🧮</h2> <div class="gamebox"><button id="math-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="number" id="math-answer" placeholder="أدخل إجابتك"/> <button id="math-submit">تحقق</button> </div> <div class="result">--</div> </section>
-      <section id="guessnum" class="game-section hidden-initially"> <h2>تخمين الرقم 🔢</h2> <div class="gamebox"><button id="guessnum-start">ابدأ اللعبة</button></div> <div class="input-group" style="display:none;"> <input type="number" id="guessnum-input" placeholder="خمن بين 1 و100"/> <button id="guessnum-submit">خمن</button> </div> <div class="result">--</div> <div class="message"></div> </section>
-      <section id="bigsmall" class="game-section hidden-initially"> <h2>من الأكبر؟ 📏</h2> <div class="gamebox"><button id="bigsmall-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="number" id="bigsmall-answer" placeholder="اكتب الرقم الأكبر"/> <button id="bigsmall-submit">تحقق</button> </div> <div class="result">--</div> </section>
-      <section id="typing" class="game-section hidden-initially"> <h2>اختبار الكتابة ⌨️</h2> <div class="gamebox"><button id="typing-start">ابدأ الاختبار</button></div> <div class="text-to-type" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="text" id="typing-input" placeholder="اكتب النص هنا"/> <button id="typing-submit">تحقق</button> </div> <div class="status">--</div> </section>
+  <!-- واجهة الألعاب (الشكل القديم) -->
+  <nav id="games-nav">
+    <a href="#" id="nav-logout-link-games">تسجيل الخروج</a> <!-- رابط الخروج هنا -->
+    <!-- روابط الألعاب ستتم إضافتها هنا بواسطة JavaScript -->
+  </nav>
+  <div id="games-container">
+      <section id="xo" class="game-section"> <h2>إكس أو (XO)</h2> <div class="board"></div> <div class="status">الدور: ❌</div> <button id="xo-restart">إعادة XO</button> </section>
+      <section id="rps" class="game-section"> <h2>حجر ورقة مقص 🧱📄✂️</h2> <div class="gamebox"> <button data-choice="🧱">🧱</button> <button data-choice="📄">📄</button> <button data-choice="✂️">✂️</button> </div> <div class="result">اختر لبدء!</div> </section>
+      <section id="click" class="game-section"> <h2>اصطياد الهدف 🎯</h2> <div class="gamebox"><button id="click-start">ابدأ</button></div> <div id="click-target-area" class="gamebox"></div> <div class="status">اضغط "ابدأ"</div> </section>
+      <section id="react" class="game-section"> <h2>اختبار سرعة الضغط ⌛</h2> <div class="gamebox"><button id="react-start">ابدأ</button></div> <div class="timebox">--</div> </section>
+      <section id="dice" class="game-section"> <h2>لعبة النرد 🎲</h2> <div class="gamebox"><button id="dice-roll">رمي النرد</button></div> <div class="result">--</div> </section>
+      <section id="memory" class="game-section"> <h2>لعبة الذاكرة 🧠</h2> <div class="cards"></div> <div class="status">اضغط بطاقة للبدء</div> <div class="gamebox"><button id="memory-restart">إعادة اللعبة</button></div> </section>
+      <section id="math" class="game-section"> <h2>جمع الأرقام 🧮</h2> <div class="gamebox"><button id="math-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="number" id="math-answer" placeholder="أدخل إجابتك"/> <button id="math-submit">تحقق</button> </div> <div class="result">--</div> </section>
+      <section id="guessnum" class="game-section"> <h2>تخمين الرقم 🔢</h2> <div class="gamebox"><button id="guessnum-start">ابدأ اللعبة</button></div> <div class="input-group" style="display:none;"> <input type="number" id="guessnum-input" placeholder="خمن بين 1 و100"/> <button id="guessnum-submit">خمن</button> </div> <div class="result">--</div> <div class="message"></div> </section>
+      <section id="bigsmall" class="game-section"> <h2>من الأكبر؟ 📏</h2> <div class="gamebox"><button id="bigsmall-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="number" id="bigsmall-answer" placeholder="اكتب الرقم الأكبر"/> <button id="bigsmall-submit">تحقق</button> </div> <div class="result">--</div> </section>
+      <section id="typing" class="game-section"> <h2>اختبار الكتابة ⌨️</h2> <div class="gamebox"><button id="typing-start">ابدأ الاختبار</button></div> <div class="text-to-type" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="text" id="typing-input" placeholder="اكتب النص هنا"/> <button id="typing-submit">تحقق</button> </div> <div class="status">--</div> </section>
   </div>
 
   <audio id="snd-click" src="https://actions.google.com/sounds/v1/alarms/button_click.ogg"></audio>
@@ -189,113 +189,102 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       const playSound = (id) => { const s = document.getElementById(id); if (s) { s.currentTime = 0; s.play().catch(e => {}); } };
-      const updateButtonText = (btnEl, baseTxt) => { if(btnEl){const tS=btnEl.querySelector('.button-text')||document.createElement('span');tS.className='button-text';tS.textContent=baseTxt;btnEl.innerHTML='';btnEl.appendChild(tS);} };
-      const updateElementText = (el, txt, type) => { if(el) { el.textContent = txt; if (el.id === 'auth-status') { el.className = ''; el.classList.add(type || 'info');}}};
+      const updateElementText = (el, txt, type) => { if(el) { el.textContent = txt; if (el.id && el.id.startsWith('auth-status')) { el.className = ''; el.classList.add(type || 'info'); }}};
       const showHideElement = (el, show, disp = 'block') => { if(el) el.style.display = show ? disp : 'none'; };
       const disableElement = (el, dis) => { if(el) el.disabled = dis; };
 
-      const loginInterfaceContainer = document.getElementById('login-interface-container');
-      const gamesInterfaceContainer = document.getElementById('games-interface-container');
       const bodyElement = document.body;
+      const htmlElement = document.documentElement;
+      const loginInterfaceContainer = document.getElementById('login-interface-container');
+      const gamesInterfaceContainer = document.getElementById('games-container');
+      const gamesNav = document.getElementById('games-nav');
+      const navLogoutLinkGames = document.getElementById('nav-logout-link-games');
 
       const gameSections = gamesInterfaceContainer.querySelectorAll('.game-section');
-      const mainNav = document.getElementById('main-nav');
-      const navLoginLinkGames = document.getElementById('nav-login-link-games'); // رابط الخروج في شريط الألعاب
-
       const gameNavLinksData = [ { href: "#xo", text: "إكس أو" }, { href: "#rps", text: "حجر ورقة مقص" }, { href: "#click", text: "اصطياد الهدف" }, { href: "#react", text: "سرعة الضغط" }, { href: "#dice", text: "النرد" }, { href: "#memory", text: "الذاكرة" }, { href: "#math", text: "الرياضيات" }, { href: "#guessnum", text: "تخمين الرقم" }, { href: "#bigsmall", text: "من الأكبر" }, { href: "#typing", text: "الكتابة" } ];
-      let currentNavLinksElements = [navLoginLinkGames]; // سيبدأ برابط تسجيل الخروج
-      let isLoginMode = true;
+      let currentGamesNavLinksElements = [navLogoutLinkGames];
+      let isLoginModeGlass = true; // للتحكم في وضع فورم Glassmorphism
 
-      // عناصر واجهة تسجيل الدخول
-      const loginWrapper = loginInterfaceContainer.querySelector('.wrapper');
-      const loginTitle = loginInterfaceContainer.querySelector('#login-title');
-      const mainActionButton = loginInterfaceContainer.querySelector('#btn-main-action');
-      const toggleAuthModeText = loginInterfaceContainer.querySelector('#toggle-auth-mode-text');
-      const authFormFields = loginInterfaceContainer.querySelector('#auth-form-fields');
-      const loginEmailInput = loginInterfaceContainer.querySelector('#login-email');
-      const loginPasswordInput = loginInterfaceContainer.querySelector('#login-password');
-      const btnLogoutFromLogin = loginInterfaceContainer.querySelector('#btn-logout-from-login'); // زر الخروج في فورم اللوجن (يجب أن يكون مخفي عادة)
-      const authStatusDiv = loginInterfaceContainer.querySelector('#auth-status');
-
+      // عناصر واجهة تسجيل الدخول Glassmorphism
+      const loginTitleGlass = document.getElementById('login-title-glass');
+      const mainActionButtonGlass = document.getElementById('btn-main-action-glass');
+      const toggleAuthModeTextGlass = document.getElementById('toggle-auth-mode-text-glass');
+      const authFormFieldsGlass = document.getElementById('auth-form-fields-glass');
+      const loginEmailInputGlass = document.getElementById('login-email-glass');
+      const loginPasswordInputGlass = document.getElementById('login-password-glass');
+      const btnLogoutGlass = document.getElementById('btn-logout-glass'); // زر الخروج في فورم اللوجن
+      const authStatusDivGlass = document.getElementById('auth-status-login');
 
       const switchToLoginInterface = () => {
-        bodyElement.classList.add('login-interface-active');
-        bodyElement.classList.remove('games-interface-active');
-        htmlElement.dir = 'ltr'; // لتصميم اللوجن
+        bodyElement.className = 'login-interface-active'; // إزالة أي كلاسات أخرى
+        htmlElement.dir = 'ltr';
         showHideElement(loginInterfaceContainer, true);
         showHideElement(gamesInterfaceContainer, false);
-        showHideElement(mainNav, false); // إخفاء شريط التنقل الرئيسي
-        isLoginMode = true; updateLoginModeUI();
-        updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
+        showHideElement(gamesNav, false);
+        isLoginModeGlass = true; updateLoginModeUIGlass();
+        updateElementText(authStatusDivGlass, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
+        showHideElement(authFormFieldsGlass, true);
+        showHideElement(mainActionButtonGlass, true);
+        showHideElement(toggleAuthModeTextGlass.parentElement, true); // .register-link
+        showHideElement(btnLogoutGlass, false);
       };
 
       const switchToGamesInterface = (userEmail) => {
-        bodyElement.classList.add('games-interface-active');
-        bodyElement.classList.remove('login-interface-active');
-        htmlElement.dir = 'rtl'; // لواجهة الألعاب
+        bodyElement.className = 'games-interface-active'; // إزالة أي كلاسات أخرى
+        htmlElement.dir = 'rtl';
         showHideElement(loginInterfaceContainer, false);
         showHideElement(gamesInterfaceContainer, true);
-        showHideElement(mainNav, true); // إظهار شريط التنقل الرئيسي
-        updateElementText(navLoginLinkGames, `تسجيل الخروج (${userEmail.substring(0, userEmail.indexOf('@'))})`);
-        updateNavigationDOM(true); // بناء روابط الألعاب
-        if (gameNavLinksData.length > 0) { // عرض أول لعبة
+        showHideElement(gamesNav, true);
+        updateElementText(navLogoutLinkGames, `تسجيل الخروج (${userEmail.substring(0, Math.min(10, userEmail.indexOf('@')))}...)`);
+        updateGamesNavigationDOM(true);
+        if (gameNavLinksData.length > 0) {
             showGameSection(gameNavLinksData[0].href.slice(1));
         }
       };
 
-
-      const updateLoginModeUI = () => {
-        const linkId = 'toggle-auth-mode-link-inner';
-        if (isLoginMode) {
-          loginTitle.textContent = 'تسجيل الدخول'; updateButtonText(mainActionButton, 'تسجيل الدخول');
-          toggleAuthModeText.innerHTML = `ليس لديك حساب؟ <a href="#" id="${linkId}">إنشاء حساب</a>`;
-          loginPasswordInput.placeholder = "كلمة المرور";
+      const updateLoginModeUIGlass = () => {
+        const linkId = 'toggle-auth-mode-link-inner-glass';
+        if (isLoginModeGlass) {
+          loginTitleGlass.textContent = 'Login'; // استخدام النص الأصلي للتصميم
+          mainActionButtonGlass.textContent = 'Login';
+          toggleAuthModeTextGlass.innerHTML = `Don't have an account? <a href="#" id="${linkId}">Register</a>`;
+          loginPasswordInputGlass.placeholder = "Password";
         } else {
-          loginTitle.textContent = 'إنشاء حساب جديد'; updateButtonText(mainActionButton, 'إنشاء حساب');
-          toggleAuthModeText.innerHTML = `لديك حساب بالفعل؟ <a href="#" id="${linkId}">تسجيل الدخول</a>`;
-          loginPasswordInput.placeholder = "كلمة المرور (6+ حروف)";
+          loginTitleGlass.textContent = 'Register';
+          mainActionButtonGlass.textContent = 'Register';
+          toggleAuthModeTextGlass.innerHTML = `Already have an account? <a href="#" id="${linkId}">Login</a>`;
+          loginPasswordInputGlass.placeholder = "Password (6+ characters)";
         }
         const newToggleLink = document.getElementById(linkId);
-        if(newToggleLink) newToggleLink.addEventListener('click', toggleMode);
+        if(newToggleLink) newToggleLink.addEventListener('click', toggleModeGlass);
       };
       
-      const toggleMode = (e) => { if(e) e.preventDefault(); isLoginMode = !isLoginMode; updateLoginModeUI(); updateElementText(authStatusDiv, isLoginMode ? 'أدخل بيانات تسجيل الدخول.' : 'أدخل بيانات لإنشاء حساب جديد.', 'info'); };
-      updateLoginModeUI(); 
+      const toggleModeGlass = (e) => { if(e) e.preventDefault(); isLoginModeGlass = !isLoginModeGlass; updateLoginModeUIGlass(); updateElementText(authStatusDivGlass, isLoginModeGlass ? 'Please enter your login credentials.' : 'Please enter details to register.', 'info'); };
+      updateLoginModeUIGlass(); 
 
-      const handleAuthAction = () => {
-        const email = loginEmailInput.value.trim(); const password = loginPasswordInput.value;
-        if (!email || !password) { updateElementText(authStatusDiv, "الرجاء إدخال البريد الإلكتروني وكلمة المرور.", 'error'); return; }
-        if (!isLoginMode && password.length < 6) { updateElementText(authStatusDiv, "كلمة المرور يجب أن تكون 6 حروف على الأقل.", 'error'); return; }
-        updateElementText(authStatusDiv, isLoginMode ? 'جاري تسجيل الدخول...' : 'جاري إنشاء الحساب...', 'info');
-        disableElement(mainActionButton, true);
-        const actionPromise = isLoginMode ? auth.signInWithEmailAndPassword(email, password) : auth.createUserWithEmailAndPassword(email, password);
+      const handleAuthActionGlass = () => {
+        const email = loginEmailInputGlass.value.trim(); const password = loginPasswordInputGlass.value;
+        if (!email || !password) { updateElementText(authStatusDivGlass, "Please enter email and password.", 'error'); return; }
+        if (!isLoginModeGlass && password.length < 6) { updateElementText(authStatusDivGlass, "Password should be at least 6 characters.", 'error'); return; }
+        updateElementText(authStatusDivGlass, isLoginModeGlass ? 'Logging in...' : 'Creating account...', 'info');
+        disableElement(mainActionButtonGlass, true);
+        const actionPromise = isLoginModeGlass ? auth.signInWithEmailAndPassword(email, password) : auth.createUserWithEmailAndPassword(email, password);
         actionPromise
-          .then(() => { loginEmailInput.value = ''; loginPasswordInput.value = '';}) // سيتم التعامل مع الانتقال بواسطة onAuthStateChanged
+          .then(() => { loginEmailInputGlass.value = ''; loginPasswordInputGlass.value = '';})
           .catch((error) => {
-            let msg = "حدث خطأ. حاول مرة أخرى.";
-            if (error.code === 'auth/invalid-api-key' || (error.code === 'auth/internal-error' && error.message.includes("API key not valid"))) { msg = "خطأ تهيئة المصادقة. تحقق من مفتاح API."; }
-            else if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') msg = "البريد أو كلمة المرور غير صحيحة.";
-            else if (error.code === 'auth/email-already-in-use') msg = "هذا البريد مستخدم بالفعل.";
-            else if (error.code === 'auth/weak-password') msg = "كلمة المرور ضعيفة (6 حروف على الأقل).";
-            else if (error.code === 'auth/invalid-email') msg = "صيغة البريد غير صحيحة.";
-            console.error("Auth Error:",error.code, error.message); updateElementText(authStatusDiv, msg, 'error');
+            let msg = "An error occurred. Please try again.";
+            if (error.code === 'auth/invalid-api-key' || (error.code === 'auth/internal-error' && error.message.includes("API key not valid"))) { msg = "Authentication service configuration error. Check API key."; }
+            else if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') msg = "Invalid email or password.";
+            else if (error.code === 'auth/email-already-in-use') msg = "This email is already in use.";
+            else if (error.code === 'auth/weak-password') msg = "Password is too weak (at least 6 characters).";
+            else if (error.code === 'auth/invalid-email') msg = "The email address is badly formatted.";
+            console.error("Auth Error:",error.code, error.message); updateElementText(authStatusDivGlass, msg, 'error');
           })
-          .finally(() => { disableElement(mainActionButton, false); });
+          .finally(() => { disableElement(mainActionButtonGlass, false); });
       };
-      mainActionButton.addEventListener('click', handleAuthAction);
-      
-      // زر الخروج في شريط الألعاب
-      navLoginLinkGames.addEventListener('click', (e) => {
-          e.preventDefault();
-          auth.signOut().catch(err => console.error('Logout error', err));
-      });
-      // زر الخروج الاحتياطي في فورم اللوجن (عادة لا يظهر)
-      btnLogoutFromLogin.addEventListener('click', () => {
-          auth.signOut().catch(err => console.error('Logout error', err));
-      });
-
-
-      const htmlElement = document.documentElement; // Get <html> element
+      mainActionButtonGlass.addEventListener('click', handleAuthActionGlass);
+      btnLogoutGlass.addEventListener('click', () => { auth.signOut().catch(e => console.error('Logout error', e)); }); // زر الخروج في فورم اللوجن
+      navLogoutLinkGames.addEventListener('click', (e) => { e.preventDefault(); auth.signOut().catch(e => console.error('Logout error', e));}); // زر الخروج في شريط الألعاب
 
       auth.onAuthStateChanged(user => {
         if (user) {
@@ -305,42 +294,37 @@
         }
       });
 
-      const updateNavigationDOM = (isLoggedIn) => {
-        // إزالة روابط الألعاب القديمة (ما عدا رابط تسجيل الخروج/الدخول)
-        currentNavLinksElements.forEach(link => { if (link !== navLoginLinkGames) link.remove(); });
-        currentNavLinksElements = [navLoginLinkGames];
-
+      const updateGamesNavigationDOM = (isLoggedIn) => {
+        currentGamesNavLinksElements.forEach(link => { if (link !== navLogoutLinkGames) link.remove(); });
+        currentGamesNavLinksElements = [navLogoutLinkGames]; // يبدأ بزر الخروج
         if (isLoggedIn) {
-          gameNavLinksData.forEach(data => {
-            const l = document.createElement('a'); l.href=data.href; l.textContent=data.text;
-            l.addEventListener('click',handleGameNavLinkClick); mainNav.appendChild(l); currentNavLinksElements.push(l);
-          });
+          gameNavLinksData.forEach(data => { const l = document.createElement('a'); l.href=data.href; l.textContent=data.text; l.addEventListener('click',handleGameNavLinkClick); gamesNav.appendChild(l); currentGamesNavLinksElements.push(l); });
         }
       };
 
       const showGameSection = (targetId) => {
-        gameSections.forEach(s => s.classList.remove('active')); // إخفاء كل أقسام الألعاب
+        gameSections.forEach(s => s.classList.remove('active'));
         const sectionToShow = document.getElementById(targetId);
         if (sectionToShow) {
-             gameSections.forEach(gs => showHideElement(gs, gs.id === targetId)); // إظهار/إخفاء بناءً على ID
-             sectionToShow.classList.add('active'); // تفعيل القسم المطلوب
+            gameSections.forEach(gs => showHideElement(gs, gs.id === targetId));
+            sectionToShow.classList.add('active');
         }
-        currentNavLinksElements.forEach(a => { if(a) a.classList.toggle('active', a.getAttribute('href') === `#${targetId}`); });
+        currentGamesNavLinksElements.forEach(a => { if(a) a.classList.toggle('active', a.getAttribute('href') === `#${targetId}`); });
         playSound('snd-click');
       };
 
-      const handleGameNavLinkClick = (e) => { // معالج لروابط الألعاب فقط
+      const handleGameNavLinkClick = (e) => {
           e.preventDefault(); const id = e.target.getAttribute('href').slice(1);
           showGameSection(id);
       };
       
-      // تهيئة الألعاب (يجب أن يكون لديك دوال التهيئة الفعلية)
-      const initXOGame=()=>{const s=document.querySelector('#xo .board');if(!s)return; /* ... كود XO ... */};
-      const initRPSGame=()=>{const s=document.querySelector('#rps .gamebox');if(!s)return; /* ... كود RPS ... */};
+      // --- كود تهيئة الألعاب (يجب أن يكون كاملاً لديك) ---
+      const initXOGame=()=>{const s=document.querySelector('#xo .board');if(!s)return; /* ... كود XO الكامل ... */};
+      const initRPSGame=()=>{const s=document.querySelector('#rps .gamebox');if(!s)return; /* ... كود RPS الكامل ... */};
       // ... استدعِ بقية دوال تهيئة الألعاب ...
       initXOGame();
       initRPSGame();
-
+      // initClickTargetGame(); ... etc.
     });
   </script>
 </body>
