@@ -6,12 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <style>
-    /* === CSS الأصلي الذي أرسلته لواجهة تسجيل الدخول === */
     @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;700;800;900&display=swap");
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
     body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat; background-size: cover; background-position: center; }
     .wrapper { margin-top: 80px; width: 420px; background-color: transparent; border: 2px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(15px); box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); color: #fff; border-radius: 16px; padding: 20px 30px; direction: rtl; }
-    .wrapper h1 { font-size: 30px; text-align: center; margin-bottom: 20px; }
+    .wrapper h1 { font-size: 30px; text-align: center; margin-bottom:20px;}
     .wrapper .input-box { width: 100%; height: 50px; position: relative; margin: 30px 0; }
     .input-box input { width: 100%; height: 100%; background: transparent; border: none; outline: none; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 40px; font-size: 16px; color: #fff; padding: 20px 45px 20px 20px; text-align: right; direction: rtl; }
     .input-box input::placeholder { color: #fff; text-align: right; }
@@ -20,14 +19,13 @@
     .remember-forgot label input { accent-color: #fff; margin-left: 3px; }
     .remember-forgot a { color: #fff; text-decoration: none; }
     .remember-forgot a:hover { text-decoration: underline; }
-    .wrapper .btn { width: 100%; height: 45px; background: #fff; border: none; outline: none; border-radius: 40px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); cursor: pointer; font-size: 16px; color: #333; font-weight: 600; margin-top: 15px; }
+    .wrapper .btn { width: 100%; height: 45px; background: #fff; border: none; outline: none; border-radius: 40px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); cursor: pointer; font-size: 16px; color: #333; font-weight: 600; margin-top: 15px; display: flex; align-items: center; justify-content: center;}
     .wrapper .btn:disabled { background: #aaa; color: #666; cursor: not-allowed; }
     .wrapper .register-link { text-align: center; font-size: 14px; margin: 20px 0 15px; }
     .wrapper .register-link p a { color: #fff; text-decoration: none; font-weight: 600; }
     .wrapper .register-link p a:hover { text-decoration: underline; }
 
-    /* --- أنماط إضافية للموقع العام والألعاب --- */
-    #auth-status { margin-top:15px; padding: 10px; border-radius: 8px; font-weight: 500; min-height: 1.5em; text-align: center; color: #fff; }
+    #auth-status { margin-top:10px; padding: 8px; border-radius: 8px; font-weight: 500; min-height: 1.5em; text-align: center; color: #fff; font-size: 0.9em;}
     #auth-status.success { background-color: rgba(40, 167, 69, 0.3); border: 1px solid rgba(40, 167, 69, 0.6); }
     #auth-status.error { background-color: rgba(220, 53, 69, 0.3); border: 1px solid rgba(220, 53, 69, 0.6); }
     #auth-status.info { background-color: rgba(23, 162, 184, 0.3); border: 1px solid rgba(23, 162, 184, 0.6); }
@@ -46,6 +44,7 @@
     .cell { width:100px; height:100px; border:2px solid #aaa; display:flex; align-items:center; justify-content:center; font-size:2.8rem; background:#f9f9f9; transition:background .2s; cursor:pointer; border-radius: 8px;}
     .cell:hover { background:#e9e9e9; }
     .hidden-by-auth { display: none !important; }
+    .button-text { margin: 0 5px; }
   </style>
 </head>
 <body>
@@ -68,7 +67,10 @@
                     <i class='bx bxs-lock-alt'></i>
                 </div>
             </div>
-            <button type="button" class="btn" id="btn-main-action">تسجيل الدخول</button>
+            <button type="button" class="btn" id="btn-main-action">
+                 <span class="button-text">تسجيل الدخول</span>
+                 <!-- تم إزالة الإيموجي من هنا -->
+            </button>
             <div class="register-link">
                 <p id="toggle-auth-mode-text">ليس لديك حساب؟ <a href="#" id="toggle-auth-mode-link-inner">إنشاء حساب</a></p>
             </div>
@@ -78,17 +80,16 @@
     </div>
   </section>
 
-  <!-- أقسام الألعاب -->
-  <section id="xo" class="game-section hidden-by-auth"> <h2>❌⭕ XO</h2> <div class="board"></div> <div class="status">الدور: ❌</div> <button id="xo-restart">إعادة XO</button> </section>
-  <section id="rps" class="game-section hidden-by-auth"> <h2>✊🖐✌ حجر ورقة مقص</h2> <div class="gamebox"> <button data-choice="🪨">🪨</button> <button data-choice="📄">📄</button> <button data-choice="✂️">✂️</button> </div> <div class="result">اختر لبدء!</div> </section>
-  <section id="click" class="game-section hidden-by-auth"> <h2>🎯 اصطياد الهدف</h2> <div class="gamebox"><button id="click-start">ابدأ</button></div> <div id="click-target-area" class="gamebox"></div> <div class="status">اضغط "ابدأ"</div> </section>
-  <section id="react" class="game-section hidden-by-auth"> <h2>⌛ اختبار سرعة الضغط</h2> <div class="gamebox"><button id="react-start">ابدأ</button></div> <div class="timebox">--</div> </section>
-  <section id="dice" class="game-section hidden-by-auth"> <h2>🎲 لعبة النرد</h2> <div class="gamebox"><button id="dice-roll">رمي النرد</button></div> <div class="result">--</div> </section>
-  <section id="memory" class="game-section hidden-by-auth"> <h2>🧠 لعبة الذاكرة</h2> <div class="cards"></div> <div class="status">اضغط بطاقة للبدء</div> <div class="gamebox"><button id="memory-restart">إعادة اللعبة</button></div> </section>
-  <section id="math" class="game-section hidden-by-auth"> <h2>🧮 جمع أرقام بسرعة</h2> <div class="gamebox"><button id="math-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="number" id="math-answer" placeholder="أدخل إجابتك"/> <button id="math-submit">تحقق</button> </div> <div class="result">--</div> </section>
-  <section id="guessnum" class="game-section hidden-by-auth"> <h2>🔢 تخمين الرقم</h2> <div class="gamebox"><button id="guessnum-start">ابدأ اللعبة</button></div> <div class="input-group" style="display:none;"> <input type="number" id="guessnum-input" placeholder="خمن بين 1 و100"/> <button id="guessnum-submit">خمن</button> </div> <div class="result">--</div> <div class="message"></div> </section>
-  <section id="bigsmall" class="game-section hidden-by-auth"> <h2>📏 من الأكبر؟</h2> <div class="gamebox"><button id="bigsmall-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="number" id="bigsmall-answer" placeholder="اكتب الرقم الأكبر"/> <button id="bigsmall-submit">تحقق</button> </div> <div class="result">--</div> </section>
-  <section id="typing" class="game-section hidden-by-auth"> <h2>⌨️ اختبار الكتابة</h2> <div class="gamebox"><button id="typing-start">ابدأ الاختبار</button></div> <div class="text-to-type" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="text" id="typing-input" placeholder="اكتب النص هنا"/> <button id="typing-submit">تحقق</button> </div> <div class="status">--</div> </section>
+  <section id="xo" class="game-section hidden-by-auth"> <h2>إكس أو (XO)</h2> <div class="board"></div> <div class="status">الدور: ❌</div> <button id="xo-restart">إعادة XO</button> </section>
+  <section id="rps" class="game-section hidden-by-auth"> <h2>حجر ورقة مقص 🧱📄✂️</h2> <div class="gamebox"> <button data-choice="🧱">🧱</button> <button data-choice="📄">📄</button> <button data-choice="✂️">✂️</button> </div> <div class="result">اختر لبدء!</div> </section>
+  <section id="click" class="game-section hidden-by-auth"> <h2>اصطياد الهدف 🎯</h2> <div class="gamebox"><button id="click-start">ابدأ</button></div> <div id="click-target-area" class="gamebox"></div> <div class="status">اضغط "ابدأ"</div> </section>
+  <section id="react" class="game-section hidden-by-auth"> <h2>اختبار سرعة الضغط ⌛</h2> <div class="gamebox"><button id="react-start">ابدأ</button></div> <div class="timebox">--</div> </section>
+  <section id="dice" class="game-section hidden-by-auth"> <h2>لعبة النرد 🎲</h2> <div class="gamebox"><button id="dice-roll">رمي النرد</button></div> <div class="result">--</div> </section>
+  <section id="memory" class="game-section hidden-by-auth"> <h2>لعبة الذاكرة 🧠</h2> <div class="cards"></div> <div class="status">اضغط بطاقة للبدء</div> <div class="gamebox"><button id="memory-restart">إعادة اللعبة</button></div> </section>
+  <section id="math" class="game-section hidden-by-auth"> <h2>جمع الأرقام 🧮</h2> <div class="gamebox"><button id="math-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="number" id="math-answer" placeholder="أدخل إجابتك"/> <button id="math-submit">تحقق</button> </div> <div class="result">--</div> </section>
+  <section id="guessnum" class="game-section hidden-by-auth"> <h2>تخمين الرقم 🔢</h2> <div class="gamebox"><button id="guessnum-start">ابدأ اللعبة</button></div> <div class="input-group" style="display:none;"> <input type="number" id="guessnum-input" placeholder="خمن بين 1 و100"/> <button id="guessnum-submit">خمن</button> </div> <div class="result">--</div> <div class="message"></div> </section>
+  <section id="bigsmall" class="game-section hidden-by-auth"> <h2>من الأكبر؟ 📏</h2> <div class="gamebox"><button id="bigsmall-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="number" id="bigsmall-answer" placeholder="اكتب الرقم الأكبر"/> <button id="bigsmall-submit">تحقق</button> </div> <div class="result">--</div> </section>
+  <section id="typing" class="game-section hidden-by-auth"> <h2>اختبار الكتابة ⌨️</h2> <div class="gamebox"><button id="typing-start">ابدأ الاختبار</button></div> <div class="text-to-type" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="text" id="typing-input" placeholder="اكتب النص هنا"/> <button id="typing-submit">تحقق</button> </div> <div class="status">--</div> </section>
 
   <audio id="snd-click" src="https://actions.google.com/sounds/v1/alarms/button_click.ogg"></audio>
   <audio id="snd-win" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
@@ -103,10 +104,10 @@
       apiKey: "AIzaSyDLzpa2HYzJZdZvY_YuviKZ6Zg0FhWTfJw",
       authDomain: "my-site-cdd00.firebaseapp.com",
       projectId: "my-site-cdd00",
-      storageBucket: "my-site-cdd00.firebasestorage.app", // تأكد أن هذه القيمة صحيحة من Firebase console (أحيانًا تكون .appspot.com)
+      storageBucket: "my-site-cdd00.firebasestorage.app",
       messagingSenderId: "514123463555",
       appId: "1:514123463555:web:8499c5bde152537a3dd4b6",
-      measurementId: "G-3Y7SYCE0NZ" // اختياري للمصادقة الأساسية
+      measurementId: "G-3Y7SYCE0NZ"
     };
     // -----------------------------------------------------------
 
@@ -115,6 +116,15 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       const playSound = (id) => { const s = document.getElementById(id); if (s) { s.currentTime = 0; s.play().catch(e => {}); } };
+      const updateButtonText = (buttonElement, baseText) => { // تم تبسيط هذه الدالة لإزالة الإيموجي
+          if (buttonElement) {
+              const textSpan = buttonElement.querySelector('.button-text') || document.createElement('span');
+              textSpan.className = 'button-text';
+              textSpan.textContent = baseText;
+              buttonElement.innerHTML = ''; // Clear previous content
+              buttonElement.appendChild(textSpan);
+          }
+      };
       const updateElementText = (el, txt, type) => { if(el) { el.textContent = txt; el.className = 'info'; if(type && el.id === 'auth-status') el.classList.add(type); }};
       const showHideElement = (el, show, disp = 'block') => { if(el) el.style.display = show ? disp : 'none'; };
       const disableElement = (el, dis) => { if(el) el.disabled = dis; };
@@ -123,7 +133,14 @@
       const gameSections = document.querySelectorAll('.game-section');
       const mainNav = document.getElementById('main-nav');
       const navLoginLink = document.getElementById('nav-login-link');
-      const gameNavLinksData = [ { href: "#xo", text: "XO" }, { href: "#rps", text: "RPS" }, { href: "#click", text: "Target" }, { href: "#react", text: "Reaction" }, { href: "#dice", text: "Dice" }, { href: "#memory", text: "Memory" }, { href: "#math", text: "Math" }, { href: "#guessnum", text: "GuessNum" }, { href: "#bigsmall", text: "BigSmall" }, { href: "#typing", text: "Typing" } ];
+      // تعريب أسماء الألعاب هنا
+      const gameNavLinksData = [
+          { href: "#xo", text: "إكس أو" }, { href: "#rps", text: "حجر ورقة مقص" },
+          { href: "#click", text: "اصطياد الهدف" }, { href: "#react", text: "سرعة الضغط" },
+          { href: "#dice", text: "النرد" }, { href: "#memory", text: "الذاكرة" },
+          { href: "#math", text: "الرياضيات" }, { href: "#guessnum", text: "تخمين الرقم" },
+          { href: "#bigsmall", text: "من الأكبر" }, { href: "#typing", text: "الكتابة" }
+      ];
       let currentNavLinksElements = [navLoginLink];
       let isLoginMode = true;
 
@@ -144,15 +161,15 @@
         showHideElement(btnLogout, isLoggedIn);
 
         if (isLoggedIn) {
-          updateElementText(loginTitle, `أهلاً بك`);
+          loginTitle.textContent = `أهلاً بك`;
           updateElementText(authStatusDiv, userEmail, 'success');
-          updateElementText(navLoginLink, 'تسجيل الخروج');
+          navLoginLink.textContent = 'تسجيل الخروج';
           navLoginLink.onclick = (e) => { e.preventDefault(); btnLogout.click(); };
           gameSections.forEach(gs => gs.classList.remove('hidden-by-auth'));
         } else {
           isLoginMode = true; updateLoginModeUI();
           updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
-          updateElementText(navLoginLink, 'تسجيل الدخول');
+          navLoginLink.textContent = 'تسجيل الدخول';
           navLoginLink.onclick = handleNavLinkClick;
           gameSections.forEach(gs => { gs.classList.add('hidden-by-auth'); gs.classList.remove('active'); });
         }
@@ -162,11 +179,13 @@
       const updateLoginModeUI = () => {
         const linkId = 'toggle-auth-mode-link-inner';
         if (isLoginMode) {
-          updateElementText(loginTitle, 'تسجيل الدخول'); updateElementText(mainActionButton, 'تسجيل الدخول');
+          loginTitle.textContent = 'تسجيل الدخول';
+          updateButtonText(mainActionButton, 'تسجيل الدخول'); // استخدام الدالة المبسطة
           toggleAuthModeText.innerHTML = `ليس لديك حساب؟ <a href="#" id="${linkId}">إنشاء حساب</a>`;
           loginPasswordInput.placeholder = "كلمة المرور";
         } else {
-          updateElementText(loginTitle, 'إنشاء حساب جديد'); updateElementText(mainActionButton, 'إنشاء حساب');
+          loginTitle.textContent = 'إنشاء حساب جديد';
+          updateButtonText(mainActionButton, 'إنشاء حساب'); // استخدام الدالة المبسطة
           toggleAuthModeText.innerHTML = `لديك حساب بالفعل؟ <a href="#" id="${linkId}">تسجيل الدخول</a>`;
           loginPasswordInput.placeholder = "كلمة المرور (6+ حروف)";
         }
@@ -240,9 +259,30 @@
       };
       navLoginLink.addEventListener('click', handleNavLinkClick);
       
+      // --- كود تهيئة الألعاب ---
       const initXOGame=()=>{const s=document.querySelector('#xo');if(!s)return;const bE=s.querySelector('.board'),sE=s.querySelector('.status'),rB=s.querySelector('#xo-restart');let b=Array(9).fill(''),cP='❌',gA=true;const wP=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];const cW=()=>{for(const p of wP){const [x,y,z]=p;if(b[x]&&b[x]===b[y]&&b[x]===b[z])return b[x];}return null;};const hC=(idx)=>{if(!gA||b[idx]||!auth.currentUser)return;b[idx]=cP;bE.children[idx].textContent=cP;const w=cW();if(w){updateElementText(sE,`فاز ${w}`);gA=false;}else if(!b.includes('')){updateElementText(sE,'تعادل');gA=false;}else{cP=cP==='❌'?'⭕':'❌';updateElementText(sE,`الدور: ${cP}`);}};const rG=()=>{b.fill('');cP='❌';gA=true;updateElementText(sE,'الدور: ❌');Array.from(bE.children).forEach(c=>c.textContent='');};if(bE){bE.innerHTML=Array(9).fill().map((_,i)=>`<div class="cell" data-index="${i}"></div>`).join('');Array.from(bE.children).forEach((c,i)=>c.addEventListener('click',()=>hC(i)));}if(rB)rB.addEventListener('click',rG);if(bE)rG();};
+      
+      const initRPSGame = () => { // تم تعديل هذه اللعبة
+        const section = document.querySelector('#rps'); if(!section) return;
+        const resultElement = section.querySelector('.result');
+        const choiceButtons = section.querySelectorAll('.gamebox button');
+        const options = ['🧱', '📄', '✂️']; // الصخرة هنا
+        choiceButtons.forEach(button => button.addEventListener('click', () => {
+          const playerChoice = button.dataset.choice;
+          const computerChoice = options[Math.floor(Math.random() * options.length)];
+          let message = 'تعادل';
+          if ( (playerChoice === '🧱' && computerChoice === '✂️') || (playerChoice === '📄' && computerChoice === '🧱') || (playerChoice === '✂️' && computerChoice === '📄') ) { message = 'فزت'; }
+          else if (playerChoice !== computerChoice) { message = 'خسرت'; }
+          updateElementText(resultElement, `${message}! أنت: ${playerChoice} الكومبيوتر: ${computerChoice}`);
+          playSound(message === 'فزت' ? 'snd-win' : message === 'خسرت' ? 'snd-lose' : 'snd-click');
+        }));
+      };
+      // استدعِ بقية دوال تهيئة الألعاب هنا كما كانت في الردود السابقة...
+      // initClickTargetGame(); initReactionTestGame(); ... etc.
+
       initXOGame();
-      // استدعِ initRPSGame(); initClickTargetGame(); ... etc. لبقية الألعاب
+      initRPSGame(); // تأكد من استدعاء اللعبة المعدلة
+      // initClickTargetGame(); ... استدعِ الباقي
 
       if (!auth.currentUser) { showSection('login', false); }
     });
