@@ -1,175 +1,46 @@
 <!DOCTYPE html>
-<html lang="ar" dir="ltr"> <!-- الاتجاه العام ltr كما في الـ CSS الأصلي -->
+<html lang="ar" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <title>🎮 موقع الألعاب - تسجيل دخول Glassmorphism</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <style>
-    /* === CSS الذي أرسلته بالكامل === */
+    /* === CSS الأصلي الذي أرسلته لواجهة تسجيل الدخول === */
     @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;700;800;900&display=swap");
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Poppins", sans-serif;
-    }
-
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat;
-      background-size: cover;
-      background-position: center;
-      /* direction: ltr; <-- تم تعيينه في وسم <html> */
-    }
-
-    .wrapper { /* هذا سيكون قسم تسجيل الدخول الرئيسي */
-      margin-top: 80px; /* مساحة لشريط التنقل المثبت */
-      width: 420px;
-      background-color: transparent;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(15px);
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      color: #fff;
-      border-radius: 16px;
-      padding: 20px 30px;
-      direction: rtl; /* سنجعل المحتوى الداخلي RTL للعربية */
-    }
-
-    .wrapper h1 {
-      font-size: 30px;
-      text-align: center;
-      margin-bottom: 20px; /* إضافة مسافة سفلية للعنوان */
-    }
-
-    .wrapper .input-box {
-      width: 100%;
-      height: 50px;
-      position: relative;
-      margin: 30px 0;
-    }
-
-    .input-box input {
-      width: 100%;
-      height: 100%;
-      background: transparent;
-      border: none;
-      outline: none;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      border-radius: 40px;
-      font-size: 16px;
-      color: #fff;
-      padding: 20px 45px 20px 20px; /* LTR padding */
-      text-align: right; /* محاذاة النص والـ placeholder لليمين */
-    }
-     /* لإجبار اتجاه الكتابة داخل الحقل لليمين إذا لزم الأمر */
-    .input-box input[type="email"], .input-box input[type="password"] {
-        direction: rtl;
-    }
-
-
-    .input-box input::placeholder {
-      color: #fff;
-      text-align: right; /* محاذاة placeholder لليمين */
-    }
-
-    .input-box i {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 20px;
-      left: 20px; /* أيقونة على اليسار لتناسب حشوة الإدخال العربية */
-    }
-
-    .wrapper .remember-forgot {
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-      margin: -15px 0 15px;
-      direction: rtl; /* لضمان اتجاه "تذكرني" و "هل نسيت؟" */
-    }
-
-    .remember-forgot label input {
-      accent-color: #fff;
-      margin-left: 3px; /* تعديل لـ RTL */
-    }
-
-    .remember-forgot a {
-      color: #fff;
-      text-decoration: none;
-    }
-
-    .remember-forgot a:hover {
-      text-decoration: underline;
-    }
-
-    .wrapper .btn { /* هذا سيكون الزر الرئيسي (تسجيل دخول/إنشاء حساب) */
-      width: 100%;
-      height: 45px;
-      background: #fff;
-      border: none;
-      outline: none;
-      border-radius: 40px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      cursor: pointer;
-      font-size: 16px;
-      color: #333;
-      font-weight: 600;
-      margin-top: 15px; /* إضافة مسافة علوية */
-    }
-     .wrapper .btn:disabled {
-        background: #aaa; /* تعديل لون التعطيل قليلاً */
-        color: #666;
-        cursor: not-allowed;
-    }
-
-
-    .wrapper .register-link { /* هذا سيكون لتبديل الوضع (تسجيل/إنشاء) */
-      text-align: center;
-      font-size: 14px;
-      margin: 20px 0 15px;
-    }
-
-    .wrapper .register-link p a {
-      color: #fff;
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .wrapper .register-link p a:hover {
-      text-decoration: underline;
-    }
-    /* === نهاية CSS الذي أرسلته === */
-
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+    body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat; background-size: cover; background-position: center; }
+    .wrapper { margin-top: 80px; width: 420px; background-color: transparent; border: 2px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(15px); box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); color: #fff; border-radius: 16px; padding: 20px 30px; direction: rtl; }
+    .wrapper h1 { font-size: 30px; text-align: center; margin-bottom: 20px; }
+    .wrapper .input-box { width: 100%; height: 50px; position: relative; margin: 30px 0; }
+    .input-box input { width: 100%; height: 100%; background: transparent; border: none; outline: none; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 40px; font-size: 16px; color: #fff; padding: 20px 45px 20px 20px; text-align: right; direction: rtl; }
+    .input-box input::placeholder { color: #fff; text-align: right; }
+    .input-box i { position: absolute; top: 50%; transform: translateY(-50%); font-size: 20px; left: 20px; }
+    .wrapper .remember-forgot { display: flex; justify-content: space-between; font-size: 14px; margin: -15px 0 15px; direction: rtl; }
+    .remember-forgot label input { accent-color: #fff; margin-left: 3px; }
+    .remember-forgot a { color: #fff; text-decoration: none; }
+    .remember-forgot a:hover { text-decoration: underline; }
+    .wrapper .btn { width: 100%; height: 45px; background: #fff; border: none; outline: none; border-radius: 40px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); cursor: pointer; font-size: 16px; color: #333; font-weight: 600; margin-top: 15px; }
+    .wrapper .btn:disabled { background: #aaa; color: #666; cursor: not-allowed; }
+    .wrapper .register-link { text-align: center; font-size: 14px; margin: 20px 0 15px; }
+    .wrapper .register-link p a { color: #fff; text-decoration: none; font-weight: 600; }
+    .wrapper .register-link p a:hover { text-decoration: underline; }
 
     /* --- أنماط إضافية للموقع العام والألعاب --- */
-    #auth-status {
-        margin-top:15px; padding: 10px; border-radius: 8px; font-weight: 500;
-        min-height: 1.5em; text-align: center; color: #fff; /* لون أبيض لرسالة الحالة */
-    }
+    #auth-status { margin-top:15px; padding: 10px; border-radius: 8px; font-weight: 500; min-height: 1.5em; text-align: center; color: #fff; }
     #auth-status.success { background-color: rgba(40, 167, 69, 0.3); border: 1px solid rgba(40, 167, 69, 0.6); }
     #auth-status.error { background-color: rgba(220, 53, 69, 0.3); border: 1px solid rgba(220, 53, 69, 0.6); }
     #auth-status.info { background-color: rgba(23, 162, 184, 0.3); border: 1px solid rgba(23, 162, 184, 0.6); }
-
     nav { background:#002b4d; padding:12px; text-align:center; position:fixed; top:0; left:0; right:0; z-index: 1000; direction: rtl;}
     nav a { color:white; margin:0 10px; text-decoration:none; font-size:1.1rem; }
     nav a:hover, nav a.active { text-decoration:underline; font-weight: bold; }
-
     section { display:none; padding:20px; max-width:500px; margin: 20px auto; margin-top: 80px; background:rgba(255,255,255,0.95); color:#333; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.15); direction: rtl;}
     section.active { display:block; }
-    section#login.active { background: transparent; box-shadow: none; border: none; padding: 0;} /* لإزالة خلفية السيكشن الأبيض من فورم اللوجن */
+    section#login.active { background: transparent; box-shadow: none; border: none; padding: 0;}
     section h2 { margin-top:0; color: #003B73; text-align:center; margin-bottom: 20px;}
-
-    .gamebox { text-align:center; margin:15px auto; }
-    /* تعديل طفيف على الأزرار العامة لتجنب التضارب */
     section:not(#login) button { padding:10px 20px; margin:8px 4px; font-size:1rem; cursor:pointer; border:none; border-radius:8px; background:#005A9C; color:white; transition:background .2s; }
     section:not(#login) button:hover { background:#003B73; }
     section:not(#login) button:disabled { background:#ccc; cursor:not-allowed; }
-
     .status, .result, .message { margin:15px 0; font-size:1.1rem; min-height: 1.2em; text-align: center;}
     .board { display:grid; grid-template-columns:repeat(3,100px); gap:8px; justify-content:center; margin:20px auto; }
     .cell { width:100px; height:100px; border:2px solid #aaa; display:flex; align-items:center; justify-content:center; font-size:2.8rem; background:#f9f9f9; transition:background .2s; cursor:pointer; border-radius: 8px;}
@@ -183,7 +54,6 @@
     <a href="#login" id="nav-login-link">تسجيل الدخول</a>
   </nav>
 
-  <!-- قسم تسجيل الدخول يستخدم بنية .wrapper -->
   <section id="login" class="active">
     <div class="wrapper">
         <form action="javascript:void(0);">
@@ -194,14 +64,10 @@
                     <i class='bx bxs-user'></i>
                 </div>
                 <div class="input-box">
-                    <input type="password" placeholder="كلمة المرور (6+)" id="login-password" required>
+                    <input type="password" placeholder="كلمة المرور" id="login-password" required>
                     <i class='bx bxs-lock-alt'></i>
                 </div>
             </div>
-            <!-- <div class="remember-forgot">
-                <label><input type="checkbox">تذكرني</label>
-                <a href="#">هل نسيت كلمة المرور؟</a>
-            </div> -->
             <button type="button" class="btn" id="btn-main-action">تسجيل الدخول</button>
             <div class="register-link">
                 <p id="toggle-auth-mode-text">ليس لديك حساب؟ <a href="#" id="toggle-auth-mode-link-inner">إنشاء حساب</a></p>
@@ -212,7 +78,7 @@
     </div>
   </section>
 
-  <!-- أقسام الألعاب (نفس الأقسام السابقة مع كلاس game-section) -->
+  <!-- أقسام الألعاب -->
   <section id="xo" class="game-section hidden-by-auth"> <h2>❌⭕ XO</h2> <div class="board"></div> <div class="status">الدور: ❌</div> <button id="xo-restart">إعادة XO</button> </section>
   <section id="rps" class="game-section hidden-by-auth"> <h2>✊🖐✌ حجر ورقة مقص</h2> <div class="gamebox"> <button data-choice="🪨">🪨</button> <button data-choice="📄">📄</button> <button data-choice="✂️">✂️</button> </div> <div class="result">اختر لبدء!</div> </section>
   <section id="click" class="game-section hidden-by-auth"> <h2>🎯 اصطياد الهدف</h2> <div class="gamebox"><button id="click-start">ابدأ</button></div> <div id="click-target-area" class="gamebox"></div> <div class="status">اضغط "ابدأ"</div> </section>
@@ -232,21 +98,24 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
   <script>
+    // --- هذا هو كود تهيئة Firebase الخاص بك (الذي أرسلته) ---
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY", // <-- استبدل هذا
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com", // <-- استبدل هذا
-      projectId: "YOUR_PROJECT_ID", // <-- استبدل هذا
-      storageBucket: "YOUR_PROJECT_ID.appspot.com", // <-- استبدل هذا
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID", // <-- استبدل هذا
-      appId: "YOUR_APP_ID" // <-- استبدل هذا
+      apiKey: "AIzaSyDLzpa2HYzJZdZvY_YuviKZ6Zg0FhWTfJw",
+      authDomain: "my-site-cdd00.firebaseapp.com",
+      projectId: "my-site-cdd00",
+      storageBucket: "my-site-cdd00.firebasestorage.app", // تأكد أن هذه القيمة صحيحة من Firebase console (أحيانًا تكون .appspot.com)
+      messagingSenderId: "514123463555",
+      appId: "1:514123463555:web:8499c5bde152537a3dd4b6",
+      measurementId: "G-3Y7SYCE0NZ" // اختياري للمصادقة الأساسية
     };
+    // -----------------------------------------------------------
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
     document.addEventListener('DOMContentLoaded', () => {
       const playSound = (id) => { const s = document.getElementById(id); if (s) { s.currentTime = 0; s.play().catch(e => {}); } };
-      const updateElementText = (el, txt, type) => { if(el) { el.textContent = txt; el.className = 'info'; if(type) el.classList.add(type); }}; // Ensure class is reset then added
+      const updateElementText = (el, txt, type) => { if(el) { el.textContent = txt; el.className = 'info'; if(type && el.id === 'auth-status') el.classList.add(type); }};
       const showHideElement = (el, show, disp = 'block') => { if(el) el.style.display = show ? disp : 'none'; };
       const disableElement = (el, dis) => { if(el) el.disabled = dis; };
 
@@ -258,7 +127,7 @@
       let currentNavLinksElements = [navLoginLink];
       let isLoginMode = true;
 
-      const loginWrapper = document.querySelector('#login .wrapper'); // The main login box
+      const loginWrapper = document.querySelector('#login .wrapper');
       const loginTitle = document.getElementById('login-title');
       const mainActionButton = document.getElementById('btn-main-action');
       const toggleAuthModeText = document.getElementById('toggle-auth-mode-text');
@@ -272,7 +141,8 @@
         showHideElement(authFormFields, !isLoggedIn);
         showHideElement(mainActionButton, !isLoggedIn);
         showHideElement(toggleAuthModeText.parentElement, !isLoggedIn);
-        showHideElement(btnLogout, isLoggedIn, 'block');
+        showHideElement(btnLogout, isLoggedIn);
+
         if (isLoggedIn) {
           updateElementText(loginTitle, `أهلاً بك`);
           updateElementText(authStatusDiv, userEmail, 'success');
@@ -294,11 +164,11 @@
         if (isLoginMode) {
           updateElementText(loginTitle, 'تسجيل الدخول'); updateElementText(mainActionButton, 'تسجيل الدخول');
           toggleAuthModeText.innerHTML = `ليس لديك حساب؟ <a href="#" id="${linkId}">إنشاء حساب</a>`;
-          loginPasswordInput.placeholder = "كلمة المرور"; // Reset placeholder
+          loginPasswordInput.placeholder = "كلمة المرور";
         } else {
           updateElementText(loginTitle, 'إنشاء حساب جديد'); updateElementText(mainActionButton, 'إنشاء حساب');
           toggleAuthModeText.innerHTML = `لديك حساب بالفعل؟ <a href="#" id="${linkId}">تسجيل الدخول</a>`;
-          loginPasswordInput.placeholder = "كلمة المرور (6+ حروف)"; // Hint for signup
+          loginPasswordInput.placeholder = "كلمة المرور (6+ حروف)";
         }
         const newToggleLink = document.getElementById(linkId);
         if(newToggleLink) newToggleLink.addEventListener('click', toggleMode);
@@ -318,11 +188,13 @@
           .then(() => { loginEmailInput.value = ''; loginPasswordInput.value = '';})
           .catch((error) => {
             let msg = "حدث خطأ. حاول مرة أخرى.";
-            if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') msg = "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
+            if (error.code === 'auth/invalid-api-key' || (error.code === 'auth/internal-error' && error.message.includes("API key not valid"))) {
+                msg = "خطأ في تهيئة خدمة المصادقة. تأكد من صحة مفتاح API في الكود.";
+            } else if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') msg = "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
             else if (error.code === 'auth/email-already-in-use') msg = "هذا البريد الإلكتروني مستخدم بالفعل.";
             else if (error.code === 'auth/weak-password') msg = "كلمة المرور ضعيفة (6 حروف على الأقل).";
             else if (error.code === 'auth/invalid-email') msg = "صيغة البريد الإلكتروني غير صحيحة.";
-            console.error(error.code, error.message); updateElementText(authStatusDiv, msg, 'error');
+            console.error("Auth Error Code:",error.code, "Message:", error.message); updateElementText(authStatusDiv, msg, 'error');
           })
           .finally(() => { disableElement(mainActionButton, false); });
       };
@@ -330,13 +202,14 @@
       btnLogout.addEventListener('click', () => { auth.signOut().catch(e => console.error('Logout error', e)); });
 
       auth.onAuthStateChanged(user => {
+        const loginSectionElement = document.getElementById('login');
         if (user) {
           updateAuthUI(true, user.email);
-          showHideElement(loginWrapper.parentElement, false); // إخفاء قسم login بالكامل
+          showHideElement(loginSectionElement, false);
           if (gameNavLinksData.length > 0) showSection(gameNavLinksData[0].href.slice(1), true);
         } else {
           updateAuthUI(false);
-          showHideElement(loginWrapper.parentElement, true); // إظهار قسم login
+          showHideElement(loginSectionElement, true);
           showSection('login', false);
         }
       });
@@ -354,7 +227,9 @@
         const sectionToShow = document.getElementById(targetId);
         if (sectionToShow) sectionToShow.classList.add('active');
         currentNavLinksElements.forEach(a => { if(a) a.classList.toggle('active', a.getAttribute('href') === `#${targetId}`); });
-        if ( (isGame && auth.currentUser) || (targetId === 'login' && !auth.currentUser) ) playSound('snd-click');
+        if ( (isGame && auth.currentUser) || (targetId === 'login' && !auth.currentUser) ) {
+             if (targetId !== 'login' || !auth.currentUser) playSound('snd-click');
+        }
       };
 
       const handleNavLinkClick = (e) => {
@@ -365,11 +240,11 @@
       };
       navLoginLink.addEventListener('click', handleNavLinkClick);
       
-      // --- كود تهيئة الألعاب (مثال واحد، يجب إضافة البقية) ---
       const initXOGame=()=>{const s=document.querySelector('#xo');if(!s)return;const bE=s.querySelector('.board'),sE=s.querySelector('.status'),rB=s.querySelector('#xo-restart');let b=Array(9).fill(''),cP='❌',gA=true;const wP=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];const cW=()=>{for(const p of wP){const [x,y,z]=p;if(b[x]&&b[x]===b[y]&&b[x]===b[z])return b[x];}return null;};const hC=(idx)=>{if(!gA||b[idx]||!auth.currentUser)return;b[idx]=cP;bE.children[idx].textContent=cP;const w=cW();if(w){updateElementText(sE,`فاز ${w}`);gA=false;}else if(!b.includes('')){updateElementText(sE,'تعادل');gA=false;}else{cP=cP==='❌'?'⭕':'❌';updateElementText(sE,`الدور: ${cP}`);}};const rG=()=>{b.fill('');cP='❌';gA=true;updateElementText(sE,'الدور: ❌');Array.from(bE.children).forEach(c=>c.textContent='');};if(bE){bE.innerHTML=Array(9).fill().map((_,i)=>`<div class="cell" data-index="${i}"></div>`).join('');Array.from(bE.children).forEach((c,i)=>c.addEventListener('click',()=>hC(i)));}if(rB)rB.addEventListener('click',rG);if(bE)rG();};
       initXOGame();
-      // استدعِ initRPSGame(); initClickTargetGame(); ... etc.
+      // استدعِ initRPSGame(); initClickTargetGame(); ... etc. لبقية الألعاب
 
+      if (!auth.currentUser) { showSection('login', false); }
     });
   </script>
 </body>
