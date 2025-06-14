@@ -2,10 +2,11 @@
 <html lang="ar" dir="ltr">
 <head>
   <meta charset="UTF-8">
-  <title>🎮 موقع الألعاب - أيقونات الألعاب</title>
+  <title>🎮 موقع الألعاب - XO مع كمبيوتر وخط فوز</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <style>
+    /* ... (نفس الأنماط العامة من الكود السابق) ... */
     @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;700;800;900&display=swap");
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
     body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat; background-size: cover; background-position: center; overflow-y: auto;}
@@ -35,7 +36,7 @@
     nav a:hover, nav a.active-nav-link { text-decoration:underline; font-weight: bold; }
     
     section {
-      display: none; /* sections are hidden by default */
+      display: none; 
       padding: 20px; 
       max-width: 600px;
       margin: 20px auto; 
@@ -46,7 +47,7 @@
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
       direction: rtl;
     }
-    section.active { display:block !important; } /* Ensure .active overrides display: none */
+    section.active { display:block !important; } 
 
     section#login.active, section#game-launcher.active { 
         background: transparent; 
@@ -77,15 +78,46 @@
     section:not(#login):not(#game-launcher) button:disabled { background:#ccc; cursor:not-allowed; }
     .status, .result, .message, .timebox { margin:15px 0; font-size:1.1rem; min-height: 1.2em; text-align: center;}
     
+    /* XO Game Specific Styles */
+    .xo-board-container {
+        position: relative; /* For positioning the canvas */
+        width: 316px; /* 3 * 100px cells + 2 * 8px gaps */
+        height: 316px;
+        margin: 0 auto 20px auto;
+    }
     .board { 
         display:grid; 
         grid-template-columns:repeat(3,100px); 
         gap:8px; 
         justify-content:center; 
-        margin: 0 auto 20px auto; 
+        /* Removed margin here, handled by container */
     }
-    .cell { width:100px; height:100px; border:2px solid #aaa; display:flex; align-items:center; justify-content:center; font-size:2.8rem; background:#f9f9f9; transition:background .2s; cursor:pointer; border-radius: 8px;}
+    .cell { 
+        width:100px; 
+        height:100px; 
+        border:2px solid #aaa; 
+        display:flex; 
+        align-items:center; 
+        justify-content:center; 
+        font-size:2.8rem; 
+        background:#f9f9f9; 
+        transition:background .2s; 
+        cursor:pointer; 
+        border-radius: 8px;
+        color: #333; /* Make X O colors more visible */
+    }
     .cell:hover { background:#e9e9e9; }
+    #xo-winning-line-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none; /* Allows clicks to pass through to the board */
+    }
+    .xo-options { margin-bottom: 15px; text-align: center; }
+    .xo-options button { margin: 0 5px; }
+
 
     .gamebox, 
     .cards {
@@ -95,130 +127,35 @@
       margin-left: auto; 
       text-align: center;
     }
-    .cards {
-        display: grid; 
-        grid-template-columns: repeat(4, 1fr); 
-        gap: 10px; 
-        max-width: 380px; 
-    }
-    .card {
-        width: 80px; height: 80px;
-        background-color: #007bff; color: white;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 2rem; border-radius: 8px; cursor: pointer;
-        transition: transform 0.3s, background-color 0.3s;
-        transform-style: preserve-3d; 
-    }
-    .card .card-face {
-        position: absolute; width: 100%; height: 100%;
-        backface-visibility: hidden; 
-        display: flex; align-items: center; justify-content: center;
-        border-radius: 8px;
-    }
+    .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 380px; }
+    .card { width: 80px; height: 80px; background-color: #007bff; color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; border-radius: 8px; cursor: pointer; transition: transform 0.3s, background-color 0.3s; transform-style: preserve-3d; }
+    .card .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
     .card .card-front { background-color: #005A9C; } 
     .card .card-back { background-color: #f0f0f0; color: #333; transform: rotateY(180deg); }
     .card.flipped { transform: rotateY(180deg); }
     .card.matched { background-color: #28a745 !important; cursor: default; }
     .card.matched .card-front { background-color: #28a745 !important; } 
 
-    #click-target-area { 
-        text-align: left; 
-        min-height: 200px; 
-        background-color: #e9ecef; 
-        position: relative; 
-        border-radius: 8px;
-        overflow: hidden; 
-    }
-    #clickable-target {
-        width: 50px; height: 50px;
-        background-color: red;
-        border-radius: 50%; 
-        position: absolute;
-        cursor: pointer;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.5rem;
-        transition: all 0.1s;
-    }
-    .timebox {
-        padding: 20px;
-        background-color: #6c757d; 
-        color: white;
-        border-radius: 8px;
-        font-size: 1.5rem;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
+    #click-target-area { text-align: left; min-height: 200px; background-color: #e9ecef; position: relative; border-radius: 8px; overflow: hidden; }
+    #clickable-target { width: 50px; height: 50px; background-color: red; border-radius: 50%; position: absolute; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: all 0.1s; }
+    .timebox { padding: 20px; background-color: #6c757d; color: white; border-radius: 8px; font-size: 1.5rem; cursor: pointer; transition: background-color 0.3s; }
     .timebox.waiting { background-color: #dc3545; } 
     .timebox.ready { background-color: #28a745; } 
 
-    .text-to-type {
-        padding: 15px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        margin-bottom: 15px;
-        font-size: 1.1rem;
-        line-height: 1.6;
-        background-color: #f8f9fa;
-        direction: rtl; 
-        text-align: right; 
-    }
-    #typing-input {
-        width: 100%;
-        padding: 10px;
-        font-size: 1rem;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        direction: rtl; 
-        text-align: right; 
-    }
+    .text-to-type { padding: 15px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 15px; font-size: 1.1rem; line-height: 1.6; background-color: #f8f9fa; direction: rtl; text-align: right; }
+    #typing-input { width: 100%; padding: 10px; font-size: 1rem; border-radius: 8px; border: 1px solid #ccc; direction: rtl; text-align: right; }
     .input-group { text-align: center; } 
     .input-group input { margin: 0 auto 10px auto; display: block; max-width: 250px; text-align: center; padding:10px; border-radius: 8px; border:1px solid #ccc; }
 
-    .hidden-by-auth { display: none !important; } /* Ensure this has high specificity */
+    .hidden-by-auth { display: none !important; } 
     .button-text { margin: 0 5px; }
 
-    .game-icons-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-        gap: 25px;
-        padding: 20px;
-        max-width: 800px;
-        margin: 0 auto; 
-    }
-    .game-icon-card {
-        background-color: rgba(0, 43, 77, 0.6); 
-        border: 1px solid rgba(255, 255, 255, 0.25);
-        border-radius: 12px;
-        padding: 20px 15px;
-        text-align: center;
-        cursor: pointer;
-        transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, background-color 0.25s;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 130px; 
-        backdrop-filter: blur(5px);
-    }
-    .game-icon-card:hover {
-        transform: translateY(-8px) scale(1.03);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
-        background-color: rgba(0, 60, 110, 0.7); 
-    }
-    .game-icon-card i {
-        font-size: 3.5rem; 
-        margin-bottom: 12px;
-        color: #cce7ff; 
-        transition: color 0.2s;
-    }
-     .game-icon-card:hover i {
-        color: #fff;
-     }
-    .game-icon-card span {
-        color: #fff;
-        font-size: 1rem;
-        font-weight: 500;
-    }
+    .game-icons-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 25px; padding: 20px; max-width: 800px; margin: 0 auto; }
+    .game-icon-card { background-color: rgba(0, 43, 77, 0.6); border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 12px; padding: 20px 15px; text-align: center; cursor: pointer; transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, background-color 0.25s; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 130px; backdrop-filter: blur(5px); }
+    .game-icon-card:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35); background-color: rgba(0, 60, 110, 0.7); }
+    .game-icon-card i { font-size: 3.5rem; margin-bottom: 12px; color: #cce7ff; transition: color 0.2s; }
+    .game-icon-card:hover i { color: #fff; }
+    .game-icon-card span { color: #fff; font-size: 1rem; font-weight: 500; }
   </style>
 </head>
 <body>
@@ -227,7 +164,7 @@
     <a href="#login" id="nav-login-link">تسجيل الدخول</a>
   </nav>
 
-  <section id="login"> <!-- Initially, login might be active by default if no hash -->
+  <section id="login">
     <div class="wrapper">
         <form action="javascript:void(0);">
             <h1 id="login-title">تسجيل الدخول</h1>
@@ -259,8 +196,22 @@
     </div>
   </section>
 
+  <section id="xo" class="game-section"> 
+    <h2>إكس أو (XO)</h2>
+    <div class="xo-options">
+        <button id="xo-pvp">لاعب ضد لاعب</button>
+        <button id="xo-pvc-easy">لاعب ضد كمبيوتر (سهل)</button>
+        <!-- <button id="xo-pvc-hard">لاعب ضد كمبيوتر (صعب)</button> --> {/* لاحقًا */}
+    </div>
+    <div class="xo-board-container">
+        <div class="board"></div> 
+        <canvas id="xo-winning-line-canvas"></canvas>
+    </div>
+    <div class="status">اختر نمط اللعبة</div> 
+    <button id="xo-restart" style="display:none;">إعادة اللعبة</button> 
+  </section>
 
-  <section id="xo" class="game-section"> <h2>إكس أو (XO)</h2> <div class="board"></div> <div class="status">الدور: ❌</div> <button id="xo-restart">إعادة XO</button> </section>
+  <!-- ... (باقي أقسام الألعاب كما هي) ... -->
   <section id="rps" class="game-section"> <h2>حجر ورقة مقص 🧱📄✂️</h2> <div class="gamebox"> <button data-choice="🧱">🧱</button> <button data-choice="📄">📄</button> <button data-choice="✂️">✂️</button> </div> <div class="result">اختر لبدء!</div> </section>
   <section id="click" class="game-section"> <h2>اصطياد الهدف 🎯</h2> <div class="gamebox"><button id="click-start">ابدأ</button></div> <div id="click-target-area" class="gamebox" style="display:none;"></div> <div class="status">اضغط "ابدأ"</div> </section>
   <section id="react" class="game-section"> <h2>اختبار سرعة الضغط ⌛</h2> <div class="timebox" id="react-box">اضغط للبدء</div> </section>
@@ -271,6 +222,7 @@
   <section id="bigsmall" class="game-section"> <h2>من الأكبر؟ 📏</h2> <div class="gamebox"><button id="bigsmall-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none; font-size: 1.5rem; margin-bottom: 15px; text-align:center;"></div> <div class="input-group" style="display:none;"> <input type="number" id="bigsmall-answer" placeholder="اكتب الرقم الأكبر"/> <button id="bigsmall-submit">تحقق</button> </div> <div class="result">--</div> </section>
   <section id="typing" class="game-section"> <h2>اختبار الكتابة ⌨️</h2> <div class="gamebox"><button id="typing-start">ابدأ الاختبار</button></div> <div class="text-to-type" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="text" id="typing-input" placeholder="اكتب النص هنا"/> <button id="typing-submit">تحقق</button> </div> <div class="status">--</div> </section>
 
+
   <audio id="snd-click" src="https://actions.google.com/sounds/v1/alarms/button_click.ogg"></audio>
   <audio id="snd-win" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
   <audio id="snd-lose" src="https://actions.google.com/sounds/v1/cartoon/cartoon_cowbell.ogg"></audio>
@@ -279,6 +231,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
   <script>
+    // ... (نفس Firebase config ودوال المساعدة العامة)
     const firebaseConfig = {
         apiKey: "AIzaSyDLzpa2HYzJZdZvY_YuviKZ6Zg0FhWTfJw", 
         authDomain: "my-site-cdd00.firebaseapp.com",
@@ -293,7 +246,6 @@
     const auth = firebase.auth();
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Helper functions (playSound, updateButtonText, etc.) remain the same
       const playSound = (id) => { const s = document.getElementById(id); if (s) { s.currentTime = 0; s.play().catch(e => console.warn(`Sound ${id} play failed:`, e)); } };
       const updateButtonText = (buttonElement, baseText) => { if (buttonElement) { const textSpan = buttonElement.querySelector('.button-text') || document.createElement('span'); textSpan.className = 'button-text'; textSpan.textContent = baseText; buttonElement.innerHTML = ''; buttonElement.appendChild(textSpan); }};
       const updateElementText = (el, txt, type) => { if(el) { el.textContent = txt; const baseClasses = el.className.split(' ').filter(c => !['info','success','error','waiting','ready'].includes(c)).join(' '); el.className = baseClasses; if (type) el.classList.add(type); }};
@@ -330,7 +282,6 @@
       const btnLogout = document.getElementById('btn-logout');
       const authStatusDiv = document.getElementById('auth-status');
 
-      // --- AUTH LOGIC (updateAuthUI, updateLoginModeUI, toggleMode, handleAuthAction) ---
        const updateAuthUI = (isLoggedIn, userEmail = '', isVerified = true) => {
         showHideElement(authFormFields, !isLoggedIn);
         showHideElement(mainActionButton, !isLoggedIn);
@@ -344,11 +295,9 @@
           loginTitle.textContent = `أهلاً بك`;
           if (isVerified) {
             updateElementText(authStatusDiv, userEmail, 'success');
-            // gameLauncherSection.classList.remove('hidden-by-auth'); // Will be handled by showSection
             if(gameIconsGridContainer && gameIconsGridContainer.children.length === 0) populateGameLauncher();
           } else {
             updateElementText(authStatusDiv, `تم تسجيل الدخول كـ ${userEmail}. يرجى التحقق من بريدك الإلكتروني للوصول الكامل.`, 'info');
-            // gameLauncherSection.classList.add('hidden-by-auth'); // Will be handled by showSection
             if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
           }
           navLoginLink.textContent = 'تسجيل الخروج';
@@ -362,9 +311,8 @@
           navLoginLink.textContent = 'تسجيل الدخول';
           navLoginLink.href = "#login";
           navLoginLink.onclick = handleNavLinkClick;
-          // gameLauncherSection.classList.add('hidden-by-auth'); // Will be handled by showSection
           if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
-          allSections.forEach(s => { // Hide all sections except login if not logged in
+          allSections.forEach(s => { 
                 if(s.id !== 'login') s.classList.remove('active');
           });
         }
@@ -411,7 +359,6 @@
                   auth.signOut(); 
                 } else {
                   loginEmailInput.value = ''; loginPasswordInput.value = '';
-                  // onAuthStateChanged will handle UI update and navigation
                 }
               })
               .catch((error) => {
@@ -452,17 +399,14 @@
               .finally(() => { disableElement(mainActionButton, false); });
         }
       };
-      // --- END AUTH LOGIC ---
-
       updateLoginModeUI(); 
       mainActionButton.addEventListener('click', handleAuthAction);
       btnLogout.addEventListener('click', () => { 
         auth.signOut().catch(e => console.error('Logout error', e)); 
         updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
-        window.location.hash = 'login'; // Go to login on logout
+        window.location.hash = 'login';
       });
 
-      // --- NAVIGATION AND SECTION DISPLAY ---
       const populateGameLauncher = () => {
         if (!gameIconsGridContainer) return;
         gameIconsGridContainer.innerHTML = ''; 
@@ -470,22 +414,18 @@
             const card = document.createElement('div');
             card.className = 'game-icon-card';
             card.dataset.targetId = game.id;
-            
             const icon = document.createElement('i');
             icon.className = `bx ${game.icon}`;
-            
             const nameSpan = document.createElement('span');
             nameSpan.textContent = game.text;
-            
             card.appendChild(icon);
             card.appendChild(nameSpan);
-            
             card.addEventListener('click', (e) => {
                 const targetId = e.currentTarget.dataset.targetId;
                 const currentUser = auth.currentUser;
                 if (currentUser && currentUser.emailVerified) {
                     playSound('snd-click');
-                    window.location.hash = targetId; // Change hash to navigate
+                    window.location.hash = targetId;
                 } else {
                     updateElementText(authStatusDiv, "يجب تسجيل الدخول والتحقق من بريدك الإلكتروني أولاً للعب.", "error");
                     window.location.hash = 'login';
@@ -500,7 +440,6 @@
             mainNav.removeChild(navGamesLink);
             navGamesLink = null;
         }
-
         if (isLoggedInAndVerified) {
             const isGameSectionActive = gameNavLinksData.some(game => game.id === activeSectionId);
             if (isGameSectionActive) { 
@@ -508,7 +447,7 @@
                 navGamesLink.href = "#game-launcher";
                 navGamesLink.textContent = "الألعاب";
                 navGamesLink.id = "nav-games-launcher-link";
-                navGamesLink.onclick = handleNavLinkClick; // Use onclick for nav links to avoid hash change conflicts initially
+                navGamesLink.onclick = handleNavLinkClick;
                 mainNav.appendChild(navGamesLink);
             }
         }
@@ -529,38 +468,33 @@
       };
 
       const showSectionByHash = () => {
-        const hash = window.location.hash.slice(1) || 'login'; // Default to login if no hash
-        console.log("Attempting to show section for hash:", hash);
-
+        const hash = window.location.hash.slice(1) || 'login';
         const currentUser = auth.currentUser;
         const isVerified = currentUser && currentUser.emailVerified;
-        let targetIdToShow = 'login'; // Default
+        let targetIdToShow = 'login'; 
 
         if (isVerified) {
             if (hash === 'game-launcher' || gameNavLinksData.some(game => game.id === hash)) {
                 targetIdToShow = hash;
-            } else if (hash === 'login'){ // If hash is login but user is verified, go to launcher
+            } else if (hash === 'login'){
                  targetIdToShow = 'game-launcher';
-                 window.location.hash = 'game-launcher'; // Correct the hash
-            }
-             else { // If hash is invalid for a verified user, go to launcher
+                 if (window.location.hash !== '#game-launcher') window.location.hash = 'game-launcher';
+            } else {
                 targetIdToShow = 'game-launcher';
-                window.location.hash = 'game-launcher'; // Correct the hash
+                if (window.location.hash !== '#game-launcher') window.location.hash = 'game-launcher';
             }
-        } else { // Not verified or not logged in
-            if (hash !== 'login') {
-                 window.location.hash = 'login'; // Force login hash
-                 targetIdToShow = 'login'; // and show login
+        } else {
+            if (hash !== 'login' && hash !== '') { // Allow empty hash to default to login if not verified
+                 if (window.location.hash !== '#login') window.location.hash = 'login';
+                 targetIdToShow = 'login';
             } else {
                 targetIdToShow = 'login';
             }
         }
         
-        console.log("Final targetIdToShow:", targetIdToShow);
         allSections.forEach(s => {
             if (s.id === targetIdToShow) {
                 s.classList.add('active');
-                 console.log(`Section ${s.id} activated.`);
             } else {
                 s.classList.remove('active');
             }
@@ -570,28 +504,216 @@
       
       auth.onAuthStateChanged(user => {
         updateAuthUI(user, user ? user.email : '', user ? user.emailVerified : false);
-        showSectionByHash(); // Update view based on auth state and current hash
+        showSectionByHash();
       });
-
 
       const handleNavLinkClick = (e) => {
           e.preventDefault(); 
-          const targetHash = e.currentTarget.getAttribute('href'); // #login, #logout, #game-launcher
-          
+          const targetHash = e.currentTarget.getAttribute('href');
           if (targetHash === '#logout') { 
              btnLogout.click();
              return;
            }
-          window.location.hash = targetHash; // This will trigger hashchange
+          window.location.hash = targetHash;
       };
-      navLoginLink.addEventListener('click', handleNavLinkClick); // For "Login" / "Logout"
+      navLoginLink.addEventListener('click', handleNavLinkClick);
       
       window.addEventListener('hashchange', showSectionByHash);
 
-      // --- Game Initializations (All game init functions are defined below) ---
-      // (The game init functions themselves remain largely the same, ensuring they check auth status before allowing interaction)
-      const initXOGame=()=>{const s=document.querySelector('#xo');if(!s)return;const bE=s.querySelector('.board'),sE=s.querySelector('.status'),rB=s.querySelector('#xo-restart');let b=Array(9).fill(''),cP='❌',gA=true;const wP=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];const cW=()=>{for(const p of wP){const [x,y,z]=p;if(b[x]&&b[x]===b[y]&&b[x]===b[z])return b[x];}return null;};const hC=(idx)=>{if(!auth.currentUser||!auth.currentUser.emailVerified){updateElementText(sE,'يرجى التحقق من بريدك للعب.','info');return;}if(!gA||b[idx])return;b[idx]=cP;bE.children[idx].textContent=cP;const w=cW();if(w){updateElementText(sE,`فاز ${w}`);playSound('snd-win');gA=false;}else if(!b.includes('')){updateElementText(sE,'تعادل');playSound('snd-lose');gA=false;}else{cP=cP==='❌'?'⭕':'❌';updateElementText(sE,`الدور: ${cP}`);playSound('snd-click');}};const rG=()=>{if(!auth.currentUser||!auth.currentUser.emailVerified){updateElementText(sE,'يرجى التحقق من بريدك للعب.','info');return;}b.fill('');cP='❌';gA=true;updateElementText(sE,'الدور: ❌');Array.from(bE.children).forEach(c=>c.textContent='');playSound('snd-click');};if(bE){bE.innerHTML=Array(9).fill().map((_,i)=>`<div class="cell" data-index="${i}"></div>`).join('');Array.from(bE.children).forEach((c,i)=>c.addEventListener('click',()=>hC(i)));}if(rB)rB.addEventListener('click',rG);if(sE)updateElementText(sE,'الدور: ❌');};
+      // --- Game Initializations ---
+      const initXOGame = () => {
+          const section = document.querySelector('#xo');
+          if (!section) return;
+          const boardElement = section.querySelector('.board');
+          const statusElement = section.querySelector('.status');
+          const restartButton = section.querySelector('#xo-restart');
+          const pvpButton = section.querySelector('#xo-pvp');
+          const pvcEasyButton = section.querySelector('#xo-pvc-easy');
+          const canvas = section.querySelector('#xo-winning-line-canvas');
+          const ctx = canvas.getContext('2d');
+          const boardContainer = section.querySelector('.xo-board-container');
+
+          let boardState = Array(9).fill('');
+          let currentPlayer = '❌';
+          let gameActive = false;
+          let gameMode = null; // 'pvp', 'pvc-easy'
+          const playerSymbol = '❌';
+          const computerSymbol = '⭕';
+
+          const winningPatterns = [
+              [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+              [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+              [0, 4, 8], [2, 4, 6]             // Diagonals
+          ];
+
+          const resizeCanvas = () => {
+              canvas.width = boardContainer.offsetWidth;
+              canvas.height = boardContainer.offsetHeight;
+          };
+
+          const drawWinningLine = (combination) => {
+              if (!combination || combination.length < 3) return;
+              resizeCanvas(); // Ensure canvas is sized correctly
+              ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous lines
+              ctx.beginPath();
+              ctx.lineWidth = 8; // Thicker line
+              ctx.strokeStyle = 'rgba(220, 53, 69, 0.8)'; // Reddish line color
+              ctx.lineCap = 'round';
+
+              const cellSize = 100; // From CSS
+              const gap = 8;      // From CSS
+
+              const getCellCenter = (index) => {
+                  const row = Math.floor(index / 3);
+                  const col = index % 3;
+                  const x = col * (cellSize + gap) + cellSize / 2;
+                  const y = row * (cellSize + gap) + cellSize / 2;
+                  return { x, y };
+              };
+
+              const startCell = getCellCenter(combination[0]);
+              const endCell = getCellCenter(combination[2]);
+
+              ctx.moveTo(startCell.x, startCell.y);
+              ctx.lineTo(endCell.x, endCell.y);
+              ctx.stroke();
+          };
+          
+          const checkWin = () => {
+              for (const pattern of winningPatterns) {
+                  const [a, b, c] = pattern;
+                  if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
+                      return { winner: boardState[a], combination: pattern };
+                  }
+              }
+              if (!boardState.includes('')) return { winner: 'tie', combination: null }; // Tie
+              return null; // No winner yet
+          };
+
+          const handleClick = (index) => {
+              if (!gameActive || boardState[index] || !auth.currentUser || !auth.currentUser.emailVerified) return;
+
+              boardState[index] = currentPlayer;
+              boardElement.children[index].textContent = currentPlayer;
+              playSound('snd-click');
+
+              const winResult = checkWin();
+              if (winResult) {
+                  gameActive = false;
+                  if (winResult.winner === 'tie') {
+                      updateElementText(statusElement, 'تعادل!');
+                      playSound('snd-lose');
+                  } else {
+                      updateElementText(statusElement, `فاز ${winResult.winner}!`);
+                      playSound('snd-win');
+                      drawWinningLine(winResult.combination);
+                  }
+                  showHideElement(restartButton, true);
+                  return;
+              }
+
+              currentPlayer = (currentPlayer === playerSymbol) ? computerSymbol : playerSymbol;
+              updateElementText(statusElement, `الدور: ${currentPlayer}`);
+
+              if (gameMode === 'pvc-easy' && currentPlayer === computerSymbol && gameActive) {
+                  // Add a small delay for computer's move to feel more natural
+                  disableBoardInteraction(true);
+                  setTimeout(() => {
+                      computerMoveEasy();
+                      disableBoardInteraction(false);
+                  }, 500 + Math.random() * 500);
+              }
+          };
+          
+          const disableBoardInteraction = (disable) => {
+            Array.from(boardElement.children).forEach(cell => {
+                cell.style.pointerEvents = disable ? 'none' : 'auto';
+            });
+          };
+
+
+          const computerMoveEasy = () => {
+              if (!gameActive) return;
+              let availableCells = [];
+              boardState.forEach((cell, index) => {
+                  if (cell === '') availableCells.push(index);
+              });
+
+              if (availableCells.length > 0) {
+                  const randomIndex = Math.floor(Math.random() * availableCells.length);
+                  const moveIndex = availableCells[randomIndex];
+                  
+                  // Directly call handleClick for the computer's chosen move.
+                  // Need to set currentPlayer correctly before calling for computer.
+                  currentPlayer = computerSymbol; // Ensure it's computer's turn
+                  handleClick(moveIndex); // This will handle game logic, check win, and switch player
+              }
+          };
+
+
+          const startGameMode = (mode) => {
+              if (!auth.currentUser || !auth.currentUser.emailVerified) {
+                  updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info');
+                  return;
+              }
+              gameMode = mode;
+              gameActive = true;
+              boardState.fill('');
+              currentPlayer = playerSymbol; // Player always starts with X
+              Array.from(boardElement.children).forEach(cell => cell.textContent = '');
+              ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear winning line
+              updateElementText(statusElement, `الدور: ${currentPlayer}`);
+              showHideElement(restartButton, false); // Hide restart until game over or explicitly requested
+              showHideElement(section.querySelector('.xo-options'), false); // Hide mode selection
+              showHideElement(restartButton, true); // Show restart button after mode is selected
+              playSound('snd-click');
+          };
+
+          const resetGame = () => {
+              gameActive = false;
+              gameMode = null;
+              boardState.fill('');
+              currentPlayer = playerSymbol;
+              Array.from(boardElement.children).forEach(cell => cell.textContent = '');
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              updateElementText(statusElement, 'اختر نمط اللعبة');
+              showHideElement(restartButton, false);
+              showHideElement(section.querySelector('.xo-options'), true);
+              playSound('snd-click');
+          };
+
+          // Build board
+          boardElement.innerHTML = Array(9).fill().map((_, i) => `<div class="cell" data-index="${i}"></div>`).join('');
+          Array.from(boardElement.children).forEach((cell, i) => cell.addEventListener('click', () => handleClick(i)));
+          
+          // Event listeners for mode buttons
+          if(pvpButton) pvpButton.addEventListener('click', () => startGameMode('pvp'));
+          if(pvcEasyButton) pvcEasyButton.addEventListener('click', () => startGameMode('pvc-easy'));
+          if(restartButton) restartButton.addEventListener('click', resetGame);
+
+          // Resize canvas on window resize
+          window.addEventListener('resize', resizeCanvas);
+          
+          // Initial setup when section becomes active
+           const observer = new MutationObserver((mutationsList) => {
+            for(const mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if (section.classList.contains('active')) {
+                        resizeCanvas(); // Ensure canvas is sized when section is shown
+                        if (!gameActive) { // If game not active, show mode options
+                           resetGame();
+                        }
+                    }
+                }
+            }
+          });
+          if(section) observer.observe(section, { attributes: true });
+
+          resetGame(); // Initial state
+      };
       
+      // ... (init functions for RPS, ClickTarget, React, Dice, Memory, Math, GuessNum, BigSmall, Typing)
+      // These remain largely the same, ensure they check auth.currentUser and auth.currentUser.emailVerified
       const initRPSGame = () => { 
         const section = document.querySelector('#rps'); if(!section) return;
         const resultElement = section.querySelector('.result');
@@ -627,7 +749,6 @@
             const areaRect = targetArea.getBoundingClientRect();
             const targetSize = 50;
              if (areaRect.height <= targetSize || areaRect.width <= targetSize) { 
-                // console.warn("Target area too small or not visible for spawnTarget.");
                 return; 
             }
             targetElement.style.top = Math.random() * (areaRect.height - targetSize) + 'px';
@@ -829,10 +950,6 @@
                         if (cardsContainer.children.length === 0 || matchedPairs === cardValues.length) { 
                            createBoard();
                         }
-                    } else if (!section.classList.contains('active')) {
-                        // Optionally clear the board or reset game state when section becomes inactive
-                        // cardsContainer.innerHTML = '';
-                        // matchedPairs = 0;
                     }
                 }
             }
@@ -1097,12 +1214,18 @@
         if(submitButton) submitButton.addEventListener('click', checkTyping);
         if(statusElement) updateElementText(statusElement, 'اضغط "ابدأ الاختبار"');
       };
-      // --- END GAME INITIALIZATIONS ---
 
-      // Call all game init functions
-      initXOGame(); initRPSGame(); initClickTargetGame(); initReactionTestGame(); initDiceRollGame(); initMemoryGame(); initMathQuizGame(); initGuessNumberGame(); initBigSmallGame(); initTypingTestGame();
+      initXOGame(); 
+      initRPSGame(); 
+      initClickTargetGame(); 
+      initReactionTestGame(); 
+      initDiceRollGame(); 
+      initMemoryGame(); 
+      initMathQuizGame(); 
+      initGuessNumberGame(); 
+      initBigSmallGame(); 
+      initTypingTestGame();
 
-      // Initial page load logic
       showSectionByHash(); 
     });
   </script>
