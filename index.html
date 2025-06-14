@@ -35,10 +35,10 @@
     
     section {
       display: none;
-      padding: 0 20px 20px 20px; /* تعديل هنا: أعلى 0، يمين 20، أسفل 20، يسار 20 */
+      padding: 0 20px 20px 20px; 
       max-width: 500px;
-      margin: 20px auto; /* هذا margin خارجي للـ section نفسها */
-      margin-top: 80px; /* مسافة من الناف بار */
+      margin: 20px auto; 
+      margin-top: 80px; 
       background: rgba(255, 255, 255, 0.95);
       color: #333;
       border-radius: 12px;
@@ -46,48 +46,118 @@
       direction: rtl;
     }
     section.active { display:block; }
-    section#login.active { background: transparent; box-shadow: none; border: none; padding: 0;} /* قسم تسجيل الدخول لا يحتاج padding */
+    section#login.active { background: transparent; box-shadow: none; border: none; padding: 0;} 
     
     section h2 {
-      margin-top: 20px; /* !!! تعديل هنا: هذا هو الهامش العلوي للعنوان داخل الـ section */
+      margin-top: 20px; 
       color: #003B73;
       text-align: center;
-      margin-bottom: 20px; /* الهامش السفلي للعنوان قبل محتوى اللعبة */
+      margin-bottom: 20px; 
     }
 
     section:not(#login) button { padding:10px 20px; margin:8px 4px; font-size:1rem; cursor:pointer; border:none; border-radius:8px; background:#005A9C; color:white; transition:background .2s; }
     section:not(#login) button:hover { background:#003B73; }
     section:not(#login) button:disabled { background:#ccc; cursor:not-allowed; }
-    .status, .result, .message { margin:15px 0; font-size:1.1rem; min-height: 1.2em; text-align: center;}
+    .status, .result, .message, .timebox { margin:15px 0; font-size:1.1rem; min-height: 1.2em; text-align: center;}
     
     .board { 
         display:grid; 
         grid-template-columns:repeat(3,100px); 
         gap:8px; 
         justify-content:center; 
-        margin: 0 auto 20px auto; /* هامش علوي 0 (يعتمد على h2)، سفلي 20، وتوسيط أفقي */
+        margin: 0 auto 20px auto; 
     }
     .cell { width:100px; height:100px; border:2px solid #aaa; display:flex; align-items:center; justify-content:center; font-size:2.8rem; background:#f9f9f9; transition:background .2s; cursor:pointer; border-radius: 8px;}
     .cell:hover { background:#e9e9e9; }
 
     .gamebox, 
     .cards {
-      margin-top: 0; /* يعتمد على margin-bottom للـ h2 */
+      margin-top: 0; 
       margin-right: auto; 
-      margin-bottom: 20px; /* لإضافة مسافة سفلية متناسقة */
+      margin-bottom: 20px; 
       margin-left: auto; 
       text-align: center;
     }
+    /* --- Memory Game Specific --- */
     .cards {
         display: grid; 
+        grid-template-columns: repeat(4, 1fr); /* 4 columns for memory cards */
         gap: 10px; 
+        max-width: 380px; /* Adjust as needed */
     }
+    .card {
+        width: 80px; height: 80px;
+        background-color: #007bff; color: white;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2rem; border-radius: 8px; cursor: pointer;
+        transition: transform 0.3s, background-color 0.3s;
+        transform-style: preserve-3d; /* For flip effect */
+    }
+    .card .card-face {
+        position: absolute; width: 100%; height: 100%;
+        backface-visibility: hidden; /* Hide back of card during flip */
+        display: flex; align-items: center; justify-content: center;
+        border-radius: 8px;
+    }
+    .card .card-front { background-color: #005A9C; } /* Default card back color */
+    .card .card-back { background-color: #f0f0f0; color: #333; transform: rotateY(180deg); }
+    .card.flipped { transform: rotateY(180deg); }
+    .card.matched { background-color: #28a745 !important; cursor: default; }
+    .card.matched .card-front { background-color: #28a745 !important; } /* Keep front color for matched */
+
+
+    /* --- Click Target Game Specific --- */
     #click-target-area { 
         text-align: left; 
-        min-height: 150px; 
-        background-color: #e0e0e0; 
+        min-height: 200px; /* Increased height */
+        background-color: #e9ecef; 
         position: relative; 
+        border-radius: 8px;
+        overflow: hidden; /* To contain the target */
     }
+    #clickable-target {
+        width: 50px; height: 50px;
+        background-color: red;
+        border-radius: 50%; /* Circle */
+        position: absolute;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.5rem;
+        transition: all 0.1s;
+    }
+     /* --- Reaction Test Specific --- */
+    .timebox {
+        padding: 20px;
+        background-color: #6c757d; /* Grayish initial color */
+        color: white;
+        border-radius: 8px;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .timebox.waiting { background-color: #dc3545; } /* Red for "Wait" */
+    .timebox.ready { background-color: #28a745; } /* Green for "Click" */
+
+    /* --- Typing Test Specific --- */
+    .text-to-type {
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        background-color: #f8f9fa;
+    }
+    #typing-input {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+    .input-group { text-align: center; } /* For math, guessnum etc. */
+    .input-group input { margin: 0 auto 10px auto; display: block; max-width: 250px; text-align: center; padding:10px; border-radius: 8px; border:1px solid #ccc; }
+
 
     .hidden-by-auth { display: none !important; }
     .button-text { margin: 0 5px; }
@@ -127,13 +197,13 @@
 
   <section id="xo" class="game-section hidden-by-auth"> <h2>إكس أو (XO)</h2> <div class="board"></div> <div class="status">الدور: ❌</div> <button id="xo-restart">إعادة XO</button> </section>
   <section id="rps" class="game-section hidden-by-auth"> <h2>حجر ورقة مقص 🧱📄✂️</h2> <div class="gamebox"> <button data-choice="🧱">🧱</button> <button data-choice="📄">📄</button> <button data-choice="✂️">✂️</button> </div> <div class="result">اختر لبدء!</div> </section>
-  <section id="click" class="game-section hidden-by-auth"> <h2>اصطياد الهدف 🎯</h2> <div class="gamebox"><button id="click-start">ابدأ</button></div> <div id="click-target-area" class="gamebox"></div> <div class="status">اضغط "ابدأ"</div> </section>
-  <section id="react" class="game-section hidden-by-auth"> <h2>اختبار سرعة الضغط ⌛</h2> <div class="gamebox"><button id="react-start">ابدأ</button></div> <div class="timebox">--</div> </section>
-  <section id="dice" class="game-section hidden-by-auth"> <h2>لعبة النرد 🎲</h2> <div class="gamebox"><button id="dice-roll">رمي النرد</button></div> <div class="result">--</div> </section>
+  <section id="click" class="game-section hidden-by-auth"> <h2>اصطياد الهدف 🎯</h2> <div class="gamebox"><button id="click-start">ابدأ</button></div> <div id="click-target-area" class="gamebox" style="display:none;"></div> <div class="status">اضغط "ابدأ"</div> </section>
+  <section id="react" class="game-section hidden-by-auth"> <h2>اختبار سرعة الضغط ⌛</h2> <div class="timebox" id="react-box">اضغط للبدء</div> </section>
+  <section id="dice" class="game-section hidden-by-auth"> <h2>لعبة النرد 🎲</h2> <div class="gamebox"><button id="dice-roll">رمي النرد</button></div> <div class="result" id="dice-result" style="font-size: 3rem;">--</div> </section>
   <section id="memory" class="game-section hidden-by-auth"> <h2>لعبة الذاكرة 🧠</h2> <div class="cards"></div> <div class="status">اضغط بطاقة للبدء</div> <div class="gamebox"><button id="memory-restart">إعادة اللعبة</button></div> </section>
-  <section id="math" class="game-section hidden-by-auth"> <h2>جمع الأرقام 🧮</h2> <div class="gamebox"><button id="math-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="number" id="math-answer" placeholder="أدخل إجابتك"/> <button id="math-submit">تحقق</button> </div> <div class="result">--</div> </section>
-  <section id="guessnum" class="game-section hidden-by-auth"> <h2>تخمين الرقم 🔢</h2> <div class="gamebox"><button id="guessnum-start">ابدأ اللعبة</button></div> <div class="input-group" style="display:none;"> <input type="number" id="guessnum-input" placeholder="خمن بين 1 و100"/> <button id="guessnum-submit">خمن</button> </div> <div class="result">--</div> <div class="message"></div> </section>
-  <section id="bigsmall" class="game-section hidden-by-auth"> <h2>من الأكبر؟ 📏</h2> <div class="gamebox"><button id="bigsmall-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="number" id="bigsmall-answer" placeholder="اكتب الرقم الأكبر"/> <button id="bigsmall-submit">تحقق</button> </div> <div class="result">--</div> </section>
+  <section id="math" class="game-section hidden-by-auth"> <h2>جمع الأرقام 🧮</h2> <div class="gamebox"><button id="math-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none; font-size: 1.5rem; margin-bottom: 15px; text-align:center;"></div> <div class="input-group" style="display:none;"> <input type="number" id="math-answer" placeholder="أدخل إجابتك"/> <button id="math-submit">تحقق</button> </div> <div class="result">--</div> </section>
+  <section id="guessnum" class="game-section hidden-by-auth"> <h2>تخمين الرقم 🔢</h2> <div class="gamebox"><button id="guessnum-start">ابدأ اللعبة</button></div> <div class="input-group" style="display:none;"> <input type="number" id="guessnum-input" placeholder="خمن بين 1 و100"/> <button id="guessnum-submit">خمن</button> </div> <div class="result">--</div> <div class="message">خمن رقمًا بين 1 و 100</div> </section>
+  <section id="bigsmall" class="game-section hidden-by-auth"> <h2>من الأكبر؟ 📏</h2> <div class="gamebox"><button id="bigsmall-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none; font-size: 1.5rem; margin-bottom: 15px; text-align:center;"></div> <div class="input-group" style="display:none;"> <input type="number" id="bigsmall-answer" placeholder="اكتب الرقم الأكبر"/> <button id="bigsmall-submit">تحقق</button> </div> <div class="result">--</div> </section>
   <section id="typing" class="game-section hidden-by-auth"> <h2>اختبار الكتابة ⌨️</h2> <div class="gamebox"><button id="typing-start">ابدأ الاختبار</button></div> <div class="text-to-type" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="text" id="typing-input" placeholder="اكتب النص هنا"/> <button id="typing-submit">تحقق</button> </div> <div class="status">--</div> </section>
 
   <audio id="snd-click" src="https://actions.google.com/sounds/v1/alarms/button_click.ogg"></audio>
@@ -144,9 +214,8 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
   <script>
-    // --- هذا هو كود تهيئة Firebase الخاص بك (الذي أرسلته) ---
     const firebaseConfig = {
-      apiKey: "AIzaSyDLzpa2HYzJZdZvY_YuviKZ6Zg0FhWTfJw",
+      apiKey: "AIzaSyDLzpa2HYzJZdZvY_YuviKZ6Zg0FhWTfJw", // استبدل بمفتاحك
       authDomain: "my-site-cdd00.firebaseapp.com",
       projectId: "my-site-cdd00",
       storageBucket: "my-site-cdd00.firebasestorage.app",
@@ -154,13 +223,12 @@
       appId: "1:514123463555:web:8499c5bde152537a3dd4b6",
       measurementId: "G-3Y7SYCE0NZ"
     };
-    // -----------------------------------------------------------
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
     document.addEventListener('DOMContentLoaded', () => {
-      const playSound = (id) => { const s = document.getElementById(id); if (s) { s.currentTime = 0; s.play().catch(e => {}); } };
+      const playSound = (id) => { const s = document.getElementById(id); if (s) { s.currentTime = 0; s.play().catch(e => console.warn(`Sound ${id} play failed:`, e)); } };
       const updateButtonText = (buttonElement, baseText) => { 
           if (buttonElement) {
               const textSpan = buttonElement.querySelector('.button-text') || document.createElement('span');
@@ -170,7 +238,7 @@
               buttonElement.appendChild(textSpan);
           }
       };
-      const updateElementText = (el, txt, type) => { if(el) { el.textContent = txt; if (el.id === 'auth-status' || el.classList.contains('status') || el.classList.contains('result') || el.classList.contains('message') || el.classList.contains('timebox')) { el.className = el.id === 'auth-status' ? 'info' : el.className.split(' ')[0]; if (type) el.classList.add(type); } }};
+      const updateElementText = (el, txt, type) => { if(el) { el.textContent = txt; const baseClasses = el.className.split(' ').filter(c => !['info','success','error','waiting','ready'].includes(c)).join(' '); el.className = baseClasses; if (type) el.classList.add(type); }};
       const showHideElement = (el, show, disp = 'block') => { if(el) el.style.display = show ? disp : 'none'; };
       const disableElement = (el, dis) => { if(el) el.disabled = dis; };
 
@@ -197,7 +265,13 @@
       const btnLogout = document.getElementById('btn-logout');
       const authStatusDiv = document.getElementById('auth-status');
 
-      const updateAuthUI = (isLoggedIn, userEmail = '') => {
+      const updateAuthUI = (isLoggedIn, userEmail = '') => { /* ... (نفس الكود السابق) ... */ };
+      const updateLoginModeUI = () => { /* ... (نفس الكود السابق) ... */ };
+      const toggleMode = (e) => { /* ... (نفس الكود السابق) ... */ };
+      const handleAuthAction = () => { /* ... (نفس الكود السابق) ... */ };
+      
+      // --- نسخ ولصق الأجزاء غير المتغيرة من الـ JS ---
+      updateAuthUI = (isLoggedIn, userEmail = '') => {
         showHideElement(authFormFields, !isLoggedIn);
         showHideElement(mainActionButton, !isLoggedIn);
         showHideElement(toggleAuthModeText.parentElement, !isLoggedIn);
@@ -219,7 +293,7 @@
         updateNavigationDOM(isLoggedIn);
       };
 
-      const updateLoginModeUI = () => {
+      updateLoginModeUI = () => {
         const linkId = 'toggle-auth-mode-link-inner';
         if (isLoginMode) {
           loginTitle.textContent = 'تسجيل الدخول';
@@ -236,10 +310,10 @@
         if(newToggleLink) newToggleLink.addEventListener('click', toggleMode);
       };
       
-      const toggleMode = (e) => { if(e) e.preventDefault(); isLoginMode = !isLoginMode; updateLoginModeUI(); updateElementText(authStatusDiv, isLoginMode ? 'أدخل بيانات تسجيل الدخول.' : 'أدخل بيانات لإنشاء حساب جديد.', 'info'); };
+      toggleMode = (e) => { if(e) e.preventDefault(); isLoginMode = !isLoginMode; updateLoginModeUI(); updateElementText(authStatusDiv, isLoginMode ? 'أدخل بيانات تسجيل الدخول.' : 'أدخل بيانات لإنشاء حساب جديد.', 'info'); };
       updateLoginModeUI(); 
 
-      const handleAuthAction = () => {
+      handleAuthAction = () => {
         const email = loginEmailInput.value.trim(); const password = loginPasswordInput.value;
         if (!email || !password) { updateElementText(authStatusDiv, "الرجاء إدخال البريد الإلكتروني وكلمة المرور.", 'error'); return; }
         if (!isLoginMode && password.length < 6) { updateElementText(authStatusDiv, "كلمة المرور يجب أن تكون 6 حروف على الأقل.", 'error'); return; }
@@ -262,6 +336,8 @@
       };
       mainActionButton.addEventListener('click', handleAuthAction);
       btnLogout.addEventListener('click', () => { auth.signOut().catch(e => console.error('Logout error', e)); });
+      // --- نهاية الأجزاء غير المتغيرة ---
+
 
       auth.onAuthStateChanged(user => {
         const loginSectionElement = document.getElementById('login');
@@ -306,9 +382,14 @@
       };
       navLoginLink.addEventListener('click', handleNavLinkClick);
       
-      const initXOGame=()=>{const s=document.querySelector('#xo');if(!s)return;const bE=s.querySelector('.board'),sE=s.querySelector('.status'),rB=s.querySelector('#xo-restart');let b=Array(9).fill(''),cP='❌',gA=true;const wP=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];const cW=()=>{for(const p of wP){const [x,y,z]=p;if(b[x]&&b[x]===b[y]&&b[x]===b[z])return b[x];}return null;};const hC=(idx)=>{if(!gA||b[idx]||!auth.currentUser)return;b[idx]=cP;bE.children[idx].textContent=cP;const w=cW();if(w){updateElementText(sE,`فاز ${w}`);playSound('snd-win');gA=false;}else if(!b.includes('')){updateElementText(sE,'تعادل');playSound('snd-lose');gA=false;}else{cP=cP==='❌'?'⭕':'❌';updateElementText(sE,`الدور: ${cP}`);playSound('snd-click');}};const rG=()=>{b.fill('');cP='❌';gA=true;updateElementText(sE,'الدور: ❌');Array.from(bE.children).forEach(c=>c.textContent='');playSound('snd-click');};if(bE){bE.innerHTML=Array(9).fill().map((_,i)=>`<div class="cell" data-index="${i}"></div>`).join('');Array.from(bE.children).forEach((c,i)=>c.addEventListener('click',()=>hC(i)));}if(rB)rB.addEventListener('click',rG);if(sE)updateElementText(sE,'الدور: ❌');};
+      // --- Game Initializations ---
+      const initXOGame=()=>{/* ... (نفس الكود السابق للعبة XO) ... */};
+      const initRPSGame = () => {/* ... (نفس الكود السابق للعبة RPS) ... */};
       
-      const initRPSGame = () => { 
+      // --- نسخ ولصق ألعاب XO و RPS ---
+       initXOGame=()=>{const s=document.querySelector('#xo');if(!s)return;const bE=s.querySelector('.board'),sE=s.querySelector('.status'),rB=s.querySelector('#xo-restart');let b=Array(9).fill(''),cP='❌',gA=true;const wP=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];const cW=()=>{for(const p of wP){const [x,y,z]=p;if(b[x]&&b[x]===b[y]&&b[x]===b[z])return b[x];}return null;};const hC=(idx)=>{if(!gA||b[idx]||!auth.currentUser)return;b[idx]=cP;bE.children[idx].textContent=cP;const w=cW();if(w){updateElementText(sE,`فاز ${w}`);playSound('snd-win');gA=false;}else if(!b.includes('')){updateElementText(sE,'تعادل');playSound('snd-lose');gA=false;}else{cP=cP==='❌'?'⭕':'❌';updateElementText(sE,`الدور: ${cP}`);playSound('snd-click');}};const rG=()=>{b.fill('');cP='❌';gA=true;updateElementText(sE,'الدور: ❌');Array.from(bE.children).forEach(c=>c.textContent='');playSound('snd-click');};if(bE){bE.innerHTML=Array(9).fill().map((_,i)=>`<div class="cell" data-index="${i}"></div>`).join('');Array.from(bE.children).forEach((c,i)=>c.addEventListener('click',()=>hC(i)));}if(rB)rB.addEventListener('click',rG);if(sE)updateElementText(sE,'الدور: ❌');};
+      
+       initRPSGame = () => { 
         const section = document.querySelector('#rps'); if(!section) return;
         const resultElement = section.querySelector('.result');
         const choiceButtons = section.querySelectorAll('.gamebox button');
@@ -325,12 +406,424 @@
           playSound(message === 'فزت' ? 'snd-win' : message === 'خسرت' ? 'snd-lose' : 'snd-click');
         }));
       };
-      
-      initXOGame();
-      initRPSGame(); 
+      // --- نهاية نسخ ألعاب XO و RPS ---
 
-      if (!auth.currentUser) { showSection('login', false); }
-       else { 
+
+      // 1. Click Target Game
+      const initClickTargetGame = () => {
+        const section = document.querySelector('#click'); if (!section) return;
+        const startButton = section.querySelector('#click-start');
+        const targetArea = section.querySelector('#click-target-area');
+        const statusElement = section.querySelector('.status');
+        let score = 0; let gameTimerId; let targetElement;
+        const gameDuration = 15000; // 15 seconds
+
+        const spawnTarget = () => {
+            if (targetElement) targetElement.remove();
+            targetElement = document.createElement('div');
+            targetElement.id = 'clickable-target';
+            targetElement.textContent = '🎯';
+            const areaRect = targetArea.getBoundingClientRect();
+            const targetSize = 50;
+            targetElement.style.top = Math.random() * (areaRect.height - targetSize) + 'px';
+            targetElement.style.left = Math.random() * (areaRect.width - targetSize) + 'px';
+            targetElement.onclick = () => {
+                score++;
+                updateElementText(statusElement, `النقاط: ${score}`);
+                playSound('snd-click');
+                spawnTarget();
+            };
+            targetArea.appendChild(targetElement);
+        };
+
+        const startGame = () => {
+            if (!auth.currentUser) return;
+            score = 0;
+            updateElementText(statusElement, 'النقاط: 0');
+            showHideElement(startButton, false);
+            showHideElement(targetArea, true);
+            spawnTarget();
+            disableElement(startButton, true);
+
+            clearTimeout(gameTimerId);
+            gameTimerId = setTimeout(() => {
+                if (targetElement) targetElement.remove();
+                updateElementText(statusElement, `انتهت اللعبة! نقاطك: ${score}`);
+                playSound(score > 5 ? 'snd-win' : 'snd-lose');
+                showHideElement(startButton, true);
+                showHideElement(targetArea, false);
+                disableElement(startButton, false);
+            }, gameDuration);
+        };
+        if(startButton) startButton.addEventListener('click', startGame);
+        if(statusElement) updateElementText(statusElement, 'اضغط "ابدأ"');
+      };
+
+      // 2. Reaction Test Game
+      const initReactionTestGame = () => {
+        const section = document.querySelector('#react'); if (!section) return;
+        const reactBox = section.querySelector('#react-box');
+        let startTime, timeoutId, waitingForClick = false;
+
+        const startGame = () => {
+            if (!auth.currentUser) return;
+            if (waitingForClick) { // Clicked too soon or during "click now"
+                if (reactBox.classList.contains('ready')) { // Clicked on green
+                    const reactionTime = Date.now() - startTime;
+                    updateElementText(reactBox, `وقتك: ${reactionTime} مللي ثانية`);
+                    playSound('snd-win');
+                } else { // Clicked too soon (on red)
+                    updateElementText(reactBox, 'مبكر جداً! اضغط للبدء من جديد.');
+                    playSound('snd-lose');
+                }
+                waitingForClick = false;
+                clearTimeout(timeoutId);
+                reactBox.classList.remove('waiting', 'ready');
+                return;
+            }
+            
+            updateElementText(reactBox, 'انتظر اللون الأخضر...', 'waiting');
+            waitingForClick = true;
+            const randomDelay = Math.random() * 3000 + 1000; // 1-4 seconds
+
+            timeoutId = setTimeout(() => {
+                if (waitingForClick) { // Ensure it wasn't cancelled by an early click
+                    updateElementText(reactBox, 'اضغط الآن!', 'ready');
+                    startTime = Date.now();
+                }
+            }, randomDelay);
+        };
+        if(reactBox) reactBox.addEventListener('click', startGame);
+      };
+
+      // 3. Dice Roll Game
+      const initDiceRollGame = () => {
+        const section = document.querySelector('#dice'); if (!section) return;
+        const rollButton = section.querySelector('#dice-roll');
+        const resultElement = section.querySelector('#dice-result');
+        const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+
+        if(rollButton) rollButton.addEventListener('click', () => {
+            if (!auth.currentUser) return;
+            const roll = Math.floor(Math.random() * 6);
+            updateElementText(resultElement, diceFaces[roll]);
+            playSound('snd-click');
+        });
+      };
+
+      // 4. Memory Game
+      const initMemoryGame = () => {
+        const section = document.querySelector('#memory'); if (!section) return;
+        const cardsContainer = section.querySelector('.cards');
+        const statusElement = section.querySelector('.status');
+        const restartButton = section.querySelector('#memory-restart');
+
+        const cardValues = ['🧠', '🎮', '🎯', '🎲', '💡', '💻', '🌟', '🚀'];
+        let gameCards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let canFlip = true;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function createBoard() {
+            if(!cardsContainer) return;
+            cardsContainer.innerHTML = '';
+            matchedPairs = 0;
+            updateElementText(statusElement, 'جد الأزواج المتطابقة.');
+            let items = shuffle([...cardValues, ...cardValues]); // Duplicate and shuffle
+            gameCards = [];
+
+            items.forEach(value => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.value = value;
+
+                const cardFaceFront = document.createElement('div');
+                cardFaceFront.classList.add('card-face', 'card-front');
+                
+                const cardFaceBack = document.createElement('div');
+                cardFaceBack.classList.add('card-face', 'card-back');
+                cardFaceBack.textContent = value;
+
+                card.appendChild(cardFaceFront);
+                card.appendChild(cardFaceBack);
+                
+                card.addEventListener('click', () => flipCard(card));
+                cardsContainer.appendChild(card);
+                gameCards.push(card);
+            });
+        }
+
+        function flipCard(card) {
+            if (!canFlip || card.classList.contains('flipped') || card.classList.contains('matched') || !auth.currentUser) return;
+            
+            card.classList.add('flipped');
+            flippedCards.push(card);
+            playSound('snd-click');
+
+            if (flippedCards.length === 2) {
+                canFlip = false; // Prevent more flips until these are processed
+                checkForMatch();
+            }
+        }
+
+        function checkForMatch() {
+            const [card1, card2] = flippedCards;
+            if (card1.dataset.value === card2.dataset.value) {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                matchedPairs++;
+                playSound('snd-win');
+                updateElementText(statusElement, `أزواج متطابقة: ${matchedPairs}/${cardValues.length}`);
+                if (matchedPairs === cardValues.length) {
+                    updateElementText(statusElement, 'أحسنت! لقد وجدت كل الأزواج!');
+                }
+                canFlip = true; // Allow flipping again
+            } else {
+                setTimeout(() => {
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                    playSound('snd-lose');
+                    canFlip = true; // Allow flipping again
+                }, 1000);
+            }
+            flippedCards = [];
+        }
+        if(restartButton) restartButton.addEventListener('click', createBoard);
+        createBoard(); // Initial setup
+      };
+      
+      // 5. Math Quiz Game
+      const initMathQuizGame = () => {
+        const section = document.querySelector('#math'); if (!section) return;
+        const startButton = section.querySelector('#math-start');
+        const questionArea = section.querySelector('.question-area');
+        const answerInput = section.querySelector('#math-answer');
+        const submitButton = section.querySelector('#math-submit');
+        const resultElement = section.querySelector('.result');
+        const inputGroup = section.querySelector('.input-group');
+        let correctAnswer;
+
+        const generateQuestion = () => {
+            const num1 = Math.floor(Math.random() * 10) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            correctAnswer = num1 + num2;
+            updateElementText(questionArea, `ما هو ناتج ${num1} + ${num2} ؟`);
+            if(answerInput) answerInput.value = '';
+        };
+
+        const startGame = () => {
+            if (!auth.currentUser) return;
+            showHideElement(startButton, false);
+            showHideElement(questionArea, true);
+            showHideElement(inputGroup, true);
+            generateQuestion();
+            updateElementText(resultElement, '--');
+            if(answerInput) answerInput.focus();
+        };
+
+        const checkAnswer = () => {
+            if (!auth.currentUser || !answerInput) return;
+            const userAnswer = parseInt(answerInput.value);
+            if (userAnswer === correctAnswer) {
+                updateElementText(resultElement, 'صحيح!', 'success');
+                playSound('snd-win');
+                generateQuestion();
+            } else {
+                updateElementText(resultElement, `خطأ. الإجابة الصحيحة كانت ${correctAnswer}.`, 'error');
+                playSound('snd-lose');
+            }
+            answerInput.value = '';
+            answerInput.focus();
+        };
+
+        if(startButton) startButton.addEventListener('click', startGame);
+        if(submitButton) submitButton.addEventListener('click', checkAnswer);
+        if(answerInput) answerInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAnswer(); });
+      };
+
+      // 6. Guess Number Game
+      const initGuessNumberGame = () => {
+        const section = document.querySelector('#guessnum'); if (!section) return;
+        const startButton = section.querySelector('#guessnum-start');
+        const inputField = section.querySelector('#guessnum-input');
+        const submitButton = section.querySelector('#guessnum-submit');
+        const resultElement = section.querySelector('.result');
+        const messageElement = section.querySelector('.message');
+        const inputGroup = section.querySelector('.input-group');
+        let secretNumber, attempts;
+
+        const startGame = () => {
+            if (!auth.currentUser) return;
+            secretNumber = Math.floor(Math.random() * 100) + 1;
+            attempts = 0;
+            showHideElement(startButton, false);
+            showHideElement(inputGroup, true);
+            updateElementText(resultElement, '--');
+            updateElementText(messageElement, 'خمن رقمًا بين 1 و 100.');
+            if(inputField) {inputField.value = ''; inputField.focus();}
+            disableElement(submitButton, false);
+            disableElement(inputField, false);
+        };
+
+        const checkGuess = () => {
+            if (!auth.currentUser || !inputField) return;
+            const guess = parseInt(inputField.value);
+            if (isNaN(guess) || guess < 1 || guess > 100) {
+                updateElementText(messageElement, 'الرجاء إدخال رقم صحيح بين 1 و 100.');
+                return;
+            }
+            attempts++;
+            if (guess === secretNumber) {
+                updateElementText(resultElement, `أحسنت! لقد خمنتها في ${attempts} محاولات.`, 'success');
+                updateElementText(messageElement, 'اضغط "ابدأ اللعبة" للعب مرة أخرى.');
+                playSound('snd-win');
+                showHideElement(startButton, true);
+                disableElement(submitButton, true);
+                disableElement(inputField, true);
+            } else if (guess < secretNumber) {
+                updateElementText(messageElement, 'منخفض جدًا! حاول رقمًا أعلى.');
+                playSound('snd-click');
+            } else {
+                updateElementText(messageElement, 'مرتفع جدًا! حاول رقمًا أقل.');
+                playSound('snd-click');
+            }
+            inputField.value = '';
+            inputField.focus();
+        };
+        if(startButton) startButton.addEventListener('click', startGame);
+        if(submitButton) submitButton.addEventListener('click', checkGuess);
+        if(inputField) inputField.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkGuess(); });
+      };
+
+      // 7. Bigger/Smaller Game
+      const initBigSmallGame = () => {
+        const section = document.querySelector('#bigsmall'); if (!section) return;
+        const startButton = section.querySelector('#bigsmall-start');
+        const questionArea = section.querySelector('.question-area');
+        const answerInput = section.querySelector('#bigsmall-answer');
+        const submitButton = section.querySelector('#bigsmall-submit');
+        const resultElement = section.querySelector('.result');
+        const inputGroup = section.querySelector('.input-group');
+        let num1, num2, biggerNum;
+
+        const generateNumbers = () => {
+            num1 = Math.floor(Math.random() * 100) + 1;
+            do {
+                num2 = Math.floor(Math.random() * 100) + 1;
+            } while (num1 === num2);
+            biggerNum = Math.max(num1, num2);
+            updateElementText(questionArea, `أيهما أكبر: ${num1} أم ${num2}؟`);
+            if(answerInput) answerInput.value = '';
+        };
+        
+        const startGame = () => {
+            if (!auth.currentUser) return;
+            showHideElement(startButton, false);
+            showHideElement(questionArea, true);
+            showHideElement(inputGroup, true);
+            generateNumbers();
+            updateElementText(resultElement, '--');
+            if(answerInput) answerInput.focus();
+        };
+
+        const checkAnswer = () => {
+            if (!auth.currentUser || !answerInput) return;
+            const userAnswer = parseInt(answerInput.value);
+            if (userAnswer === biggerNum) {
+                updateElementText(resultElement, 'صحيح!', 'success');
+                playSound('snd-win');
+            } else {
+                updateElementText(resultElement, `خطأ. الرقم الأكبر كان ${biggerNum}.`, 'error');
+                playSound('snd-lose');
+            }
+            generateNumbers();
+            answerInput.value = '';
+            answerInput.focus();
+        };
+        if(startButton) startButton.addEventListener('click', startGame);
+        if(submitButton) submitButton.addEventListener('click', checkAnswer);
+        if(answerInput) answerInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAnswer(); });
+      };
+
+      // 8. Typing Test Game
+      const initTypingTestGame = () => {
+        const section = document.querySelector('#typing'); if (!section) return;
+        const startButton = section.querySelector('#typing-start');
+        const textToTypeElement = section.querySelector('.text-to-type');
+        const inputField = section.querySelector('#typing-input');
+        const submitButton = section.querySelector('#typing-submit'); // Using submit button for simplicity
+        const statusElement = section.querySelector('.status');
+        const inputGroup = section.querySelector('.input-group');
+
+        // نص بسيط باللغة العربية
+        const sampleText = "أهلاً بك في اختبار الكتابة السريع. حاول أن تكتب هذه الجملة بدقة وسرعة.";
+        let startTime;
+
+        const startGame = () => {
+            if (!auth.currentUser) return;
+            showHideElement(startButton, false);
+            showHideElement(textToTypeElement, true);
+            showHideElement(inputGroup, true);
+            updateElementText(textToTypeElement, sampleText);
+            if(inputField) {inputField.value = ''; inputField.focus();}
+            updateElementText(statusElement, 'ابدأ الكتابة...');
+            disableElement(submitButton, false);
+            disableElement(inputField, false);
+            startTime = Date.now();
+        };
+
+        const checkTyping = () => {
+            if (!auth.currentUser || !inputField) return;
+            const typedText = inputField.value;
+            const timeTaken = (Date.now() - startTime) / 1000; // seconds
+            
+            if (typedText === sampleText) {
+                const words = sampleText.split(' ').length;
+                const wpm = Math.round((words / timeTaken) * 60);
+                updateElementText(statusElement, `أحسنت! الوقت: ${timeTaken.toFixed(1)} ثانية. السرعة: ${wpm} ك/د.`, 'success');
+                playSound('snd-win');
+                disableElement(submitButton, true);
+                disableElement(inputField, true);
+                showHideElement(startButton, true);
+
+            } else {
+                updateElementText(statusElement, 'النص غير مطابق. حاول مرة أخرى.', 'error');
+                playSound('snd-lose');
+                 inputField.focus();
+            }
+        };
+
+        if(startButton) startButton.addEventListener('click', startGame);
+        if(submitButton) submitButton.addEventListener('click', checkTyping);
+        // Optional: Check on Enter key for typing game
+        if(inputField) inputField.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkTyping(); });
+      };
+
+
+      // Call all game init functions
+      initXOGame();
+      initRPSGame();
+      initClickTargetGame();
+      initReactionTestGame();
+      initDiceRollGame();
+      initMemoryGame();
+      initMathQuizGame();
+      initGuessNumberGame();
+      initBigSmallGame();
+      initTypingTestGame();
+
+      // Initial state
+      if (!auth.currentUser) { 
+        showSection('login', false); 
+      } else { 
         if (gameNavLinksData.length > 0 && gameNavLinksData.some(link => link.href === "#xo")) {
             showSection('xo', true);
         } else if (gameNavLinksData.length > 0) {
