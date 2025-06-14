@@ -2,13 +2,13 @@
 <html lang="ar" dir="ltr">
 <head>
   <meta charset="UTF-8">
-  <title>🎮 موقع الألعاب - تسجيل دخول Glassmorphism</title>
+  <title>🎮 موقع الألعاب - أيقونات الألعاب</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;700;800;900&display=swap");
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-    body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat; background-size: cover; background-position: center; }
+    body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat; background-size: cover; background-position: center; overflow-y: auto;} /* Added overflow-y */
     .wrapper { margin-top: 80px; width: 420px; background-color: transparent; border: 2px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(15px); box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); color: #fff; border-radius: 16px; padding: 20px 30px; direction: rtl; }
     .wrapper h1 { font-size: 30px; text-align: center; margin-bottom:20px;}
     .wrapper .input-box { width: 100%; height: 50px; position: relative; margin: 30px 0; }
@@ -29,16 +29,17 @@
     #auth-status.success { background-color: rgba(40, 167, 69, 0.3); border: 1px solid rgba(40, 167, 69, 0.6); }
     #auth-status.error { background-color: rgba(220, 53, 69, 0.3); border: 1px solid rgba(220, 53, 69, 0.6); }
     #auth-status.info { background-color: rgba(23, 162, 184, 0.3); border: 1px solid rgba(23, 162, 184, 0.6); }
+    
     nav { background:#002b4d; padding:12px; text-align:center; position:fixed; top:0; left:0; right:0; z-index: 1000; direction: rtl;}
     nav a { color:white; margin:0 10px; text-decoration:none; font-size:1.1rem; }
-    nav a:hover, nav a.active { text-decoration:underline; font-weight: bold; }
+    nav a:hover, nav a.active-nav-link { text-decoration:underline; font-weight: bold; } /* Changed .active to .active-nav-link to avoid conflict */
     
     section {
       display: none;
-      padding: 0 20px 20px 20px; 
-      max-width: 500px;
+      padding: 20px; 
+      max-width: 600px; /* Increased max-width for launcher */
       margin: 20px auto; 
-      margin-top: 80px; 
+      margin-top: 80px; /* Account for nav */
       background: rgba(255, 255, 255, 0.95);
       color: #333;
       border-radius: 12px;
@@ -46,18 +47,34 @@
       direction: rtl;
     }
     section.active { display:block; }
-    section#login.active { background: transparent; box-shadow: none; border: none; padding: 0;} 
+    section#login.active, section#game-launcher.active { 
+        background: transparent; 
+        box-shadow: none; 
+        border: none; 
+        padding: 0;
+        max-width: none; /* Allow launcher to take more width if needed */
+    } 
+     section#game-launcher.active {
+        margin-top: 80px; /* Ensure spacing from nav */
+        padding: 20px; /* Add some padding around the grid */
+     }
     
     section h2 {
-      margin-top: 20px; 
+      margin-top: 0; /* Adjusted for sections */
       color: #003B73;
       text-align: center;
       margin-bottom: 20px; 
     }
+    section#game-launcher h2 {
+        color: #fff; /* White title for launcher */
+        font-size: 2rem;
+        margin-bottom: 30px;
+    }
 
-    section:not(#login) button { padding:10px 20px; margin:8px 4px; font-size:1rem; cursor:pointer; border:none; border-radius:8px; background:#005A9C; color:white; transition:background .2s; }
-    section:not(#login) button:hover { background:#003B73; }
-    section:not(#login) button:disabled { background:#ccc; cursor:not-allowed; }
+
+    section:not(#login):not(#game-launcher) button { padding:10px 20px; margin:8px 4px; font-size:1rem; cursor:pointer; border:none; border-radius:8px; background:#005A9C; color:white; transition:background .2s; }
+    section:not(#login):not(#game-launcher) button:hover { background:#003B73; }
+    section:not(#login):not(#game-launcher) button:disabled { background:#ccc; cursor:not-allowed; }
     .status, .result, .message, .timebox { margin:15px 0; font-size:1.1rem; min-height: 1.2em; text-align: center;}
     
     .board { 
@@ -81,9 +98,9 @@
     /* --- Memory Game Specific --- */
     .cards {
         display: grid; 
-        grid-template-columns: repeat(4, 1fr); /* 4 columns for memory cards */
+        grid-template-columns: repeat(4, 1fr); 
         gap: 10px; 
-        max-width: 380px; /* Adjust as needed */
+        max-width: 380px; 
     }
     .card {
         width: 80px; height: 80px;
@@ -91,34 +108,34 @@
         display: flex; align-items: center; justify-content: center;
         font-size: 2rem; border-radius: 8px; cursor: pointer;
         transition: transform 0.3s, background-color 0.3s;
-        transform-style: preserve-3d; /* For flip effect */
+        transform-style: preserve-3d; 
     }
     .card .card-face {
         position: absolute; width: 100%; height: 100%;
-        backface-visibility: hidden; /* Hide back of card during flip */
+        backface-visibility: hidden; 
         display: flex; align-items: center; justify-content: center;
         border-radius: 8px;
     }
-    .card .card-front { background-color: #005A9C; } /* Default card back color */
+    .card .card-front { background-color: #005A9C; } 
     .card .card-back { background-color: #f0f0f0; color: #333; transform: rotateY(180deg); }
     .card.flipped { transform: rotateY(180deg); }
     .card.matched { background-color: #28a745 !important; cursor: default; }
-    .card.matched .card-front { background-color: #28a745 !important; } /* Keep front color for matched */
+    .card.matched .card-front { background-color: #28a745 !important; } 
 
 
     /* --- Click Target Game Specific --- */
     #click-target-area { 
         text-align: left; 
-        min-height: 200px; /* Increased height */
+        min-height: 200px; 
         background-color: #e9ecef; 
         position: relative; 
         border-radius: 8px;
-        overflow: hidden; /* To contain the target */
+        overflow: hidden; 
     }
     #clickable-target {
         width: 50px; height: 50px;
         background-color: red;
-        border-radius: 50%; /* Circle */
+        border-radius: 50%; 
         position: absolute;
         cursor: pointer;
         display: flex; align-items: center; justify-content: center;
@@ -128,15 +145,15 @@
      /* --- Reaction Test Specific --- */
     .timebox {
         padding: 20px;
-        background-color: #6c757d; /* Grayish initial color */
+        background-color: #6c757d; 
         color: white;
         border-radius: 8px;
         font-size: 1.5rem;
         cursor: pointer;
         transition: background-color 0.3s;
     }
-    .timebox.waiting { background-color: #dc3545; } /* Red for "Wait" */
-    .timebox.ready { background-color: #28a745; } /* Green for "Click" */
+    .timebox.waiting { background-color: #dc3545; } 
+    .timebox.ready { background-color: #28a745; } 
 
     /* --- Typing Test Specific --- */
     .text-to-type {
@@ -147,8 +164,8 @@
         font-size: 1.1rem;
         line-height: 1.6;
         background-color: #f8f9fa;
-        direction: rtl; /* Ensure text is RTL */
-        text-align: right; /* Ensure text aligns to the right */
+        direction: rtl; 
+        text-align: right; 
     }
     #typing-input {
         width: 100%;
@@ -156,21 +173,67 @@
         font-size: 1rem;
         border-radius: 8px;
         border: 1px solid #ccc;
-        direction: rtl; /* For RTL typing input */
-        text-align: right; /* Align text to right in input */
+        direction: rtl; 
+        text-align: right; 
     }
-    .input-group { text-align: center; } /* For math, guessnum etc. */
+    .input-group { text-align: center; } 
     .input-group input { margin: 0 auto 10px auto; display: block; max-width: 250px; text-align: center; padding:10px; border-radius: 8px; border:1px solid #ccc; }
 
 
     .hidden-by-auth { display: none !important; }
     .button-text { margin: 0 5px; }
+
+    /* --- Game Launcher Styles --- */
+    .game-icons-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 25px;
+        padding: 20px;
+        max-width: 800px; /* Control max width of the grid itself */
+        margin: 0 auto; /* Center the grid */
+    }
+    .game-icon-card {
+        background-color: rgba(0, 43, 77, 0.6); /* Darker, semi-transparent blue */
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 12px;
+        padding: 20px 15px;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, background-color 0.25s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 130px; /* Ensure cards have a minimum height */
+        backdrop-filter: blur(5px);
+    }
+    .game-icon-card:hover {
+        transform: translateY(-8px) scale(1.03);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+        background-color: rgba(0, 60, 110, 0.7); /* Slightly lighter on hover */
+    }
+    .game-icon-card i {
+        font-size: 3.5rem; /* Larger icons */
+        margin-bottom: 12px;
+        color: #cce7ff; /* Light blueish white for icons */
+        transition: color 0.2s;
+    }
+     .game-icon-card:hover i {
+        color: #fff;
+     }
+    .game-icon-card span {
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
   </style>
 </head>
 <body>
 
   <nav id="main-nav">
     <a href="#login" id="nav-login-link">تسجيل الدخول</a>
+    <!-- "Games" link will be added here by JS -->
   </nav>
 
   <section id="login" class="active">
@@ -199,6 +262,14 @@
     </div>
   </section>
 
+  <section id="game-launcher" class="hidden-by-auth">
+    <h2>اختر لعبتك المفضلة!</h2>
+    <div class="game-icons-grid" id="game-icons-grid-container">
+        <!-- Game icons will be populated here by JavaScript -->
+    </div>
+  </section>
+
+
   <section id="xo" class="game-section hidden-by-auth"> <h2>إكس أو (XO)</h2> <div class="board"></div> <div class="status">الدور: ❌</div> <button id="xo-restart">إعادة XO</button> </section>
   <section id="rps" class="game-section hidden-by-auth"> <h2>حجر ورقة مقص 🧱📄✂️</h2> <div class="gamebox"> <button data-choice="🧱">🧱</button> <button data-choice="📄">📄</button> <button data-choice="✂️">✂️</button> </div> <div class="result">اختر لبدء!</div> </section>
   <section id="click" class="game-section hidden-by-auth"> <h2>اصطياد الهدف 🎯</h2> <div class="gamebox"><button id="click-start">ابدأ</button></div> <div id="click-target-area" class="gamebox" style="display:none;"></div> <div class="status">اضغط "ابدأ"</div> </section>
@@ -219,10 +290,10 @@
 
   <script>
     const firebaseConfig = {
-        apiKey: "AIzaSyDLzpa2HYzJZdZvY_YuviKZ6Zg0FhWTfJw", // استبدل بمفتاحك
+        apiKey: "AIzaSyDLzpa2HYzJZdZvY_YuviKZ6Zg0FhWTfJw", 
         authDomain: "my-site-cdd00.firebaseapp.com",
         projectId: "my-site-cdd00",
-        storageBucket: "my-site-cdd00.firebasestorage.app", // Consistent with user's original first file
+        storageBucket: "my-site-cdd00.firebasestorage.app",
         messagingSenderId: "514123463555",
         appId: "1:514123463555:web:8499c5bde152537a3dd4b6",
         measurementId: "G-3Y7SYCE0NZ"
@@ -250,14 +321,22 @@
       const gameSections = document.querySelectorAll('.game-section');
       const mainNav = document.getElementById('main-nav');
       const navLoginLink = document.getElementById('nav-login-link');
+      const gameLauncherSection = document.getElementById('game-launcher');
+      const gameIconsGridContainer = document.getElementById('game-icons-grid-container');
+      
       const gameNavLinksData = [
-          { href: "#xo", text: "إكس أو" }, { href: "#rps", text: "حجر ورقة مقص" },
-          { href: "#click", text: "اصطياد الهدف" }, { href: "#react", text: "سرعة الضغط" },
-          { href: "#dice", text: "النرد" }, { href: "#memory", text: "الذاكرة" },
-          { href: "#math", text: "الرياضيات" }, { href: "#guessnum", text: "تخمين الرقم" },
-          { href: "#bigsmall", text: "من الأكبر" }, { href: "#typing", text: "الكتابة" }
+          { id: "xo", text: "إكس أو", icon: "bxs-grid-alt" }, 
+          { id: "rps", text: "حجر ورقة مقص", icon: "bxs-joystick-button" },
+          { id: "click", text: "اصطياد الهدف", icon: "bxs-bullseye" }, 
+          { id: "react", text: "سرعة الضغط", icon: "bxs-stopwatch" },
+          { id: "dice", text: "النرد", icon: "bxs-dice-5" }, 
+          { id: "memory", text: "الذاكرة", icon: "bxs-brain" },
+          { id: "math", text: "الرياضيات", icon: "bxs-calculator" }, 
+          { id: "guessnum", text: "تخمين الرقم", icon: "bxs-help-circle" },
+          { id: "bigsmall", text: "من الأكبر", icon: "bxs-sort-alt" }, 
+          { id: "typing", text: "الكتابة", icon: "bxs-keyboard" }
       ];
-      let currentNavLinksElements = [navLoginLink];
+      let navGamesLink = null; // To store the "Games" link
       let isLoginMode = true;
 
       const loginTitle = document.getElementById('login-title');
@@ -269,7 +348,7 @@
       const btnLogout = document.getElementById('btn-logout');
       const authStatusDiv = document.getElementById('auth-status');
 
-      // --- AUTH LOGIC FROM FIRST FILE (WITH VERIFICATION) ---
+
       const updateAuthUI = (isLoggedIn, userEmail = '', isVerified = true) => {
         showHideElement(authFormFields, !isLoggedIn);
         showHideElement(mainActionButton, !isLoggedIn);
@@ -280,26 +359,30 @@
           loginTitle.textContent = `أهلاً بك`;
           if (isVerified) {
             updateElementText(authStatusDiv, userEmail, 'success');
+            gameLauncherSection.classList.remove('hidden-by-auth');
+            populateGameLauncher();
           } else {
             updateElementText(authStatusDiv, `تم تسجيل الدخول كـ ${userEmail}. يرجى التحقق من بريدك الإلكتروني للوصول الكامل.`, 'info');
+            gameLauncherSection.classList.add('hidden-by-auth');
+            gameIconsGridContainer.innerHTML = ''; // Clear icons if not verified
           }
           navLoginLink.textContent = 'تسجيل الخروج';
+          navLoginLink.href = "#logout"; // Make it clear it's a logout action
           navLoginLink.onclick = (e) => { e.preventDefault(); btnLogout.click(); };
           
-          if (isVerified) {
-            gameSections.forEach(gs => gs.classList.remove('hidden-by-auth'));
-          } else {
-            gameSections.forEach(gs => { gs.classList.add('hidden-by-auth'); gs.classList.remove('active'); });
-          }
         } else {
           isLoginMode = true; 
           updateLoginModeUI(); 
           updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
           navLoginLink.textContent = 'تسجيل الدخول';
-          navLoginLink.onclick = handleNavLinkClick; // Re-assign original handler
+          navLoginLink.href = "#login";
+          navLoginLink.onclick = handleNavLinkClick;
+          gameLauncherSection.classList.add('hidden-by-auth');
+          gameIconsGridContainer.innerHTML = ''; // Clear icons on logout
           gameSections.forEach(gs => { gs.classList.add('hidden-by-auth'); gs.classList.remove('active'); });
+
         }
-        updateNavigationDOM(isLoggedIn && isVerified); // Pass verification status
+        updateNavigationDOM(isLoggedIn && isVerified, null); 
       };
 
       const updateLoginModeUI = () => {
@@ -334,15 +417,13 @@
         updateElementText(authStatusDiv, isLoginMode ? 'جاري تسجيل الدخول...' : 'جاري إنشاء الحساب...', 'info');
         disableElement(mainActionButton, true);
 
-        if (isLoginMode) { // Login
+        if (isLoginMode) { 
             auth.signInWithEmailAndPassword(email, password)
               .then((userCredential) => {
                 if (userCredential.user && !userCredential.user.emailVerified) {
-                  updateElementText(authStatusDiv, "لقد سجلت الدخول، ولكن يجب التحقق من بريدك الإلكتروني أولاً. يمكنك إعادة إرسال رسالة تحقق إذا أردت.", 'error');
-                  // userCredential.user.sendEmailVerification(); // Optionally re-send
+                  updateElementText(authStatusDiv, "لقد سجلت الدخول، ولكن يجب التحقق من بريدك الإلكتروني أولاً.", 'error');
                   auth.signOut(); 
                 } else {
-                  // Verified, onAuthStateChanged will handle UI
                   loginEmailInput.value = ''; loginPasswordInput.value = '';
                 }
               })
@@ -355,7 +436,7 @@
                 console.error("Auth Error Code:",error.code, "Message:", error.message); updateElementText(authStatusDiv, msg, 'error');
               })
               .finally(() => { disableElement(mainActionButton, false); });
-        } else { // Register (Create Account)
+        } else { 
             auth.createUserWithEmailAndPassword(email, password)
               .then((userCredential) => {
                 if (userCredential.user) {
@@ -384,13 +465,12 @@
               .finally(() => { disableElement(mainActionButton, false); });
         }
       };
-      // --- END AUTH LOGIC FROM FIRST FILE ---
 
       updateLoginModeUI(); 
       mainActionButton.addEventListener('click', handleAuthAction);
       btnLogout.addEventListener('click', () => { 
         auth.signOut().catch(e => console.error('Logout error', e)); 
-        updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info'); // Reflect logout immediately
+        updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
       });
 
       auth.onAuthStateChanged(user => {
@@ -399,62 +479,128 @@
           if (user.emailVerified) {
             updateAuthUI(true, user.email, true);
             showHideElement(loginSectionElement, false);
-            if (gameNavLinksData.length > 0 && gameNavLinksData.some(link => link.href === "#xo")) { 
-              showSection('xo', true); 
-            } else if (gameNavLinksData.length > 0) {
-              showSection(gameNavLinksData[0].href.slice(1), true); 
-            }
+            showSection('game-launcher'); 
           } else {
             updateAuthUI(true, user.email, false); 
             showHideElement(loginSectionElement, true); 
             updateElementText(authStatusDiv, `تم تسجيل حسابك (${user.email}) ولكن لم يتم التحقق من البريد الإلكتروني. يرجى التحقق من بريدك لتتمكن من اللعب.`, 'info');
-             gameSections.forEach(gs => { gs.classList.add('hidden-by-auth'); gs.classList.remove('active'); });
-             updateNavigationDOM(false); // Do not show game links
+            showSection('login'); 
           }
         } else {
           updateAuthUI(false);
           showHideElement(loginSectionElement, true);
-          showSection('login', false);
+          showSection('login');
         }
       });
+      
+      const populateGameLauncher = () => {
+        if (!gameIconsGridContainer) return;
+        gameIconsGridContainer.innerHTML = ''; // Clear previous icons
+        gameNavLinksData.forEach(game => {
+            const card = document.createElement('div');
+            card.className = 'game-icon-card';
+            card.dataset.target = game.id;
+            
+            const icon = document.createElement('i');
+            icon.className = `bx ${game.icon}`;
+            
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = game.text;
+            
+            card.appendChild(icon);
+            card.appendChild(nameSpan);
+            
+            card.addEventListener('click', () => {
+                playSound('snd-click');
+                showSection(game.id, true);
+            });
+            gameIconsGridContainer.appendChild(card);
+        });
+      };
 
-      const updateNavigationDOM = (isLoggedInAndVerified) => { 
-        currentNavLinksElements.forEach(link => { if (link !== navLoginLink) link.remove(); });
-        currentNavLinksElements = [navLoginLink];
-        if (isLoggedInAndVerified) { // Only add game links if logged in AND verified
-          gameNavLinksData.forEach(data => { const l = document.createElement('a'); l.href=data.href; l.textContent=data.text; l.addEventListener('click',handleNavLinkClick); mainNav.appendChild(l); currentNavLinksElements.push(l); });
+      const updateNavigationDOM = (isLoggedInAndVerified, activeSectionId) => { 
+        // Remove existing "Games" link if it exists
+        if (navGamesLink && navGamesLink.parentNode === mainNav) {
+            mainNav.removeChild(navGamesLink);
+            navGamesLink = null;
+        }
+
+        if (isLoggedInAndVerified) {
+            const isGameActive = gameNavLinksData.some(game => game.id === activeSectionId);
+            if (isGameActive) {
+                navGamesLink = document.createElement('a');
+                navGamesLink.href = "#game-launcher";
+                navGamesLink.textContent = "الألعاب";
+                navGamesLink.id = "nav-games-launcher-link";
+                navGamesLink.addEventListener('click', handleNavLinkClick);
+                mainNav.appendChild(navGamesLink);
+            }
+        }
+        // Ensure navLoginLink is always present and correctly configured
+        if (!mainNav.contains(navLoginLink)) {
+            mainNav.insertBefore(navLoginLink, mainNav.firstChild);
         }
       };
 
-      const showSection = (targetId, isGame = false) => {
+      const showSection = (targetId, isGameSection = false) => {
         allSections.forEach(s => s.classList.remove('active'));
         const sectionToShow = document.getElementById(targetId);
         if (sectionToShow) sectionToShow.classList.add('active');
-        currentNavLinksElements.forEach(a => { if(a) a.classList.toggle('active', a.getAttribute('href') === `#${targetId}`); });
         
         const currentUser = auth.currentUser;
-        // Play sound if game section and user is verified, or if login section and no user
-        if ( (isGame && currentUser && currentUser.emailVerified) || (targetId === 'login' && !currentUser) ) {
-             if (targetId !== 'login' || !currentUser) playSound('snd-click');
+        const isVerified = currentUser && currentUser.emailVerified;
+
+        // Update nav links based on what's shown
+        updateNavigationDOM(isVerified, targetId);
+
+        // Highlight active link in main nav
+        Array.from(mainNav.children).forEach(a => {
+            if(a) a.classList.toggle('active-nav-link', a.getAttribute('href') === `#${targetId}`);
+        });
+
+        // Specific sound logic for sections
+        if (targetId === 'login' && !currentUser) {
+            playSound('snd-click');
+        } else if (targetId === 'game-launcher' && isVerified) {
+            // No sound when launcher itself is shown, only for icon clicks
+        } else if (isGameSection && isVerified) {
+            // Sound for game icons is handled in their click listener to avoid double play
         }
       };
 
       const handleNavLinkClick = (e) => {
-          e.preventDefault(); const id = e.target.getAttribute('href').slice(1);
-          const isGame = Array.from(gameSections).some(gs => gs.id === id);
+          e.preventDefault(); 
+          const targetId = e.target.getAttribute('href').slice(1);
           
+          if (targetId === 'login' && auth.currentUser) { // If "Login" is clicked but user is logged in (e.g. unverified)
+            showSection('login');
+            return;
+          }
+           if (targetId === 'logout') { // Should be handled by btnLogout.click() but as a fallback
+             btnLogout.click();
+             return;
+           }
+
+          const isGame = gameNavLinksData.some(game => game.id === targetId);
           const currentUser = auth.currentUser;
-          // Check auth and verification for game links
+
           if (isGame && (!currentUser || !currentUser.emailVerified)) { 
             updateElementText(authStatusDiv, "يجب تسجيل الدخول والتحقق من بريدك الإلكتروني أولاً للعب.", "error"); 
-            showSection('login', false); 
+            showSection('login'); 
             return; 
           }
-          showSection(id, isGame);
+          if (targetId === 'game-launcher' && (!currentUser || !currentUser.emailVerified)) {
+             updateElementText(authStatusDiv, "يجب تسجيل الدخول والتحقق من بريدك الإلكتروني أولاً.", "error"); 
+             showSection('login');
+             return;
+          }
+          
+          playSound('snd-click'); // Play sound for nav link clicks (login, games launcher)
+          showSection(targetId, isGame);
       };
       navLoginLink.addEventListener('click', handleNavLinkClick);
       
-      // --- Game Initializations (Kept from second file, with added verification checks) ---
+      // --- Game Initializations (Verification checks within each game function) ---
       const initXOGame=()=>{const s=document.querySelector('#xo');if(!s)return;const bE=s.querySelector('.board'),sE=s.querySelector('.status'),rB=s.querySelector('#xo-restart');let b=Array(9).fill(''),cP='❌',gA=true;const wP=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];const cW=()=>{for(const p of wP){const [x,y,z]=p;if(b[x]&&b[x]===b[y]&&b[x]===b[z])return b[x];}return null;};const hC=(idx)=>{if(!auth.currentUser||!auth.currentUser.emailVerified){updateElementText(sE,'يرجى التحقق من بريدك للعب.','info');return;}if(!gA||b[idx])return;b[idx]=cP;bE.children[idx].textContent=cP;const w=cW();if(w){updateElementText(sE,`فاز ${w}`);playSound('snd-win');gA=false;}else if(!b.includes('')){updateElementText(sE,'تعادل');playSound('snd-lose');gA=false;}else{cP=cP==='❌'?'⭕':'❌';updateElementText(sE,`الدور: ${cP}`);playSound('snd-click');}};const rG=()=>{if(!auth.currentUser||!auth.currentUser.emailVerified){updateElementText(sE,'يرجى التحقق من بريدك للعب.','info');return;}b.fill('');cP='❌';gA=true;updateElementText(sE,'الدور: ❌');Array.from(bE.children).forEach(c=>c.textContent='');playSound('snd-click');};if(bE){bE.innerHTML=Array(9).fill().map((_,i)=>`<div class="cell" data-index="${i}"></div>`).join('');Array.from(bE.children).forEach((c,i)=>c.addEventListener('click',()=>hC(i)));}if(rB)rB.addEventListener('click',rG);if(sE)updateElementText(sE,'الدور: ❌');};
       
       const initRPSGame = () => { 
@@ -572,7 +718,7 @@
         const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 
         if(rollButton) rollButton.addEventListener('click', () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(resultElement, '--', 'info'); if(statusElement) statusElement.textContent = 'يرجى التحقق من بريدك للعب.'; return;}
+            if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(resultElement, '--'); alert('يرجى التحقق من بريدك للعب.'); return;}
             const roll = Math.floor(Math.random() * 6);
             updateElementText(resultElement, diceFaces[roll]);
             playSound('snd-click');
@@ -604,7 +750,7 @@
             if(!cardsContainer || !statusElement) return;
             if (auth.currentUser && !auth.currentUser.emailVerified) { 
                 updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info');
-                cardsContainer.innerHTML = ''; // Clear board if not verified to prevent interaction
+                cardsContainer.innerHTML = '';
                 return;
             }
 
@@ -619,17 +765,13 @@
                 const card = document.createElement('div');
                 card.classList.add('card');
                 card.dataset.value = value;
-
                 const cardFaceFront = document.createElement('div');
                 cardFaceFront.classList.add('card-face', 'card-front');
-
                 const cardFaceBack = document.createElement('div');
                 cardFaceBack.classList.add('card-face', 'card-back');
                 cardFaceBack.textContent = value;
-
                 card.appendChild(cardFaceFront);
                 card.appendChild(cardFaceBack);
-                
                 card.addEventListener('click', () => flipCard(card));
                 cardsContainer.appendChild(card);
                 gameCards.push(card);
@@ -674,7 +816,7 @@
                 }, 1000);
             }
             flippedCards = [];
-            setTimeout(() => { canFlip = true; }, isMatch ? 200 : 1000); // Allow flipping sooner if match
+            setTimeout(() => { canFlip = true; }, isMatch ? 200 : 1000); 
         }
 
         if(restartButton) restartButton.addEventListener('click', () => {
@@ -685,7 +827,11 @@
             createBoard();
             playSound('snd-click');
         });
-        createBoard(); 
+        // Initial board creation is handled by onAuthStateChanged indirectly via populateGameLauncher then showSection
+        // For direct load or refresh when already logged in:
+        if (auth.currentUser && auth.currentUser.emailVerified) {
+          createBoard();
+        }
       };
       
       const initMathQuizGame = () => {
@@ -736,7 +882,7 @@
                 updateElementText(resultElement, `خطأ. الإجابة الصحيحة: ${correctAnswer}`, 'error');
                 playSound('snd-lose');
             }
-             if(answerInput) answerInput.value = ''; // Clear input for next question or retry
+             if(answerInput) {answerInput.value = ''; answerInput.focus(); }
         };
 
         if(startButton) startButton.addEventListener('click', startGame);
@@ -865,7 +1011,7 @@
                 updateElementText(resultElement, `خطأ. الرقم الأكبر كان ${biggerNum}.`, 'error');
                 playSound('snd-lose');
             }
-            if(answerInput) answerInput.value = ''; // Clear input
+            if(answerInput) {answerInput.value = ''; answerInput.focus();}
         };
         if(startButton) startButton.addEventListener('click', startGame);
         if(submitButton) submitButton.addEventListener('click', checkAnswer);
@@ -915,9 +1061,15 @@
                 if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
             }
             const typedText = inputField.value;
-            const originalText = textToTypeElement.textContent; // Use the current text content
+            const originalText = textToTypeElement.textContent; 
             const endTime = new Date();
             const timeTaken = (endTime - startTime) / 1000; 
+
+            if (typedText.length < originalText.length && typedText !== originalText) {
+                 updateElementText(statusElement, 'أكمل النص أولاً ثم اضغط تحقق.');
+                 playSound('snd-lose');
+                 return;
+            }
 
             let errors = 0;
             for (let i = 0; i < originalText.length; i++) {
@@ -925,16 +1077,9 @@
                     errors++;
                 }
             }
-            if (typedText.length > originalText.length) { // Penalize extra characters
+            if (typedText.length > originalText.length) { 
                 errors += (typedText.length - originalText.length);
             }
-            // Only count as complete if all original text is typed
-            if (typedText.length < originalText.length && typedText !== originalText) {
-                 updateElementText(statusElement, 'أكمل النص أولاً ثم اضغط تحقق.');
-                 playSound('snd-lose');
-                 return;
-            }
-
 
             const words = originalText.split(/\s+/).filter(Boolean).length;
             const wpm = timeTaken > 0 ? Math.round((words / timeTaken) * 60) : 0;
@@ -945,7 +1090,6 @@
             showHideElement(startButton, true);
             disableElement(inputField, true);
             disableElement(submitButton, true);
-            // Don't hide inputGroup and textToTypeElement immediately, so user can see results. Start button will reset.
         };
         if(startButton) startButton.addEventListener('click', startGame);
         if(submitButton) submitButton.addEventListener('click', checkTyping);
@@ -956,15 +1100,12 @@
       // Call all game init functions
       initXOGame(); initRPSGame(); initClickTargetGame(); initReactionTestGame(); initDiceRollGame(); initMemoryGame(); initMathQuizGame(); initGuessNumberGame(); initBigSmallGame(); initTypingTestGame();
 
-      // Initial state
-      if (!auth.currentUser || (auth.currentUser && !auth.currentUser.emailVerified)) { 
-        showSection('login', false); 
+      // Initial state check
+      const currentUser = auth.currentUser;
+      if (!currentUser || !currentUser.emailVerified) { 
+        showSection('login'); 
       } else { 
-        if (gameNavLinksData.length > 0 && gameNavLinksData.some(link => link.href === "#xo")) {
-            showSection('xo', true);
-        } else if (gameNavLinksData.length > 0) {
-            showSection(gameNavLinksData[0].href.slice(1), true);
-        }
+        showSection('game-launcher');
       }
     });
   </script>
