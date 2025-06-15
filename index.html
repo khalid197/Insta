@@ -8,14 +8,14 @@
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;700;800;900&display=swap");
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-    body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat; background-size: cover; background-position: center; overflow-y: auto; position: relative; /* For sidebar positioning */
+    body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat; background-size: cover; background-position: center; overflow-y: auto; position: relative; 
     }
 
     /* --- Sidebar Styles --- */
     .sidebar-toggle {
         position: fixed;
         top: 15px;
-        right: 20px; /* Changed from left to right for LTR toggle on RTL page */
+        right: 20px; 
         font-size: 2.2rem;
         color: white;
         background-color: #002b4d;
@@ -23,36 +23,36 @@
         padding: 5px 10px;
         border-radius: 8px;
         cursor: pointer;
-        z-index: 1002; /* Above sidebar overlay */
+        z-index: 1002; 
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     .sidebar-toggle:focus { outline: none; }
 
     .sidebar {
         height: 100%;
-        width: 0; /* Initially hidden */
+        width: 0; 
         position: fixed;
         z-index: 1001;
         top: 0;
-        right: 0; /* Changed from left to right */
-        background-color: #00233a; /* Slightly darker than nav */
+        right: 0; 
+        background-color: #00233a; 
         overflow-x: hidden;
         transition: 0.35s ease-out;
-        padding-top: 70px; /* Space for toggle button or header */
+        padding-top: 70px; 
         direction: rtl;
-        box-shadow: -5px 0 15px rgba(0,0,0,0.2); /* Shadow on the left */
+        box-shadow: -5px 0 15px rgba(0,0,0,0.2); 
     }
     .sidebar.open {
-        width: 260px; /* Width when open */
+        width: 260px; 
     }
     .sidebar a {
-        padding: 12px 15px 12px 30px; /* Adjusted padding for RTL */
+        padding: 12px 15px 12px 30px; 
         text-decoration: none;
         font-size: 1.15rem;
-        color: #b0bec5; /* Lighter color for links */
+        color: #b0bec5; 
         display: block;
         transition: 0.2s;
-        border-bottom: 1px solid #002b4d; /* Separator */
+        border-bottom: 1px solid #002b4d; 
     }
     .sidebar a:last-child {
         border-bottom: none;
@@ -65,7 +65,7 @@
     .sidebar .sidebar-close-btn {
         position: absolute;
         top: 15px;
-        left: 25px; /* Changed from right to left */
+        left: 25px; 
         font-size: 2rem;
         color: #b0bec5;
         cursor: pointer;
@@ -76,14 +76,13 @@
 
     #admin-button-sidebar {
         background-color: rgba(220, 53, 69, 0.7);
-        color: white !important; /* Important to override other styles */
+        color: white !important; 
     }
     #admin-button-sidebar:hover {
          background-color: #dc3545;
     }
 
-
-    /* --- General Styles (some might be adjusted) --- */
+    /* --- General Styles --- */
     .wrapper { margin-top: 80px; width: 420px; background-color: transparent; border: 2px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(15px); box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); color: #fff; border-radius: 16px; padding: 20px 30px; direction: rtl; }
     .wrapper h1 { font-size: 30px; text-align: center; margin-bottom:20px;}
     .wrapper .input-box { width: 100%; height: 50px; position: relative; margin: 30px 0; }
@@ -105,47 +104,14 @@
     #auth-status.error { background-color: rgba(220, 53, 69, 0.3); border: 1px solid rgba(220, 53, 69, 0.6); }
     #auth-status.info { background-color: rgba(23, 162, 184, 0.3); border: 1px solid rgba(23, 162, 184, 0.6); }
     
-    /* Nav is now just the toggle button, so we can hide the old nav */
     nav#main-nav { display: none; } 
     
-    section {
-      display: none; 
-      padding: 20px; 
-      max-width: 600px;
-      margin: 20px auto; 
-      margin-top: 80px; 
-      background: rgba(255, 255, 255, 0.95);
-      color: #333;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-      direction: rtl;
-    }
+    section { display: none; padding: 20px; max-width: 600px; margin: 20px auto; margin-top: 80px; background: rgba(255, 255, 255, 0.95); color: #333; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); direction: rtl; }
     section.active { display:block !important; } 
-
-    section#login.active, section#game-launcher.active { 
-        background: transparent; 
-        box-shadow: none; 
-        border: none; 
-        padding: 0;
-        max-width: none; 
-    } 
-     section#game-launcher.active {
-        margin-top: 80px; 
-        padding: 20px; 
-     }
-    
-    section h2 {
-      margin-top: 0; 
-      color: #003B73;
-      text-align: center;
-      margin-bottom: 20px; 
-    }
-    section#game-launcher h2 {
-        color: #fff; 
-        font-size: 2rem;
-        margin-bottom: 30px;
-    }
-
+    section#login.active, section#game-launcher.active { background: transparent; box-shadow: none; border: none; padding: 0; max-width: none; } 
+    section#game-launcher.active { margin-top: 80px; padding: 20px; }
+    section h2 { margin-top: 0; color: #003B73; text-align: center; margin-bottom: 20px; }
+    section#game-launcher h2 { color: #fff; font-size: 2rem; margin-bottom: 30px; }
     section:not(#login):not(#game-launcher) button { padding:10px 15px; margin:8px 4px; font-size:0.9rem; cursor:pointer; border:none; border-radius:8px; background:#005A9C; color:white; transition:background .2s; }
     section#xo .xo-options button, section#memory .memory-options button { font-size: 0.9rem; padding: 10px 12px;} 
     section:not(#login):not(#game-launcher) button:hover { background:#003B73; }
@@ -200,7 +166,6 @@
     #settings p { margin-bottom: 10px; font-size: 1.1rem; }
     #settings .info-value { font-weight: bold; color: #005A9C; }
     #settings-status { margin-top: 15px; font-size: 0.9em; }
-
   </style>
 </head>
 <body>
@@ -215,9 +180,7 @@
     <a href="#game-launcher" id="nav-games-launcher-link-sidebar" style="display:none;">الألعاب</a>
     <a href="#settings" id="nav-settings-link-sidebar" style="display:none;">الإعدادات</a>
     <a href="#" id="admin-button-sidebar" style="display:none;" onclick="showAdminArea(event)">لوحة الأدمن</a>
-    <!-- Dynamic game links will be added here by JS -->
   </div>
-
 
   <section id="login">
     <div class="wrapper">
@@ -349,7 +312,6 @@
       const sidebarToggleButton = document.getElementById('sidebar-toggle-button');
       const sidebarCloseButton = document.getElementById('sidebar-close-button');
       
-      // Sidebar links
       const navLoginLinkSidebar = document.getElementById('nav-login-link-sidebar');
       const navGamesLauncherLinkSidebar = document.getElementById('nav-games-launcher-link-sidebar');
       const navSettingsLinkSidebar = document.getElementById('nav-settings-link-sidebar');
@@ -358,7 +320,7 @@
       const gameLauncherSection = document.getElementById('game-launcher');
       const gameIconsGridContainer = document.getElementById('game-icons-grid-container');
       
-      const gameNavLinksData = [
+      const gameNavLinksData = [ // This is still needed for the game launcher page
           { id: "xo", text: "إكس أو", icon: "bxs-grid-alt" }, 
           { id: "rps", text: "حجر ورقة مقص", icon: "bxs-joystick-button" },
           { id: "click", text: "اصطياد الهدف", icon: "bxs-bullseye" }, 
@@ -378,27 +340,23 @@
       const authFormFields = document.getElementById('auth-form-fields');
       const loginEmailInput = document.getElementById('login-email');
       const loginPasswordInput = document.getElementById('login-password');
-      const btnLogout = document.getElementById('btn-logout'); // This button is inside the login form, might need to move it or create a new one for sidebar
+      const btnLogout = document.getElementById('btn-logout');
       const authStatusDiv = document.getElementById('auth-status');
 
       const settingsUserEmailEl = document.getElementById('settings-user-email');
       const btnChangePassword = document.getElementById('btn-change-password');
       const settingsStatusDiv = document.getElementById('settings-status');
-      const adminAreaSection = document.getElementById('admin-area');
-
 
        const updateAuthUI = (isLoggedIn, user, isVerified = true) => {
         showHideElement(authFormFields, !isLoggedIn);
         showHideElement(mainActionButton, !isLoggedIn);
         showHideElement(toggleAuthModeText.parentElement, !isLoggedIn);
-        showHideElement(btnLogout, isLoggedIn); // Keep this for the login form if needed, or rely on sidebar's logout
+        showHideElement(btnLogout, isLoggedIn); 
 
-        // Sidebar links visibility
-        showHideElement(navLoginLinkSidebar, !isLoggedIn); // Show "Login" if not logged in
+        showHideElement(navLoginLinkSidebar, true); // Always show this link, text will change
         showHideElement(navGamesLauncherLinkSidebar, isLoggedIn && isVerified);
         showHideElement(navSettingsLinkSidebar, isLoggedIn && isVerified);
         showHideElement(adminButtonSidebar, isLoggedIn && user && user.email === ADMIN_EMAIL);
-        // Dynamic game links in sidebar will be handled by populateSidebarGameLinks
 
         const currentActiveSection = document.querySelector('section.active');
         const activeSectionId = currentActiveSection ? currentActiveSection.id : 'login';
@@ -409,32 +367,25 @@
             updateElementText(authStatusDiv, user.email, 'success');
             if(gameIconsGridContainer && gameIconsGridContainer.children.length === 0) populateGameLauncher();
             if(settingsUserEmailEl) settingsUserEmailEl.textContent = user.email;
-            populateSidebarGameLinks(); // Populate game links in sidebar
           } else {
             updateElementText(authStatusDiv, `تم تسجيل الدخول كـ ${user.email}. يرجى التحقق من بريدك الإلكتروني للوصول الكامل.`, 'info');
             if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
             if(settingsUserEmailEl) settingsUserEmailEl.textContent = "يرجى التحقق من بريدك أولاً.";
-            clearSidebarGameLinks();
           }
-          // Change login link in sidebar to logout
           navLoginLinkSidebar.textContent = 'تسجيل الخروج';
           navLoginLinkSidebar.href = "#logout"; 
-          // The click handler for logout will be managed globally for sidebar links
-          
         } else {
           isLoginMode = true; 
           updateLoginModeUI(); 
           updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
-          // Change sidebar link back to login
           navLoginLinkSidebar.textContent = 'تسجيل الدخول';
           navLoginLinkSidebar.href = "#login";
 
           if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
           if(settingsUserEmailEl) settingsUserEmailEl.textContent = "غير مسجل الدخول";
           updateElementText(settingsStatusDiv, '', 'info');
-          clearSidebarGameLinks();
           allSections.forEach(s => { 
-                if(s.id !== 'login' && s.id !== 'admin-area') s.classList.remove('active'); // Keep admin area potentially active
+                if(s.id !== 'login' && s.id !== 'admin-area') s.classList.remove('active');
           });
         }
         updateSidebarActiveLink(activeSectionId); 
@@ -523,14 +474,12 @@
       updateLoginModeUI(); 
       mainActionButton.addEventListener('click', handleAuthAction);
       
-      // Logout logic for the main button in login form (if you keep it)
       btnLogout.addEventListener('click', () => { 
         auth.signOut().catch(e => console.error('Logout error', e)); 
         updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
         window.location.hash = 'login';
         closeSidebar();
       });
-
 
       if(btnChangePassword) { /* ... (same as before) ... */ 
           btnChangePassword.addEventListener('click', () => {
@@ -556,7 +505,7 @@
           closeSidebar();
       };
 
-      const populateGameLauncher = () => { /* ... (same as before) ... */ 
+      const populateGameLauncher = () => { /* ... (same as before, used for the game-launcher section) ... */ 
         if (!gameIconsGridContainer) return;
         gameIconsGridContainer.innerHTML = ''; 
         gameNavLinksData.forEach(game => {
@@ -583,77 +532,53 @@
             gameIconsGridContainer.appendChild(card);
         });
       };
-
-      const populateSidebarGameLinks = () => {
-          clearSidebarGameLinks(); // Clear existing dynamic links first
-          const adminButton = document.getElementById('admin-button-sidebar'); // Reference to insert before
-
-          gameNavLinksData.forEach(game => {
-              const gameLink = document.createElement('a');
-              gameLink.href = `#${game.id}`;
-              gameLink.textContent = game.text;
-              gameLink.classList.add('sidebar-game-link'); // For easy removal
-              gameLink.onclick = handleSidebarLinkClick;
-              if (adminButton && adminButton.parentNode === sidebar) {
-                 sidebar.insertBefore(gameLink, adminButton);
-              } else {
-                 sidebar.appendChild(gameLink); // Fallback if admin button isn't there
-              }
-          });
-      };
-      const clearSidebarGameLinks = () => {
-          const dynamicLinks = sidebar.querySelectorAll('.sidebar-game-link');
-          dynamicLinks.forEach(link => link.remove());
-      };
-
+      
       const updateSidebarActiveLink = (activeSectionId) => { 
         const links = sidebar.querySelectorAll('a');
         links.forEach(a => {
             if (a) a.classList.remove('active-nav-link');
-            // Check if href matches, considering the #
             if (a && a.getAttribute('href') === `#${activeSectionId}`) {
                 a.classList.add('active-nav-link');
             }
         });
-        // Special case for logout which is part of login link when logged in
         if (activeSectionId === 'login' && auth.currentUser) {
-            // No specific active state for logout, login link text changes
+            // No specific active state for logout, handled by text change
         } else if (activeSectionId === 'login' && !auth.currentUser) {
             if(navLoginLinkSidebar) navLoginLinkSidebar.classList.add('active-nav-link');
         }
       };
 
-
       const showSectionByHash = () => {
         let hash = window.location.hash.slice(1);
-        if (!hash && auth.currentUser && auth.currentUser.emailVerified) {
-            hash = 'game-launcher'; // Default to game launcher if logged in and no hash
-            window.location.hash = hash; // Update URL
-        } else if (!hash && (!auth.currentUser || !auth.currentUser.emailVerified)) {
-            hash = 'login'; // Default to login if not logged in and no hash
-             window.location.hash = hash; // Update URL
-        }
-
-
         const currentUser = auth.currentUser;
         const isVerified = currentUser && currentUser.emailVerified;
-        let targetIdToShow = 'login'; 
 
+        if (!hash) { // No hash in URL
+            if (isVerified) {
+                hash = 'game-launcher'; 
+            } else {
+                hash = 'login';
+            }
+            window.location.hash = hash; // Set default hash
+            return; // Hashchange will trigger this function again with the new hash
+        }
+        
+        let targetIdToShow = 'login'; 
         if (isVerified) {
             if (hash === 'game-launcher' || gameNavLinksData.some(game => game.id === hash) || hash === 'settings' || (hash === 'admin-area' && currentUser.email === ADMIN_EMAIL)) {
                 targetIdToShow = hash;
-            } else if (hash === 'login'){ // If explicitly trying to go to login while verified
-                 targetIdToShow = 'game-launcher'; // Redirect to game launcher
+            } else if (hash === 'login'){ 
+                 targetIdToShow = 'game-launcher'; 
                  if (window.location.hash !== '#game-launcher') window.location.hash = 'game-launcher';
-            } else { // Default to game launcher if hash is unknown and verified
+            } else { 
                 targetIdToShow = 'game-launcher';
                 if (window.location.hash !== '#game-launcher') window.location.hash = 'game-launcher';
             }
-        } else { // Not verified or not logged in
-            if (hash !== 'login' && hash !== '') { // If trying to access other sections, redirect to login
+        } else { 
+            if (hash !== 'login' && hash !== '') { 
                  if (window.location.hash !== '#login') window.location.hash = 'login';
                  targetIdToShow = 'login';
-            } else { // Already at login or no hash
+            } else { 
                 targetIdToShow = 'login';
             }
         }
@@ -671,36 +596,30 @@
       
       auth.onAuthStateChanged(user => {
         updateAuthUI(!!user, user, user ? user.emailVerified : false);
-        showSectionByHash(); // Call this to ensure correct section is shown after auth state change
+        showSectionByHash(); 
       });
 
       const handleSidebarLinkClick = (e) => {
           e.preventDefault(); 
           const targetHash = e.currentTarget.getAttribute('href');
           if (targetHash === '#logout') { 
-            auth.signOut().catch(err => console.error('Logout error', err));
-            window.location.hash = 'login'; // Go to login after logout
+            auth.signOut().then(() => {
+                 window.location.hash = 'login'; 
+            }).catch(err => console.error('Logout error', err));
           } else {
             window.location.hash = targetHash;
           }
           closeSidebar();
       };
 
-      // Assign click handlers to static sidebar links
       navLoginLinkSidebar.addEventListener('click', handleSidebarLinkClick);
       if (navGamesLauncherLinkSidebar) navGamesLauncherLinkSidebar.addEventListener('click', handleSidebarLinkClick);
       if (navSettingsLinkSidebar) navSettingsLinkSidebar.addEventListener('click', handleSidebarLinkClick);
-      // Admin button has onclick in HTML for showAdminArea, which then changes hash and calls closeSidebar.
       
       window.addEventListener('hashchange', showSectionByHash);
 
-      // Sidebar Toggle Logic
-      function openSidebar() {
-        if(sidebar) sidebar.classList.add('open');
-      }
-      function closeSidebar() {
-        if(sidebar) sidebar.classList.remove('open');
-      }
+      function openSidebar() { if(sidebar) sidebar.classList.add('open'); }
+      function closeSidebar() { if(sidebar) sidebar.classList.remove('open'); }
       if(sidebarToggleButton) sidebarToggleButton.addEventListener('click', openSidebar);
       if(sidebarCloseButton) sidebarCloseButton.addEventListener('click', closeSidebar);
       document.addEventListener('click', function(event) {
@@ -710,7 +629,6 @@
             closeSidebar();
         }
       });
-
 
       // --- Game Initializations ---
       const initXOGame = () => { /* ... (same as before) ... */ 
