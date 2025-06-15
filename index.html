@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="ltr">
 <head>
@@ -927,11 +926,20 @@
               ctx.save(); ctx.translate(0.5, 0.5); 
               ctx.beginPath(); ctx.lineWidth = 10; ctx.strokeStyle = 'rgba(220, 53, 69, 0.9)'; ctx.lineCap = 'round';
               const cellSize = 100; const gap = 8;      
+              
               const getCellCenter = (index) => {
-                  const row = Math.floor(index / 3); const col = index % 3;
-                  const x = col * (cellSize + gap) + cellSize / 2; const y = row * (cellSize + gap) + cellSize / 2;
+                  const row = Math.floor(index / 3);
+                  const logicalCol = index % 3; // العمود المنطقي (0 لليسار, 1 للوسط, 2 لليمين في نموذج LTR)
+                  
+                  // بسبب اتجاه الشبكة direction: rtl, العمود المنطقي 0 يظهر في أقصى اليمين بصريًا.
+                  // إحداثيات Canvas دائمًا LTR (0 لليسار). لذا نحتاج لعكس ترتيب الأعمدة للرسم.
+                  const canvasCol = 2 - logicalCol; 
+                  
+                  const x = canvasCol * (cellSize + gap) + cellSize / 2;
+                  const y = row * (cellSize + gap) + cellSize / 2;
                   return { x, y };
               };
+
               const startCell = getCellCenter(combination[0]); const endCell = getCellCenter(combination[2]);
               ctx.moveTo(startCell.x, startCell.y); ctx.lineTo(endCell.x, endCell.y); ctx.stroke();
               ctx.restore(); 
