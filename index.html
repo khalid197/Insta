@@ -580,8 +580,8 @@
               ctx.translate(0.5, 0.5); // Offset by half a pixel
 
               ctx.beginPath();
-              ctx.lineWidth = 8; 
-              ctx.strokeStyle = 'rgba(220, 53, 69, 0.8)'; 
+              ctx.lineWidth = 10; // Increased line width slightly for better visibility
+              ctx.strokeStyle = 'rgba(220, 53, 69, 0.9)'; // Made slightly more opaque
               ctx.lineCap = 'round';
 
               const cellSize = 100; 
@@ -683,21 +683,6 @@
             Array.from(boardElement.children).forEach(cell => {
                 cell.style.pointerEvents = disable ? 'none' : 'auto';
             });
-          };
-
-          // computerMoveNormal is no longer used but can be kept for reference or future use
-          const computerMoveNormal = () => { 
-              if (!gameActive) return -1;
-              let availableCells = [];
-              boardState.forEach((cell, index) => {
-                  if (cell === '') availableCells.push(index);
-              });
-
-              if (availableCells.length > 0) {
-                  const randomIndex = Math.floor(Math.random() * availableCells.length);
-                  return availableCells[randomIndex];
-              }
-              return -1; 
           };
 
           const computerMoveHard = () => { 
@@ -830,6 +815,7 @@
         let currentPlayerMemory = null; 
         let scoresMemory = { player1: 0, player2: 0, computer: 0 };
         let revealedByComputer = []; 
+        const FLIP_BACK_DELAY = 2500; // MODIFIED: Centralized and increased flip back delay
 
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -983,7 +969,7 @@
                     updateStatus(); 
                     if (gameModeMemory === 'pvc-memory' && currentPlayerMemory === 'computer' && gameActiveMemory) {
                          cardsContainer.classList.add('disabled');
-                         setTimeout(computerTurnMemory, 1500); // Computer's next turn after a match
+                         setTimeout(computerTurnMemory, 1500); 
                     } else {
                         cardsContainer.classList.remove('disabled');
                     }
@@ -996,7 +982,7 @@
                     card2.classList.remove('flipped');
                     flippedCards = [];
                     if (gameActiveMemory) switchPlayerMemory(); 
-                }, 1800); // MODIFIED: Increased delay from 1200ms to 1800ms
+                }, FLIP_BACK_DELAY); // MODIFIED: Used FLIP_BACK_DELAY
             }
         }
 
@@ -1013,7 +999,7 @@
 
             if (gameModeMemory === 'pvc-memory' && currentPlayerMemory === 'computer' && gameActiveMemory) {
                 cardsContainer.classList.add('disabled'); 
-                setTimeout(computerTurnMemory, 1800); // Increased delay before computer plays
+                setTimeout(computerTurnMemory, 1800); 
             } else {
                 cardsContainer.classList.remove('disabled'); 
             }
@@ -1100,7 +1086,7 @@
                         if (firstCardToFlip) firstCardToFlip.classList.remove('flipped'); 
                         flippedCards = [];
                         if (gameActiveMemory) switchPlayerMemory();
-                    }, 1800); // MODIFIED: Use the same longer delay for consistency 
+                    }, FLIP_BACK_DELAY); // MODIFIED: Used FLIP_BACK_DELAY
                     return;
                 }
                 
@@ -1236,29 +1222,27 @@
             if(!reactBox) return;
             if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(reactBox, 'يرجى التحقق من بريدك للعب.','info'); reactBox.classList.remove('waiting', 'ready'); return;}
             
-            if (waitingForClick) { // If currently waiting or green
-                if (reactBox.classList.contains('ready')) { // Clicked on green
+            if (waitingForClick) { 
+                if (reactBox.classList.contains('ready')) { 
                     const reactionTime = Date.now() - startTime;
                     updateElementText(reactBox, `وقتك: ${reactionTime} مللي ثانية. اضغط للبدء من جديد.`);
                     playSound('snd-win');
-                } else { // Clicked too early (on red/waiting)
+                } else { 
                     updateElementText(reactBox, 'مبكر جداً! اضغط للبدء من جديد.');
                     playSound('snd-lose');
                 }
                 waitingForClick = false;
                 clearTimeout(timeoutId);
                 reactBox.classList.remove('waiting', 'ready');
-                // Don't immediately reset to "اضغط للبدء", message above serves as reset prompt
                 return;
             }
             
-            // Start a new round
             updateElementText(reactBox, 'انتظر اللون الأخضر...', 'waiting');
             waitingForClick = true;
             const randomDelay = Math.random() * 3000 + 1000; 
 
             timeoutId = setTimeout(() => {
-                if (waitingForClick) { // Ensure still waiting (user hasn't clicked too early and reset)
+                if (waitingForClick) { 
                     updateElementText(reactBox, 'اضغط الآن!', 'ready');
                     startTime = Date.now();
                 }
