@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="ltr">
 <head>
@@ -86,7 +85,7 @@
     /* --- General Styles --- */
     .wrapper { margin-top: 80px; width: 420px; background-color: transparent; border: 2px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(15px); box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); color: #fff; border-radius: 16px; padding: 20px 30px; direction: rtl; }
     .wrapper h1 { font-size: 30px; text-align: center; margin-bottom:20px;}
-    .wrapper .input-box { width: 100%; height: 50px; position: relative; margin: 30px 0; }
+    .wrapper .input-box { width: 100%; height: 50px; position: relative; margin: 20px 0; } /* Adjusted margin */
     .input-box input { width: 100%; height: 100%; background: transparent; border: none; outline: none; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 40px; font-size: 16px; color: #fff; padding: 20px 45px 20px 20px; text-align: right; direction: rtl; }
     .input-box input::placeholder { color: #fff; text-align: right; }
     .input-box i { position: absolute; top: 50%; transform: translateY(-50%); font-size: 20px; left: 20px; }
@@ -105,6 +104,10 @@
     #auth-status.error { background-color: rgba(220, 53, 69, 0.3); border: 1px solid rgba(220, 53, 69, 0.6); }
     #auth-status.info { background-color: rgba(23, 162, 184, 0.3); border: 1px solid rgba(23, 162, 184, 0.6); }
     
+    #phone-verification-section { margin-top: 15px; padding-top:15px; border-top: 1px solid rgba(255,255,255,0.2);}
+    #recaptcha-container { margin: 10px auto; }
+
+
     nav#main-nav { display: none; } 
     
     section { display: none; padding: 20px; max-width: 600px; margin: 20px auto; margin-top: 80px; background: rgba(255, 255, 255, 0.95); color: #333; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); direction: rtl; }
@@ -208,6 +211,27 @@
                     <i class='bx bxs-lock-alt'></i>
                 </div>
             </div>
+
+            <!-- قسم التحقق من الهاتف (يظهر عند إنشاء حساب جديد بعد إدخال الإيميل والباسوورد) -->
+            <div id="phone-verification-section" style="display:none;">
+                <h4>التحقق من رقم الهاتف (إلزامي)</h4>
+                <div class="input-box">
+                    <input type="tel" placeholder="رقم الهاتف (مثال: +201001234567)" id="phone-number-input">
+                    <i class='bx bxs-phone'></i>
+                </div>
+                <button type="button" class="btn" id="btn-send-otp">إرسال كود التحقق</button>
+                <div id="recaptcha-container"></div>
+                
+                <div id="otp-input-section" style="display:none; margin-top:15px;">
+                     <div class="input-box">
+                        <input type="text" placeholder="أدخل كود التحقق (OTP)" id="otp-code-input">
+                        <i class='bx bxs-key'></i>
+                    </div>
+                    <button type="button" class="btn" id="btn-verify-otp">التحقق من الكود</button>
+                </div>
+                <div id="phone-auth-status" class="info" style="margin-top:10px;"></div>
+            </div>
+
             <button type="button" class="btn" id="btn-main-action">
                  <span class="button-text">تسجيل الدخول</span>
             </button>
@@ -270,6 +294,7 @@
   <section id="settings" class="game-section">
       <h2>الإعدادات ⚙️</h2>
       <p>البريد الإلكتروني: <span id="settings-user-email" class="info-value"></span></p>
+      <p>رقم الهاتف: <span id="settings-user-phone" class="info-value">لم يتم التحقق</span></p>
       <button id="btn-change-password">تغيير كلمة المرور</button>
       <div id="settings-status" class="info"></div>
   </section>
@@ -290,6 +315,7 @@
               <p id="details-uid"></p>
               <p id="details-created"></p>
               <p id="details-last-login"></p>
+              <p id="details-phone"></p>
               <p id="details-banned-status"></p>
               <button id="details-close-btn">إغلاق التفاصيل</button>
           </div>
@@ -333,6 +359,7 @@
     const db = firebase.firestore(); 
     const ADMIN_EMAIL = "ka6761386@gmail.com"; 
     let currentUserIsAdmin = false; 
+    let tempUserCredentialForPhoneAuth = null; // لتخزين بيانات اعتماد المستخدم مؤقتًا
 
     document.addEventListener('DOMContentLoaded', () => {
       const playSound = (id) => { const s = document.getElementById(id); if (s) { s.currentTime = 0; s.play().catch(e => console.warn(`Sound ${id} play failed:`, e)); } };
@@ -377,7 +404,18 @@
       const btnLogout = document.getElementById('btn-logout');
       const authStatusDiv = document.getElementById('auth-status');
 
+      const phoneVerificationSection = document.getElementById('phone-verification-section');
+      const phoneNumberInput = document.getElementById('phone-number-input');
+      const btnSendOtp = document.getElementById('btn-send-otp');
+      const otpInputSection = document.getElementById('otp-input-section');
+      const otpCodeInput = document.getElementById('otp-code-input');
+      const btnVerifyOtp = document.getElementById('btn-verify-otp');
+      const phoneAuthStatusDiv = document.getElementById('phone-auth-status');
+      const recaptchaContainer = document.getElementById('recaptcha-container');
+
+
       const settingsUserEmailEl = document.getElementById('settings-user-email');
+      const settingsUserPhoneEl = document.getElementById('settings-user-phone');
       const btnChangePassword = document.getElementById('btn-change-password');
       const settingsStatusDiv = document.getElementById('settings-status');
 
@@ -387,18 +425,56 @@
       const detailsCloseBtn = document.getElementById('details-close-btn');
       if (detailsCloseBtn) detailsCloseBtn.addEventListener('click', () => showHideElement(adminUserDetailsContainer, false));
 
+      // تهيئة reCAPTCHA
+      let recaptchaVerifier = null;
+      const setupRecaptcha = () => {
+        if (recaptchaVerifier) { //  تجنب إعادة التهيئة إذا كان موجودًا بالفعل
+            try {
+                 grecaptcha.reset(window.recaptchaWidgetId); //  جرب إعادة تعيين الويدجت الحالي
+            } catch (e) {
+                 console.warn("Could not reset existing reCAPTCHA, re-rendering:", e);
+                 if (recaptchaContainer) recaptchaContainer.innerHTML = ''; // إفراغ الحاوية قبل إعادة الإنشاء
+                 recaptchaVerifier = null; // اسمح بإعادة الإنشاء
+            }
+        }
+        if (!recaptchaVerifier && recaptchaContainer && recaptchaContainer.offsetParent !== null) { // تأكد من أن الحاوية مرئية
+            recaptchaVerifier = new firebase.auth.RecaptchaVerifier(recaptchaContainer, {
+                'size': 'invisible',
+                'callback': (response) => {
+                    // console.log("reCAPTCHA verified");
+                },
+                'expired-callback': () => {
+                    updateElementText(phoneAuthStatusDiv, 'انتهت صلاحية reCAPTCHA. حاول إرسال الكود مرة أخرى.', 'error');
+                    if (window.recaptchaWidgetId) grecaptcha.reset(window.recaptchaWidgetId);
+                }
+            });
+            recaptchaVerifier.render().then(function(widgetId) {
+                window.recaptchaWidgetId = widgetId;
+            }).catch(err => {
+                console.error("Recaptcha render error:", err);
+                updateElementText(phoneAuthStatusDiv, "خطأ في تهيئة reCAPTCHA. تأكد أنك متصل بالإنترنت وأن النطاق مضاف لقائمة النطاقات المسموح بها في إعدادات مفتاح reCAPTCHA.", "error");
+            });
+        }
+      };
 
-      const updateUserDocument = (user) => {
+
+      const updateUserDocument = (user, phoneNumber = null, phoneVerified = false) => {
           if (!user) return;
           const userDocRef = db.collection('users').doc(user.uid);
-          userDocRef.set({
+          const userData = {
               email: user.email,
               uid: user.uid,
               displayName: user.displayName || user.email.split('@')[0],
               lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
               createdAt: user.metadata.creationTime ? firebase.firestore.Timestamp.fromDate(new Date(user.metadata.creationTime)) : firebase.firestore.FieldValue.serverTimestamp(),
-              isBanned: false 
-          }, { merge: true }) 
+              isBanned: false,
+              phoneVerified: phoneVerified,
+          };
+          if (phoneNumber) {
+              userData.phoneNumber = phoneNumber;
+          }
+
+          userDocRef.set(userData, { merge: true }) 
           .then(() => {
               userDocRef.get().then(doc => {
                   if (doc.exists && doc.data().isAdmin === true) {
@@ -406,7 +482,8 @@
                   } else {
                       currentUserIsAdmin = false;
                   }
-                  showHideElement(adminButtonSidebar, currentUserIsAdmin && user.emailVerified);
+                  showHideElement(adminButtonSidebar, currentUserIsAdmin && user.emailVerified && doc.data().phoneVerified);
+                  if(settingsUserPhoneEl && doc.exists) settingsUserPhoneEl.textContent = doc.data().phoneNumber ? `${doc.data().phoneNumber} (${doc.data().phoneVerified ? 'مُتحقق' : 'غير مُتحقق'})` : 'لم يُضَف';
               }).catch(err => {
                   console.error("Error fetching user admin status:", err);
                   currentUserIsAdmin = false; 
@@ -431,6 +508,16 @@
               return false; 
           }
       };
+       const checkUserPhoneVerified = async (userId) => {
+          if (!userId) return false;
+          try {
+              const userDoc = await db.collection('users').doc(userId).get();
+              return userDoc.exists && userDoc.data().phoneVerified === true;
+          } catch (error) {
+              console.error("Error checking phone verification status:", error);
+              return false;
+          }
+      };
 
 
        const updateAuthUI = async (isLoggedIn, user, isVerified = true) => {
@@ -438,10 +525,13 @@
         showHideElement(mainActionButton, !isLoggedIn);
         showHideElement(toggleAuthModeText.parentElement, !isLoggedIn);
         showHideElement(btnLogout, isLoggedIn); 
+        showHideElement(phoneVerificationSection, false); // إخفاء قسم الهاتف مبدئيًا
 
         showHideElement(navLoginLinkSidebar, true); 
         
         let isBanned = false;
+        let phoneIsVerified = false;
+
         if (isLoggedIn && user) {
             isBanned = await checkIfUserIsBanned(user.uid);
             if (isBanned) {
@@ -452,25 +542,38 @@
                     return; 
                 }
             }
+            phoneIsVerified = await checkUserPhoneVerified(user.uid);
         }
         
-        showHideElement(navGamesLauncherLinkSidebar, isLoggedIn && isVerified);
-        showHideElement(navSettingsLinkSidebar, isLoggedIn && isVerified);
+        const canAccessContent = isLoggedIn && isVerified && phoneIsVerified;
+        showHideElement(navGamesLauncherLinkSidebar, canAccessContent);
+        showHideElement(navSettingsLinkSidebar, canAccessContent);
         
         const currentActiveSection = document.querySelector('section.active');
         const activeSectionId = currentActiveSection ? currentActiveSection.id : 'login';
 
         if (isLoggedIn) {
           loginTitle.textContent = `أهلاً بك`;
-          if (isVerified) { 
+          if (isVerified && phoneIsVerified) { 
             updateElementText(authStatusDiv, user.email, 'success');
             if(gameIconsGridContainer && gameIconsGridContainer.children.length === 0) populateGameLauncher();
             if(settingsUserEmailEl) settingsUserEmailEl.textContent = user.email;
-            updateUserDocument(user); 
+            updateUserDocument(user, user.phoneNumber, true); // تحديث معلومات الهاتف إذا كانت موجودة في auth.user
+          } else if (isVerified && !phoneIsVerified && !isBanned) {
+            updateElementText(authStatusDiv, `مرحباً ${user.email}. يرجى التحقق من رقم هاتفك للوصول الكامل.`, 'info');
+             // هنا يمكن أن نعرض قسم التحقق من الهاتف إذا أردنا ذلك عند تسجيل الدخول لحساب لم يتحقق من هاتفه بعد
+             // showHideElement(phoneVerificationSection, true); setupRecaptcha();
+             // disableElement(mainActionButton, true); // تعطيل زر تسجيل الدخول الرئيسي
+             if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
+             if(settingsUserEmailEl) settingsUserEmailEl.textContent = user.email;
+             if(settingsUserPhoneEl) settingsUserPhoneEl.textContent = "يرجى التحقق من رقم هاتفك";
+
+
           } else if (!isBanned) { 
-            updateElementText(authStatusDiv, `تم تسجيل الدخول كـ ${user.email}. يرجى التحقق من بريدك الإلكتروني للوصول الكامل.`, 'info');
+            updateElementText(authStatusDiv, `تم تسجيل الدخول كـ ${user.email}. يرجى التحقق من بريدك الإلكتروني أولاً.`, 'info');
             if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
             if(settingsUserEmailEl) settingsUserEmailEl.textContent = "يرجى التحقق من بريدك أولاً.";
+            if(settingsUserPhoneEl) settingsUserPhoneEl.textContent = "لم يتم التحقق من البريد بعد";
           }
           navLoginLinkSidebar.textContent = 'تسجيل الخروج';
           navLoginLinkSidebar.href = "#logout"; 
@@ -484,6 +587,7 @@
 
           if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
           if(settingsUserEmailEl) settingsUserEmailEl.textContent = "غير مسجل الدخول";
+          if(settingsUserPhoneEl) settingsUserPhoneEl.textContent = "غير مسجل الدخول";
           updateElementText(settingsStatusDiv, '', 'info');
           showHideElement(adminButtonSidebar, false); 
           allSections.forEach(s => { 
@@ -495,16 +599,21 @@
 
       const updateLoginModeUI = () => { 
         const linkId = 'toggle-auth-mode-link-inner';
+        showHideElement(phoneVerificationSection, false); // إخفاء قسم الهاتف عند تبديل الوضع
+        disableElement(mainActionButton, false); // تمكين زر الإجراء الرئيسي
+
         if (isLoginMode) {
           loginTitle.textContent = 'تسجيل الدخول';
           updateButtonText(mainActionButton, 'تسجيل الدخول'); 
           toggleAuthModeText.innerHTML = `ليس لديك حساب؟ <a href="#" id="${linkId}">إنشاء حساب</a>`;
           loginPasswordInput.placeholder = "كلمة المرور";
+          showHideElement(authFormFields, true);
         } else {
           loginTitle.textContent = 'إنشاء حساب جديد';
           updateButtonText(mainActionButton, 'إنشاء حساب'); 
           toggleAuthModeText.innerHTML = `لديك حساب بالفعل؟ <a href="#" id="${linkId}">تسجيل الدخول</a>`;
           loginPasswordInput.placeholder = "كلمة المرور (6+ حروف)";
+          showHideElement(authFormFields, true); // إظهار حقول الإيميل والباسورد
         }
         const newToggleLink = document.getElementById(linkId);
         if(newToggleLink) newToggleLink.addEventListener('click', toggleMode);
@@ -537,6 +646,12 @@
                         updateElementText(authStatusDiv, "لقد سجلت الدخول، ولكن يجب التحقق من بريدك الإلكتروني أولاً.", 'error');
                         auth.signOut(); 
                     } else {
+                        const phoneIsVerified = await checkUserPhoneVerified(userCredential.user.uid);
+                        if (!phoneIsVerified) {
+                             updateElementText(authStatusDiv, `مرحباً ${userCredential.user.email}. يرجى التحقق من رقم هاتفك للوصول الكامل.`, 'info');
+                             // لا تسجل الخروج، ولكن لا تسمح بالوصول الكامل حتى يتم التحقق من الهاتف
+                             // قد ترغب في توجيهه إلى صفحة الإعدادات للتحقق من الهاتف
+                        }
                         loginEmailInput.value = ''; loginPasswordInput.value = '';
                     }
                 }
@@ -550,22 +665,15 @@
                 console.error("Auth Error Code:",error.code, "Message:", error.message); updateElementText(authStatusDiv, msg, 'error');
               })
               .finally(() => { disableElement(mainActionButton, false); });
-        } else { 
+        } else { // وضع إنشاء حساب جديد
             auth.createUserWithEmailAndPassword(email, password)
               .then((userCredential) => {
-                if (userCredential.user) {
-                  userCredential.user.sendEmailVerification()
-                    .then(() => {
-                      updateElementText(authStatusDiv, 'تم إنشاء الحساب بنجاح! تم إرسال رسالة تحقق إلى بريدك الإلكتروني. يرجى التحقق منها ثم تسجيل الدخول.', 'success');
-                      auth.signOut(); 
-                    })
-                    .catch((error) => {
-                      console.error("Error sending verification email:", error);
-                      updateElementText(authStatusDiv, 'تم إنشاء الحساب، ولكن فشل إرسال بريد التحقق. حاول تسجيل الدخول لاحقًا.', 'error');
-                       auth.signOut(); 
-                    });
-                }
-                loginEmailInput.value = ''; loginPasswordInput.value = '';
+                tempUserCredentialForPhoneAuth = userCredential; //  احفظ بيانات الاعتماد مؤقتًا
+                showHideElement(authFormFields, false); // إخفاء حقول الإيميل والباسورد
+                showHideElement(phoneVerificationSection, true); // إظهار قسم التحقق من الهاتف
+                setupRecaptcha(); // تهيئة reCAPTCHA الآن لأنه مرئي
+                updateElementText(authStatusDiv, 'تم إنشاء الحساب مبدئيًا. يرجى إدخال رقم هاتفك للتحقق.', 'info');
+                disableElement(mainActionButton, true); //  تعطيل زر الإنشاء الرئيسي مؤقتًا
               })
               .catch((error) => {
                 let msg = "حدث خطأ. حاول مرة أخرى.";
@@ -575,10 +683,101 @@
                 else if (error.code === 'auth/weak-password') msg = "كلمة المرور ضعيفة (6 حروف على الأقل).";
                 else if (error.code === 'auth/invalid-email') msg = "صيغة البريد الإلكتروني غير صحيحة.";
                 console.error("Auth Error Code:",error.code, "Message:", error.message); updateElementText(authStatusDiv, msg, 'error');
-              })
-              .finally(() => { disableElement(mainActionButton, false); });
+                disableElement(mainActionButton, false); // إعادة تمكين الزر عند الخطأ
+              });
         }
       };
+      
+      if(btnSendOtp) {
+        btnSendOtp.addEventListener('click', () => {
+            const phoneNumber = phoneNumberInput.value;
+            if (!phoneNumber || !/^\+[1-9]\d{1,14}$/.test(phoneNumber)) { // تحقق بسيط من تنسيق الرقم الدولي
+                updateElementText(phoneAuthStatusDiv, 'الرجاء إدخال رقم هاتف صحيح بالتنسيق الدولي (مثال: +201001234567).', 'error');
+                return;
+            }
+            if (!recaptchaVerifier) {
+                updateElementText(phoneAuthStatusDiv, "خطأ: reCAPTCHA لم يتم تهيئته. حاول تحديث الصفحة.", "error");
+                return;
+            }
+
+            updateElementText(phoneAuthStatusDiv, 'جاري إرسال كود التحقق...', 'info');
+            disableElement(btnSendOtp, true);
+
+            auth.signInWithPhoneNumber(phoneNumber, recaptchaVerifier)
+                .then((confirmationResult) => {
+                    window.confirmationResult = confirmationResult;
+                    updateElementText(phoneAuthStatusDiv, 'تم إرسال كود التحقق إلى هاتفك.', 'success');
+                    showHideElement(otpInputSection, true);
+                    disableElement(btnSendOtp, false); //  أعد تمكين الزر للسماح بإعادة الإرسال إذا لزم الأمر
+                }).catch((error) => {
+                    console.error("Error sending OTP:", error);
+                    updateElementText(phoneAuthStatusDiv, `فشل إرسال الكود: ${error.message}. تأكد من تفعيل مصادقة الهاتف في Firebase وأن النطاق مضاف لقائمة السماح.`, 'error');
+                    if (window.recaptchaWidgetId) grecaptcha.reset(window.recaptchaWidgetId); // أعد تعيين reCAPTCHA
+                    disableElement(btnSendOtp, false);
+                });
+        });
+      }
+
+      if(btnVerifyOtp) {
+        btnVerifyOtp.addEventListener('click', () => {
+            const code = otpCodeInput.value;
+            if (!code || code.length !== 6) {
+                updateElementText(phoneAuthStatusDiv, 'الرجاء إدخال كود التحقق المكون من 6 أرقام.', 'error');
+                return;
+            }
+            if (!window.confirmationResult) {
+                 updateElementText(phoneAuthStatusDiv, 'خطأ: لم يتم إرسال كود التحقق أولاً.', 'error');
+                 return;
+            }
+            updateElementText(phoneAuthStatusDiv, 'جاري التحقق من الكود...', 'info');
+            disableElement(btnVerifyOtp, true);
+
+            window.confirmationResult.confirm(code).then((result) => {
+                const userFromPhoneAuth = result.user; //  المستخدم من مصادقة الهاتف
+
+                if (tempUserCredentialForPhoneAuth && tempUserCredentialForPhoneAuth.user) {
+                    const originalUser = tempUserCredentialForPhoneAuth.user;
+                    // ربط اعتماد الهاتف بالحساب الأصلي الذي تم إنشاؤه بالإيميل
+                    const phoneCredential = firebase.auth.PhoneAuthProvider.credential(window.confirmationResult.verificationId, code);
+                    
+                    originalUser.linkWithCredential(phoneCredential).then(() => {
+                        updateUserDocument(originalUser, userFromPhoneAuth.phoneNumber, true);
+                        originalUser.sendEmailVerification().then(() => {
+                            updateElementText(authStatusDiv, 'تم إنشاء الحساب بنجاح وتم التحقق من رقم الهاتف! تم إرسال رسالة تحقق إلى بريدك الإلكتروني. يرجى التحقق منها ثم تسجيل الدخول.', 'success');
+                        }).catch(err => {
+                             updateElementText(authStatusDiv, 'تم إنشاء الحساب والتحقق من الهاتف، لكن فشل إرسال بريد التحقق.', 'error');
+                        });
+                        auth.signOut(); //  سجل الخروج ليقوم المستخدم بتسجيل الدخول من جديد بعد التحقق من البريد
+                        tempUserCredentialForPhoneAuth = null;
+                        updateLoginModeUI(); // العودة لواجهة تسجيل الدخول
+                        loginEmailInput.value = ''; loginPasswordInput.value = ''; phoneNumberInput.value = ''; otpCodeInput.value = '';
+                    }).catch((error) => {
+                        console.error("Error linking phone to email user:", error);
+                        // إذا فشل الربط (مثلاً، رقم الهاتف مستخدم بالفعل مع حساب آخر)
+                        updateElementText(authStatusDiv, `فشل ربط رقم الهاتف بحساب البريد: ${error.message}. قد يكون الرقم مستخدماً.`, 'error');
+                        // هنا قد تحتاج لحذف الحساب الذي تم إنشاؤه بالإيميل إذا كان الربط إلزاميًا
+                        originalUser.delete().catch(delErr => console.error("Failed to delete temp user", delErr));
+                        updateLoginModeUI();
+                    });
+
+                } else {
+                    // هذا السيناريو لا يجب أن يحدث في التدفق الحالي، لكن كاحتياط
+                    updateUserDocument(userFromPhoneAuth, userFromPhoneAuth.phoneNumber, true);
+                    updateElementText(authStatusDiv, 'تم التحقق من رقم الهاتف بنجاح!', 'success');
+                    auth.signOut();
+                    updateLoginModeUI();
+                }
+
+            }).catch((error) => {
+                console.error("Error verifying OTP:", error);
+                updateElementText(phoneAuthStatusDiv, `فشل التحقق من الكود: ${error.message}`, 'error');
+            }).finally(() => {
+                 disableElement(btnVerifyOtp, false);
+            });
+        });
+      }
+
+
       updateLoginModeUI(); 
       mainActionButton.addEventListener('click', handleAuthAction);
       
@@ -623,10 +822,11 @@
                       const userData = doc.data();
                       const isAdminText = userData.isAdmin ? ' (أدمن)' : '';
                       const bannedIndicator = userData.isBanned ? '<span class="banned-user-indicator"> (محظور)</span>' : '';
+                      const phoneText = userData.phoneNumber ? ` - ${userData.phoneNumber} (${userData.phoneVerified ? 'مُتحقق' : 'غير مُتحقق'})` : '';
                       const disableBanForSelfOrOtherAdmins = (userData.uid === auth.currentUser.uid || userData.isAdmin) && auth.currentUser.email !== ADMIN_EMAIL ; 
 
                       html += `<li>
-                                 <span>${userData.displayName || userData.email}${isAdminText}${bannedIndicator}</span>
+                                 <span>${userData.displayName || userData.email}${isAdminText}${phoneText}${bannedIndicator}</span>
                                  <div class="user-actions">
                                      <button onclick="viewUserDetails('${doc.id}')">تفاصيل</button>
                                      <button onclick="toggleUserBanStatus('${doc.id}', ${userData.isBanned || false})" 
@@ -657,6 +857,7 @@
                   document.getElementById('details-uid').textContent = `UID: ${data.uid || 'غير متوفر'}`;
                   document.getElementById('details-created').textContent = `تاريخ الإنشاء: ${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString() : 'غير متوفر'}`;
                   document.getElementById('details-last-login').textContent = `آخر تسجيل دخول: ${data.lastLogin ? new Date(data.lastLogin.toDate()).toLocaleString() : 'غير متوفر'}`;
+                  document.getElementById('details-phone').textContent = `الهاتف: ${data.phoneNumber || 'لم يُضَف'} (${data.phoneVerified ? 'مُتحقق' : 'غير مُتحقق'})`;
                   document.getElementById('details-banned-status').textContent = `الحالة: ${data.isBanned ? 'محظور' : 'نشط'}${data.isAdmin ? ' (أدمن)' : ''}`;
                   showHideElement(adminUserDetailsContainer, true);
               } else {
@@ -729,10 +930,14 @@
                 const currentUser = auth.currentUser;
                 if (currentUser && currentUser.emailVerified) {
                     const isBanned = await checkIfUserIsBanned(currentUser.uid);
+                    const phoneIsVerified = await checkUserPhoneVerified(currentUser.uid);
                     if (isBanned) {
                         updateElementText(authStatusDiv, "حسابك محظور. لا يمكنك لعب الألعاب.", "error");
                         auth.signOut(); 
                         window.location.hash = 'login';
+                    } else if (!phoneIsVerified) {
+                        updateElementText(authStatusDiv, "يجب التحقق من رقم هاتفك أولاً للعب.", "error");
+                        window.location.hash = 'login'; // أو 'settings' لتوجيهه للتحقق
                     } else {
                         playSound('snd-click');
                         window.location.hash = targetId;
@@ -768,23 +973,26 @@
         const currentUser = auth.currentUser;
         
         let isBanned = false;
-        let isVerified = false;
+        let emailIsVerified = false;
+        let phoneIsVerified = false;
 
         if (currentUser) {
-            isVerified = currentUser.emailVerified;
+            emailIsVerified = currentUser.emailVerified;
             isBanned = await checkIfUserIsBanned(currentUser.uid);
             if (isBanned) {
-                isVerified = false; 
+                emailIsVerified = false; 
+                phoneIsVerified = false;
                 if (hash !== 'login') {
                      window.location.hash = 'login'; 
                      return; 
                 }
+            } else if (emailIsVerified) {
+                 phoneIsVerified = await checkUserPhoneVerified(currentUser.uid);
             }
         }
 
-
         if (!hash) { 
-            if (isVerified) { 
+            if (emailIsVerified && phoneIsVerified) { 
                 hash = 'game-launcher'; 
             } else {
                 hash = 'login';
@@ -796,7 +1004,7 @@
         }
         
         let targetIdToShow = 'login'; 
-        if (isVerified) { 
+        if (emailIsVerified && phoneIsVerified) { 
             if (hash === 'game-launcher' || gameNavLinksData.some(game => game.id === hash) || hash === 'settings') {
                 targetIdToShow = hash;
             } else if (hash === 'admin-area' && currentUserIsAdmin) { 
@@ -836,11 +1044,12 @@
         if(user && user.emailVerified) {
             const userDoc = await db.collection('users').doc(user.uid).get().catch(() => null);
             currentUserIsAdmin = userDoc && userDoc.exists && userDoc.data().isAdmin === true;
+            const phoneIsVerified = userDoc && userDoc.exists && userDoc.data().phoneVerified === true;
+            showHideElement(adminButtonSidebar, currentUserIsAdmin && user.emailVerified && phoneIsVerified);
         } else {
             currentUserIsAdmin = false;
+            showHideElement(adminButtonSidebar, false);
         }
-        showHideElement(adminButtonSidebar, currentUserIsAdmin && user && user.emailVerified);
-
         showSectionByHash(); 
       });
 
@@ -964,9 +1173,11 @@
               if (!gameActive || boardState[index] || !user || !user.emailVerified) return;
 
               const isBanned = await checkIfUserIsBanned(user.uid);
-              if (isBanned) {
-                  updateElementText(statusElement, 'حسابك محظور!', 'error');
-                  auth.signOut(); window.location.hash = 'login'; return;
+              const phoneIsVerified = await checkUserPhoneVerified(user.uid);
+              if (isBanned || !phoneIsVerified) {
+                  updateElementText(statusElement, isBanned ? 'حسابك محظور!' : 'يرجى التحقق من هاتفك!', 'error');
+                  if(isBanned) auth.signOut(); 
+                  window.location.hash = 'login'; return;
               }
 
               boardState[index] = currentPlayer;
@@ -1025,9 +1236,11 @@
                   updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
               }
               const isBanned = await checkIfUserIsBanned(user.uid);
-              if (isBanned) {
-                  updateElementText(statusElement, 'حسابك محظور!', 'error');
-                  auth.signOut(); window.location.hash = 'login'; return;
+              const phoneIsVerified = await checkUserPhoneVerified(user.uid);
+              if (isBanned || !phoneIsVerified) {
+                  updateElementText(statusElement, isBanned ? 'حسابك محظور!' : 'يرجى التحقق من هاتفك!', 'error');
+                  if(isBanned) auth.signOut();
+                  window.location.hash = 'login'; return;
               }
 
               gameMode = mode; gameActive = true; boardState.fill(''); currentPlayer = playerSymbol; 
@@ -1116,9 +1329,11 @@
             const user = auth.currentUser;
             if (!user || !user.emailVerified) { updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
             const isBanned = await checkIfUserIsBanned(user.uid);
-            if (isBanned) {
-                updateElementText(statusElement, 'حسابك محظور!', 'error');
-                auth.signOut(); window.location.hash = 'login'; return;
+            const phoneIsVerified = await checkUserPhoneVerified(user.uid);
+            if (isBanned || !phoneIsVerified) {
+                updateElementText(statusElement, isBanned ? 'حسابك محظور!' : 'يرجى التحقق من هاتفك!', 'error');
+                if(isBanned) auth.signOut();
+                window.location.hash = 'login'; return;
             }
 
             if (mode === 'pvp-memory' && !pvpSetupDone) { preparePvpNameInputs(); return; }
@@ -1140,9 +1355,11 @@
             const user = auth.currentUser;
             if (!user || !user.emailVerified) { updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
             const isBanned = await checkIfUserIsBanned(user.uid);
-            if (isBanned) {
-                updateElementText(statusElement, 'حسابك محظور!', 'error');
-                auth.signOut(); window.location.hash = 'login'; return;
+            const phoneIsVerified = await checkUserPhoneVerified(user.uid);
+            if (isBanned || !phoneIsVerified) {
+                updateElementText(statusElement, isBanned ? 'حسابك محظور!' : 'يرجى التحقق من هاتفك!', 'error');
+                if(isBanned) auth.signOut();
+                window.location.hash = 'login'; return;
             }
             if (!gameActiveMemory || !canFlip || card.classList.contains('flipped') || card.classList.contains('matched')) return; 
             card.classList.add('flipped'); flippedCards.push(card); playSound('snd-click'); if (flippedCards.length === 2) { canFlip = false; checkForMatchMemory(); } 
@@ -1190,9 +1407,11 @@
           const user = auth.currentUser;
           if(!user||!user.emailVerified) {updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.','info'); return;}
           const isBanned = await checkIfUserIsBanned(user.uid);
-          if (isBanned) {
-              updateElementText(resultElement, 'حسابك محظور!', 'error');
-              auth.signOut(); window.location.hash = 'login'; return;
+          const phoneIsVerified = await checkUserPhoneVerified(user.uid);
+          if (isBanned || !phoneIsVerified) {
+              updateElementText(resultElement, isBanned ? 'حسابك محظور!' : 'يرجى التحقق من هاتفك!', 'error');
+              if(isBanned) auth.signOut();
+              window.location.hash = 'login'; return;
           }
           const playerChoice = button.dataset.choice;
           const computerChoice = options[Math.floor(Math.random() * options.length)];
@@ -1248,14 +1467,24 @@
             const user = auth.currentUser; 
             if(!user||!user.emailVerified) {updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.','info'); return;}
             const isBanned = await checkIfUserIsBanned(user.uid);
-            if (isBanned) { updateElementText(statusElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            const phoneIsVerified = await checkUserPhoneVerified(user.uid);
+            if (isBanned || !phoneIsVerified) { 
+                updateElementText(statusElement, isBanned ? 'حسابك محظور!' : 'يرجى التحقق من هاتفك!', 'error'); 
+                if(isBanned) auth.signOut(); 
+                window.location.hash = 'login'; return; 
+            }
             if(!gameActiveClick) return; score++; updateElementText(statusElement, `النقاط: ${score}`); playSound('snd-click'); spawnTarget(); }; targetArea.appendChild(targetElement); };
         
         const startGame = async () => { 
             const user = auth.currentUser;
             if (!user||!user.emailVerified) {updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.','info'); return;}
             const isBanned = await checkIfUserIsBanned(user.uid);
-            if (isBanned) { updateElementText(statusElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            const phoneIsVerified = await checkUserPhoneVerified(user.uid);
+            if (isBanned || !phoneIsVerified) { 
+                updateElementText(statusElement, isBanned ? 'حسابك محظور!' : 'يرجى التحقق من هاتفك!', 'error'); 
+                if(isBanned) auth.signOut(); 
+                window.location.hash = 'login'; return; 
+            }
             
             gameActiveClick = true; score = 0;
             updateElementText(statusElement, 'النقاط: 0');
@@ -1312,7 +1541,12 @@
             const user = auth.currentUser;
             if (!user||!user.emailVerified) {updateElementText(reactBox, 'يرجى التحقق من بريدك للعب.','info'); if(reactBox) reactBox.classList.remove('waiting', 'ready'); return;}
             const isBanned = await checkIfUserIsBanned(user.uid);
-             if (isBanned) { updateElementText(reactBox, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            const phoneIsVerified = await checkUserPhoneVerified(user.uid);
+            if (isBanned || !phoneIsVerified) { 
+                updateElementText(reactBox, isBanned ? 'حسابك محظور!' : 'يرجى التحقق من هاتفك!', 'error'); 
+                if(isBanned) auth.signOut(); 
+                window.location.hash = 'login'; return; 
+            }
             
             if (waitingForClick) { 
                 gameActiveReact = false; 
@@ -1376,7 +1610,12 @@
             const user = auth.currentUser;
             if (!user||!user.emailVerified) {updateElementText(resultElement, '--'); if(resultElement) resultElement.textContent = 'يرجى التحقق من بريدك.'; return;}
             const isBanned = await checkIfUserIsBanned(user.uid);
-            if (isBanned) { updateElementText(resultElement, 'محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            const phoneIsVerified = await checkUserPhoneVerified(user.uid);
+            if (isBanned || !phoneIsVerified) { 
+                updateElementText(resultElement, isBanned ? 'محظور!' : 'تحقق من هاتفك!', 'error'); 
+                if(isBanned) auth.signOut(); 
+                window.location.hash = 'login'; return; 
+            }
 
             const roll = Math.floor(Math.random() * 6);
             updateElementText(resultElement, diceFaces[roll]);
@@ -1428,7 +1667,12 @@
             const user = auth.currentUser;
             if (!user || !user.emailVerified) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
             const isBanned = await checkIfUserIsBanned(user.uid);
-            if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            const phoneIsVerified = await checkUserPhoneVerified(user.uid);
+            if (isBanned || !phoneIsVerified) { 
+                updateElementText(resultElement, isBanned ? 'حسابك محظور!' : 'يرجى التحقق من هاتفك!', 'error'); 
+                if(isBanned) auth.signOut(); 
+                window.location.hash = 'login'; return; 
+            }
             
             gameActiveMath = true;
             showHideElement(startButton, false); showHideElement(exitGameButton, true);
@@ -1439,7 +1683,12 @@
             const user = auth.currentUser;
             if (!user || !user.emailVerified || !answerInput || !resultElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } 
             const isBanned = await checkIfUserIsBanned(user.uid);
-            if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            const phoneIsVerified = await checkUserPhoneVerified(user.uid);
+            if (isBanned || !phoneIsVerified) { 
+                updateElementText(resultElement, isBanned ? 'حسابك محظور!' : 'يرجى التحقق من هاتفك!', 'error'); 
+                if(isBanned) auth.signOut(); 
+                window.location.hash = 'login'; return; 
+            }
             if (!gameActiveMath) return; const userAnswer = parseInt(answerInput.value); if (isNaN(userAnswer)) { updateElementText(resultElement, 'الرجاء إدخال رقم صحيح.', 'error'); return; } if (userAnswer === correctAnswer) { updateElementText(resultElement, 'صحيح! 🎉', 'success'); playSound('snd-win'); setTimeout(() => {  if (gameActiveMath && section.classList.contains('active') && auth.currentUser && auth.currentUser.emailVerified) generateQuestion();  }, 1500); } else { updateElementText(resultElement, `خطأ. الإجابة الصحيحة: ${correctAnswer}`, 'error'); playSound('snd-lose'); }  if(answerInput) {answerInput.value = ''; answerInput.focus(); } };
 
         if(startButton) startButton.addEventListener('click', startGame);
@@ -1494,7 +1743,12 @@
             const user = auth.currentUser;
             if (!user || !user.emailVerified) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
             const isBanned = await checkIfUserIsBanned(user.uid);
-            if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            const phoneIsVerified = await checkUserPhoneVerified(user.uid);
+            if (isBanned || !phoneIsVerified) { 
+                updateElementText(resultElement, isBanned ? 'حسابك محظور!' : 'يرجى التحقق من هاتفك!', 'error'); 
+                if(isBanned) auth.signOut(); 
+                window.location.hash = 'login'; return; 
+            }
             
             gameActiveGuessNum = true; secretNumber = Math.floor(Math.random() * 100) + 1; attempts = 0; showHideElement(startButton, false); showHideElement(exitGameButton, true); showHideElement(inputGroupDiv, true, 'block'); if(inputField) inputField.value = ''; if(messageElement) updateElementText(messageElement, `خمن رقمًا بين 1 و 100. لديك ${maxAttempts} محاولات.`); if(resultElement) updateElementText(resultElement, '--'); if(inputField) inputField.focus(); disableElement(submitButton, false); disableElement(inputField, false); playSound('snd-click'); };
         
@@ -1502,7 +1756,12 @@
             const user = auth.currentUser;
             if (!user || !user.emailVerified || !inputField || !resultElement || !messageElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } 
             const isBanned = await checkIfUserIsBanned(user.uid);
-            if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            const phoneIsVerified = await checkUserPhoneVerified(user.uid);
+            if (isBanned || !phoneIsVerified) { 
+                updateElementText(resultElement, isBanned ? 'حسابك محظور!' : 'يرجى التحقق من هاتفك!', 'error'); 
+                if(isBanned) auth.signOut(); 
+                window.location.hash = 'login'; return; 
+            }
             if (!gameActiveGuessNum) return; const guess = parseInt(inputField.value); if (isNaN(guess) || guess < 1 || guess > 100) { updateElementText(resultElement, 'الرجاء إدخال رقم بين 1 و 100.', 'error'); return; } attempts++; if (guess === secretNumber) { updateElementText(resultElement, `أحسنت! لقد خمنت الرقم ${secretNumber} في ${attempts} محاولات.`, 'success'); playSound('snd-win'); if(messageElement) updateElementText(messageElement, 'اضغط "ابدأ اللعبة" للعب مرة أخرى.'); showHideElement(startButton, true); showHideElement(exitGameButton, false); disableElement(submitButton, true); disableElement(inputField, true); gameActiveGuessNum = false; } else { playSound('snd-click'); const remainingAttempts = maxAttempts - attempts; if (remainingAttempts <= 0) { updateElementText(resultElement, `للأسف انتهت محاولاتك. الرقم الصحيح كان ${secretNumber}.`, 'error'); playSound('snd-lose'); if(messageElement) updateElementText(messageElement, 'اضغط "ابدأ اللعبة" للعب مرة أخرى.'); showHideElement(startButton, true); showHideElement(exitGameButton, false); disableElement(submitButton, true); disableElement(inputField, true); gameActiveGuessNum = false; } else { updateElementText(resultElement, guess < secretNumber ? 'أعلى!' : 'أقل!', 'info'); if(messageElement) updateElementText(messageElement, `محاولات متبقية: ${remainingAttempts}`); } } if(inputField) { inputField.value = ''; inputField.focus(); } };
         
         if(startButton) startButton.addEventListener('click', startGame);
@@ -1556,7 +1815,12 @@
             const user = auth.currentUser;
             if (!user || !user.emailVerified) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
             const isBanned = await checkIfUserIsBanned(user.uid);
-            if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            const phoneIsVerified = await checkUserPhoneVerified(user.uid);
+            if (isBanned || !phoneIsVerified) { 
+                updateElementText(resultElement, isBanned ? 'حسابك محظور!' : 'يرجى التحقق من هاتفك!', 'error'); 
+                if(isBanned) auth.signOut(); 
+                window.location.hash = 'login'; return; 
+            }
             
             gameActiveBigSmall = true; showHideElement(startButton, false); showHideElement(exitGameButton, true); showHideElement(questionArea, true); showHideElement(inputGroupDiv, true, 'block'); generateNumbers(); if(answerInput) answerInput.focus(); playSound('snd-click'); };
         
@@ -1564,7 +1828,12 @@
             const user = auth.currentUser;
             if (!user || !user.emailVerified || !answerInput || !resultElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } 
             const isBanned = await checkIfUserIsBanned(user.uid);
-            if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            const phoneIsVerified = await checkUserPhoneVerified(user.uid);
+            if (isBanned || !phoneIsVerified) { 
+                updateElementText(resultElement, isBanned ? 'حسابك محظور!' : 'يرجى التحقق من هاتفك!', 'error'); 
+                if(isBanned) auth.signOut(); 
+                window.location.hash = 'login'; return; 
+            }
             if (!gameActiveBigSmall) return; const userAnswer = parseInt(answerInput.value); if (isNaN(userAnswer)) { updateElementText(resultElement, 'الرجاء إدخال رقم.', 'error'); return; } if (userAnswer === biggerNum) { updateElementText(resultElement, 'صحيح! 🎉', 'success'); playSound('snd-win');  setTimeout(() => {  if (gameActiveBigSmall && section.classList.contains('active') && auth.currentUser && auth.currentUser.emailVerified) generateNumbers(); }, 1500); } else { updateElementText(resultElement, `خطأ. الرقم الأكبر كان ${biggerNum}.`, 'error'); playSound('snd-lose'); } if(answerInput) {answerInput.value = ''; answerInput.focus();} };
         
         if(startButton) startButton.addEventListener('click', startGame);
@@ -1619,7 +1888,12 @@
             const user = auth.currentUser;
             if (!user || !user.emailVerified) { if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
             const isBanned = await checkIfUserIsBanned(user.uid);
-            if (isBanned) { updateElementText(statusElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            const phoneIsVerified = await checkUserPhoneVerified(user.uid);
+            if (isBanned || !phoneIsVerified) { 
+                updateElementText(statusElement, isBanned ? 'حسابك محظور!' : 'يرجى التحقق من هاتفك!', 'error'); 
+                if(isBanned) auth.signOut(); 
+                window.location.hash = 'login'; return; 
+            }
             
             gameActiveTyping = true; currentTextToType = sampleTexts[Math.floor(Math.random() * sampleTexts.length)]; if(textToTypeElement) textToTypeElement.textContent = currentTextToType; if(inputField) inputField.value = ''; showHideElement(startButton, false); showHideElement(exitGameButton, true); showHideElement(textToTypeElement, true); showHideElement(inputGroupDiv, true, 'block');  disableElement(inputField, false); disableElement(submitButton, false); if(statusElement) updateElementText(statusElement, 'ابدأ الكتابة...'); if(inputField) inputField.focus(); startTime = new Date(); playSound('snd-click'); };
         
@@ -1627,7 +1901,12 @@
             const user = auth.currentUser;
             if (!user || !user.emailVerified || !inputField || !textToTypeElement || !statusElement) { if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } 
             const isBanned = await checkIfUserIsBanned(user.uid);
-            if (isBanned) { updateElementText(statusElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            const phoneIsVerified = await checkUserPhoneVerified(user.uid);
+            if (isBanned || !phoneIsVerified) { 
+                updateElementText(statusElement, isBanned ? 'حسابك محظور!' : 'يرجى التحقق من هاتفك!', 'error'); 
+                if(isBanned) auth.signOut(); 
+                window.location.hash = 'login'; return; 
+            }
             if(!gameActiveTyping) return; const typedText = inputField.value; const originalText = textToTypeElement.textContent;  const endTime = new Date(); const timeTaken = (endTime - startTime) / 1000;  if (typedText.length < originalText.length && typedText !== originalText) { updateElementText(statusElement, 'أكمل النص أولاً ثم اضغط تحقق.'); playSound('snd-lose'); return; } let errors = 0; for (let i = 0; i < originalText.length; i++) { if (i >= typedText.length || typedText[i] !== originalText[i]) { errors++; } } if (typedText.length > originalText.length) {  errors += (typedText.length - originalText.length); } const words = originalText.split(/\s+/).filter(Boolean).length; const wpm = timeTaken > 0 ? Math.round((words / timeTaken) * 60) : 0; const accuracy = originalText.length > 0 ? Math.round(((originalText.length - errors) / originalText.length) * 100) : 0;  updateElementText(statusElement, `الوقت: ${timeTaken.toFixed(1)} ثانية, السرعة: ${wpm} ك/د, الدقة: ${Math.max(0, accuracy)}%, الأخطاء: ${errors}`); playSound(accuracy >= 80 ? 'snd-win' : 'snd-lose'); showHideElement(startButton, true); showHideElement(exitGameButton, false); disableElement(inputField, true); disableElement(submitButton, true); gameActiveTyping = false; };
         
         if(startButton) startButton.addEventListener('click', startGame);
