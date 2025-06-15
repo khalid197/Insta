@@ -2,7 +2,7 @@
 <html lang="ar" dir="ltr">
 <head>
   <meta charset="UTF-8">
-  <title>🎮 موقع الألعاب - XO مع كمبيوتر وخط فوز</title>
+  <title>🎮 موقع الألعاب</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <style>
@@ -34,6 +34,7 @@
     nav { background:#002b4d; padding:12px; text-align:center; position:fixed; top:0; left:0; right:0; z-index: 1000; direction: rtl;}
     nav a { color:white; margin:0 10px; text-decoration:none; font-size:1.1rem; }
     nav a:hover, nav a.active-nav-link { text-decoration:underline; font-weight: bold; }
+    #admin-button-nav { background-color: #dc3545; padding: 5px 10px; border-radius: 5px; font-weight: bold; }
     
     section {
       display: none; 
@@ -128,7 +129,7 @@
       text-align: center;
     }
     .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 380px; }
-    .cards.disabled { pointer-events: none; /* Prevent clicks when computer is "thinking" or game not active for player */ }
+    .cards.disabled { pointer-events: none; }
     .cards.disabled .card:not(.matched) { opacity: 0.8; }
 
 
@@ -140,6 +141,9 @@
     .card.matched { background-color: #28a745 !important; cursor: default; opacity: 0.7; }
     .card.matched .card-front { background-color: #28a745 !important; } 
     .memory-scores { margin-bottom: 10px; font-weight: bold; }
+    .memory-player-names-input { margin-bottom:15px; text-align:center; }
+    .memory-player-names-input input { padding:8px; margin:0 5px; border-radius:5px; border:1px solid #ccc; text-align:center;}
+
 
     #click-target-area { text-align: left; min-height: 200px; background-color: #e9ecef; position: relative; border-radius: 8px; overflow: hidden; }
     #clickable-target { width: 50px; height: 50px; background-color: red; border-radius: 50%; position: absolute; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: all 0.1s; }
@@ -161,12 +165,19 @@
     .game-icon-card i { font-size: 3.5rem; margin-bottom: 12px; color: #cce7ff; transition: color 0.2s; }
     .game-icon-card:hover i { color: #fff; }
     .game-icon-card span { color: #fff; font-size: 1rem; font-weight: 500; }
+
+    #settings p { margin-bottom: 10px; font-size: 1.1rem; }
+    #settings .info-value { font-weight: bold; color: #005A9C; }
+    #settings-status { margin-top: 15px; font-size: 0.9em; }
+
   </style>
 </head>
 <body>
 
   <nav id="main-nav">
     <a href="#login" id="nav-login-link">تسجيل الدخول</a>
+    <a href="#settings" id="nav-settings-link" style="display:none;">الإعدادات</a>
+    <a href="#" id="admin-button-nav" style="display:none;" onclick="showAdminMessage(event)">لوحة الأدمن</a>
   </nav>
 
   <section id="login">
@@ -219,11 +230,17 @@
     <h2>لعبة الذاكرة 🧠</h2> 
     <div class="memory-options">
         <button id="memory-pvp">لاعب ضد لاعب</button>
-        <button id="memory-pvc">لاعب ضد كمبيوتر</button>
+        <button id="memory-solo">لاعب واحد</button>
+    </div>
+    <div class="memory-player-names-input" style="display:none;">
+        <input type="text" id="memory-player1-name" placeholder="اسم اللاعب 1">
+        <input type="text" id="memory-player2-name" placeholder="اسم اللاعب 2">
+        <button id="memory-start-pvp-named">ابدأ اللعب</button>
     </div>
     <div class="memory-scores" style="display:none;">
-        <span id="memory-player1-score">اللاعب 1: 0</span> | 
-        <span id="memory-player2-score">اللاعب 2: 0</span>
+        <span id="memory-player1-score">اللاعب 1: 0</span>
+        <span id="memory-player2-separator" style="display:none;"> | </span>
+        <span id="memory-player2-score" style="display:none;">اللاعب 2: 0</span>
     </div>
     <div class="cards" style="display:none;"></div> 
     <div class="status">اختر نمط اللعبة</div> 
@@ -231,6 +248,14 @@
         <button id="memory-restart" style="display:none;">إعادة اللعبة</button>
     </div> 
   </section>
+  
+  <section id="settings" class="game-section">
+      <h2>الإعدادات ⚙️</h2>
+      <p>البريد الإلكتروني: <span id="settings-user-email" class="info-value"></span></p>
+      <button id="btn-change-password">تغيير كلمة المرور</button>
+      <div id="settings-status" class="info"></div>
+  </section>
+
 
   <!-- ... (باقي أقسام الألعاب كما هي) ... -->
   <section id="rps" class="game-section"> <h2>حجر ورقة مقص 🧱📄✂️</h2> <div class="gamebox"> <button data-choice="🧱">🧱</button> <button data-choice="📄">📄</button> <button data-choice="✂️">✂️</button> </div> <div class="result">اختر لبدء!</div> </section>
@@ -251,7 +276,6 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
   <script>
-    // ... (نفس Firebase config ودوال المساعدة العامة)
     const firebaseConfig = {
         apiKey: "AIzaSyDLzpa2HYzJZdZvY_YuviKZ6Zg0FhWTfJw", 
         authDomain: "my-site-cdd00.firebaseapp.com",
@@ -264,6 +288,7 @@
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+    const ADMIN_EMAIL = "ka6761386@gmail.com";
 
     document.addEventListener('DOMContentLoaded', () => {
       const playSound = (id) => { const s = document.getElementById(id); if (s) { s.currentTime = 0; s.play().catch(e => console.warn(`Sound ${id} play failed:`, e)); } };
@@ -275,6 +300,8 @@
       const allSections = document.querySelectorAll('section');
       const mainNav = document.getElementById('main-nav');
       const navLoginLink = document.getElementById('nav-login-link');
+      const navSettingsLink = document.getElementById('nav-settings-link');
+      const adminButtonNav = document.getElementById('admin-button-nav');
       const gameLauncherSection = document.getElementById('game-launcher');
       const gameIconsGridContainer = document.getElementById('game-icons-grid-container');
       
@@ -302,11 +329,20 @@
       const btnLogout = document.getElementById('btn-logout');
       const authStatusDiv = document.getElementById('auth-status');
 
-       const updateAuthUI = (isLoggedIn, userEmail = '', isVerified = true) => {
+      // Settings section elements
+      const settingsUserEmailEl = document.getElementById('settings-user-email');
+      const btnChangePassword = document.getElementById('btn-change-password');
+      const settingsStatusDiv = document.getElementById('settings-status');
+
+
+       const updateAuthUI = (isLoggedIn, user, isVerified = true) => {
         showHideElement(authFormFields, !isLoggedIn);
         showHideElement(mainActionButton, !isLoggedIn);
         showHideElement(toggleAuthModeText.parentElement, !isLoggedIn);
         showHideElement(btnLogout, isLoggedIn);
+        showHideElement(navSettingsLink, isLoggedIn && isVerified);
+        showHideElement(adminButtonNav, isLoggedIn && user && user.email === ADMIN_EMAIL);
+
 
         const currentActiveSection = document.querySelector('section.active');
         const activeSectionId = currentActiveSection ? currentActiveSection.id : 'login';
@@ -314,11 +350,13 @@
         if (isLoggedIn) {
           loginTitle.textContent = `أهلاً بك`;
           if (isVerified) {
-            updateElementText(authStatusDiv, userEmail, 'success');
+            updateElementText(authStatusDiv, user.email, 'success');
             if(gameIconsGridContainer && gameIconsGridContainer.children.length === 0) populateGameLauncher();
+            if(settingsUserEmailEl) settingsUserEmailEl.textContent = user.email;
           } else {
-            updateElementText(authStatusDiv, `تم تسجيل الدخول كـ ${userEmail}. يرجى التحقق من بريدك الإلكتروني للوصول الكامل.`, 'info');
+            updateElementText(authStatusDiv, `تم تسجيل الدخول كـ ${user.email}. يرجى التحقق من بريدك الإلكتروني للوصول الكامل.`, 'info');
             if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
+             if(settingsUserEmailEl) settingsUserEmailEl.textContent = "يرجى التحقق من بريدك أولاً.";
           }
           navLoginLink.textContent = 'تسجيل الخروج';
           navLoginLink.href = "#logout"; 
@@ -332,6 +370,8 @@
           navLoginLink.href = "#login";
           navLoginLink.onclick = handleNavLinkClick;
           if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
+          if(settingsUserEmailEl) settingsUserEmailEl.textContent = "غير مسجل الدخول";
+          updateElementText(settingsStatusDiv, '', 'info');
           allSections.forEach(s => { 
                 if(s.id !== 'login') s.classList.remove('active');
           });
@@ -427,6 +467,32 @@
         window.location.hash = 'login';
       });
 
+      if(btnChangePassword) {
+          btnChangePassword.addEventListener('click', () => {
+              const user = auth.currentUser;
+              if (user && user.email) {
+                  auth.sendPasswordResetEmail(user.email)
+                      .then(() => {
+                          updateElementText(settingsStatusDiv, 'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.', 'success');
+                      })
+                      .catch((error) => {
+                          console.error("Error sending password reset email:", error);
+                          updateElementText(settingsStatusDiv, 'فشل إرسال رابط إعادة تعيين كلمة المرور. حاول مرة أخرى.', 'error');
+                      });
+              } else {
+                  updateElementText(settingsStatusDiv, 'يجب أن تكون مسجلاً الدخول لتغيير كلمة المرور.', 'error');
+              }
+          });
+      }
+
+      window.showAdminMessage = (event) => { // Make it global to be accessible from onclick
+          event.preventDefault();
+          alert("أهلاً أيها الأدمن! هذه منطقة مخصصة لك.");
+          // In a real application, you would navigate to an admin section or fetch admin data here.
+          // For now, it just shows an alert.
+      };
+
+
       const populateGameLauncher = () => {
         if (!gameIconsGridContainer) return;
         gameIconsGridContainer.innerHTML = ''; 
@@ -468,12 +534,13 @@
                 navGamesLink.textContent = "الألعاب";
                 navGamesLink.id = "nav-games-launcher-link";
                 navGamesLink.onclick = handleNavLinkClick;
-                mainNav.appendChild(navGamesLink);
+                mainNav.insertBefore(navGamesLink, navSettingsLink); // Insert before settings
             }
         }
         if (!mainNav.contains(navLoginLink)) {
             mainNav.insertBefore(navLoginLink, mainNav.firstChild);
         }
+        
         Array.from(mainNav.children).forEach(a => {
             if (a) a.classList.remove('active-nav-link');
             if (a && a.getAttribute('href') === `#${activeSectionId}`) {
@@ -494,20 +561,20 @@
         let targetIdToShow = 'login'; 
 
         if (isVerified) {
-            if (hash === 'game-launcher' || gameNavLinksData.some(game => game.id === hash)) {
+            if (hash === 'game-launcher' || gameNavLinksData.some(game => game.id === hash) || hash === 'settings') {
                 targetIdToShow = hash;
             } else if (hash === 'login'){
                  targetIdToShow = 'game-launcher';
                  if (window.location.hash !== '#game-launcher') window.location.hash = 'game-launcher';
-            } else {
+            } else { // Default to game launcher if hash is unknown and verified
                 targetIdToShow = 'game-launcher';
                 if (window.location.hash !== '#game-launcher') window.location.hash = 'game-launcher';
             }
-        } else {
-            if (hash !== 'login' && hash !== '') { 
+        } else { // Not verified or not logged in
+            if (hash !== 'login' && hash !== '') { // If trying to access other sections, redirect to login
                  if (window.location.hash !== '#login') window.location.hash = 'login';
                  targetIdToShow = 'login';
-            } else {
+            } else { // Already at login or no hash
                 targetIdToShow = 'login';
             }
         }
@@ -520,10 +587,11 @@
             }
         });
         updateNavigationDOM(isVerified, targetIdToShow);
+         if (targetIdToShow === 'settings' && settingsStatusDiv) updateElementText(settingsStatusDiv, '', 'info'); // Clear status on settings open
       };
       
       auth.onAuthStateChanged(user => {
-        updateAuthUI(user, user ? user.email : '', user ? user.emailVerified : false);
+        updateAuthUI(!!user, user, user ? user.emailVerified : false);
         showSectionByHash();
       });
 
@@ -537,6 +605,7 @@
           window.location.hash = targetHash;
       };
       navLoginLink.addEventListener('click', handleNavLinkClick);
+      if (navSettingsLink) navSettingsLink.addEventListener('click', handleNavLinkClick);
       
       window.addEventListener('hashchange', showSectionByHash);
 
@@ -556,7 +625,7 @@
           let boardState = Array(9).fill('');
           let currentPlayer = '❌';
           let gameActive = false;
-          let gameMode = null; // 'pvp', 'pvc-hard'
+          let gameMode = null; 
           const playerSymbol = '❌';
           const computerSymbol = '⭕';
 
@@ -652,27 +721,16 @@
               currentPlayer = (currentPlayer === playerSymbol) ? computerSymbol : playerSymbol;
               updateElementText(statusElement, `الدور: ${currentPlayer}`);
 
-              if (gameMode && gameMode.startsWith('pvc-') && gameActive && currentPlayer === computerSymbol) {
+              if (gameMode === 'pvc-hard' && gameActive && currentPlayer === computerSymbol) {
                   disableBoardInteraction(true);
-                  let moveDelay = 500 + Math.random() * 500;
-                  let computerMoveFunction = null;
-
-                  if (gameMode === 'pvc-hard') {
-                      computerMoveFunction = computerMoveHard;
-                      moveDelay = 300 + Math.random() * 200; 
-                  }
-
-                  if (computerMoveFunction) {
-                    setTimeout(() => {
-                        const moveIndex = computerMoveFunction();
-                        if (moveIndex !== -1 && boardState[moveIndex] === '') { 
-                            handleClick(moveIndex); 
-                        }
-                        disableBoardInteraction(false);
-                    }, moveDelay);
-                  } else {
-                       disableBoardInteraction(false); 
-                  }
+                  let moveDelay = 300 + Math.random() * 200; 
+                  setTimeout(() => {
+                      const moveIndex = computerMoveHard();
+                      if (moveIndex !== -1 && boardState[moveIndex] === '') { 
+                          handleClick(moveIndex); 
+                      }
+                      disableBoardInteraction(false);
+                  }, moveDelay);
               } else {
                   disableBoardInteraction(false);
               }
@@ -686,51 +744,27 @@
 
           const computerMoveHard = () => { 
             if (!gameActive) return -1;
-
             const findStrategicMove = (player, currentBoardState) => {
                 for (let i = 0; i < currentBoardState.length; i++) {
                     if (currentBoardState[i] === '') {
                         let tempBoard = [...currentBoardState];
                         tempBoard[i] = player; 
                         const winCheck = checkWinWithBoard(tempBoard);
-                        if (winCheck && winCheck.winner === player) {
-                            return i; 
-                        }
+                        if (winCheck && winCheck.winner === player) return i; 
                     }
                 }
                 return -1; 
             };
-
-            let move = findStrategicMove(computerSymbol, boardState);
-            if (move !== -1) return move;
-
-            move = findStrategicMove(playerSymbol, boardState);
-            if (move !== -1) return move;
-
+            let move = findStrategicMove(computerSymbol, boardState); if (move !== -1) return move;
+            move = findStrategicMove(playerSymbol, boardState); if (move !== -1) return move;
             if (boardState[4] === '') return 4;
-
             const corners = [0, 2, 6, 8];
-            const oppositeCorners = { 0: 8, 2: 6, 6: 2, 8: 0 };
-            for (const corner of corners) {
-                if (boardState[corner] === playerSymbol && boardState[oppositeCorners[corner]] === '') {
-                    return oppositeCorners[corner];
-                }
-            }
-            
             const emptyCorners = corners.filter(corner => boardState[corner] === '');
-            if (emptyCorners.length > 0) {
-                return emptyCorners[Math.floor(Math.random() * emptyCorners.length)];
-            }
-
+            if (emptyCorners.length > 0) return emptyCorners[Math.floor(Math.random() * emptyCorners.length)];
             const sides = [1, 3, 5, 7];
             const emptySides = sides.filter(side => boardState[side] === '');
-            if (emptySides.length > 0) {
-                return emptySides[Math.floor(Math.random() * emptySides.length)];
-            }
-            
-            for (let i = 0; i < boardState.length; i++) {
-                if (boardState[i] === '') return i;
-            }
+            if (emptySides.length > 0) return emptySides[Math.floor(Math.random() * emptySides.length)];
+            for (let i = 0; i < boardState.length; i++) { if (boardState[i] === '') return i;}
             return -1; 
           };
 
@@ -753,10 +787,7 @@
           };
 
           const resetGame = () => {
-              gameActive = false;
-              gameMode = null;
-              boardState.fill('');
-              currentPlayer = playerSymbol;
+              gameActive = false; gameMode = null; boardState.fill(''); currentPlayer = playerSymbol;
               Array.from(boardElement.children).forEach(cell => cell.textContent = '');
               ctx.clearRect(0, 0, canvas.width, canvas.height);
               updateElementText(statusElement, 'اختر نمط اللعبة');
@@ -772,23 +803,18 @@
           if(pvpButton) pvpButton.addEventListener('click', () => startGameMode('pvp'));
           if(pvcHardButton) pvcHardButton.addEventListener('click', () => startGameMode('pvc-hard')); 
           if(restartButton) restartButton.addEventListener('click', resetGame);
-
           window.addEventListener('resize', resizeCanvas);
-          
            const observer = new MutationObserver((mutationsList) => {
             for(const mutation of mutationsList) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     if (section.classList.contains('active')) {
                         resizeCanvas(); 
-                        if (!gameActive) { 
-                           resetGame();
-                        }
+                        if (!gameActive) resetGame();
                     }
                 }
             }
           });
           if(section) observer.observe(section, { attributes: true });
-
           resetGame(); 
       };
       
@@ -798,11 +824,16 @@
         const statusElement = section.querySelector('.status');
         const restartButton = section.querySelector('#memory-restart');
         const pvpButtonMemory = section.querySelector('#memory-pvp');
-        const pvcButtonMemory = section.querySelector('#memory-pvc');
+        const soloButtonMemory = section.querySelector('#memory-solo');
         const optionsDivMemory = section.querySelector('.memory-options');
         const scoresDivMemory = section.querySelector('.memory-scores');
         const player1ScoreEl = section.querySelector('#memory-player1-score');
         const player2ScoreEl = section.querySelector('#memory-player2-score');
+        const player2Separator = section.querySelector('#memory-player2-separator');
+        const playerNamesInputDiv = section.querySelector('.memory-player-names-input');
+        const player1NameInput = section.querySelector('#memory-player1-name');
+        const player2NameInput = section.querySelector('#memory-player2-name');
+        const startPvpNamedButton = section.querySelector('#memory-start-pvp-named');
 
 
         const cardValues = ['🧠', '🎮', '🎯', '🎲', '💡', '💻', '🌟', '🚀'];
@@ -810,12 +841,11 @@
         let flippedCards = [];
         let canFlip = true;
         let gameActiveMemory = false;
-        let gameModeMemory = null; 
+        let gameModeMemory = null; // 'pvp-memory', 'solo-memory'
         let currentPlayerMemory = null; 
-        let scoresMemory = { player1: 0, player2: 0, computer: 0 };
-        let revealedByComputer = []; 
-        const FLIP_BACK_DELAY = 2500; 
-        const COMPUTER_SECOND_PICK_DELAY = 5000; // MODIFIED: New constant for computer's second pick delay
+        let playerNames = { player1: "اللاعب 1", player2: "اللاعب 2" };
+        let scoresMemory = { player1: 0, player2: 0 };
+        const FLIP_BACK_DELAY = 1800; 
 
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -827,11 +857,14 @@
 
         function updateScoresDisplay() {
             if (gameModeMemory === 'pvp-memory') {
-                player1ScoreEl.textContent = `اللاعب 1: ${scoresMemory.player1}`;
-                player2ScoreEl.textContent = `اللاعب 2: ${scoresMemory.player2}`;
-            } else if (gameModeMemory === 'pvc-memory') {
-                player1ScoreEl.textContent = `أنت: ${scoresMemory.player1}`;
-                player2ScoreEl.textContent = `الكمبيوتر: ${scoresMemory.computer}`;
+                player1ScoreEl.textContent = `${playerNames.player1}: ${scoresMemory.player1}`;
+                player2ScoreEl.textContent = `${playerNames.player2}: ${scoresMemory.player2}`;
+                showHideElement(player2ScoreEl, true);
+                showHideElement(player2Separator, true);
+            } else if (gameModeMemory === 'solo-memory') {
+                player1ScoreEl.textContent = `النقاط: ${scoresMemory.player1}`;
+                showHideElement(player2ScoreEl, false);
+                showHideElement(player2Separator, false);
             }
         }
         
@@ -842,11 +875,18 @@
             }
             let turnText = "";
             if (gameModeMemory === 'pvp-memory') {
-                turnText = currentPlayerMemory === 'player1' ? "دور اللاعب 1" : "دور اللاعب 2";
-            } else if (gameModeMemory === 'pvc-memory') {
-                turnText = currentPlayerMemory === 'player1' ? "دورك" : "دور الكمبيوتر";
+                turnText = currentPlayerMemory === 'player1' ? `دور ${playerNames.player1}` : `دور ${playerNames.player2}`;
+            } else if (gameModeMemory === 'solo-memory') {
+                turnText = "ابحث عن التطابقات!";
             }
-            updateElementText(statusElement, `${turnText}`);
+            updateElementText(statusElement, turnText);
+        }
+
+        function preparePvpNameInputs() {
+            showHideElement(optionsDivMemory, false);
+            showHideElement(playerNamesInputDiv, true);
+            player1NameInput.value = '';
+            player2NameInput.value = '';
         }
 
         function startGameMemory(mode) {
@@ -854,16 +894,23 @@
                 updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info');
                 return;
             }
+            
             gameModeMemory = mode;
+            if (mode === 'pvp-memory') {
+                playerNames.player1 = player1NameInput.value.trim() || "اللاعب 1";
+                playerNames.player2 = player2NameInput.value.trim() || "اللاعب 2";
+            } else { // solo-memory
+                playerNames.player1 = "أنت"; // Or just keep it generic
+            }
+
             gameActiveMemory = true;
             canFlip = true;
             flippedCards = [];
-            scoresMemory = { player1: 0, player2: 0, computer: 0 };
-            revealedByComputer = []; 
-            
+            scoresMemory = { player1: 0, player2: 0 };
             currentPlayerMemory = 'player1';
 
             showHideElement(optionsDivMemory, false);
+            showHideElement(playerNamesInputDiv, false); // Hide name inputs after starting
             showHideElement(scoresDivMemory, true);
             showHideElement(cardsContainer, true, 'grid');
             cardsContainer.classList.remove('disabled');
@@ -906,21 +953,10 @@
                 return;
             }
             if (!gameActiveMemory || !canFlip || card.classList.contains('flipped') || card.classList.contains('matched')) return;
-            if (gameModeMemory === 'pvc-memory' && currentPlayerMemory === 'computer') return; 
-
+            
             card.classList.add('flipped');
             flippedCards.push(card);
             playSound('snd-click');
-
-            const cardId = parseInt(card.dataset.id);
-            const cardValue = card.dataset.value;
-            let computerMemoryEntry = revealedByComputer.find(c => c.id === cardId);
-            if (!computerMemoryEntry) {
-                 revealedByComputer.push({ id: cardId, value: cardValue, element: card, revealedOnce: true });
-            } else {
-                computerMemoryEntry.revealedOnce = true; 
-            }
-
 
             if (flippedCards.length === 2) {
                 canFlip = false; 
@@ -936,43 +972,37 @@
                 card1.classList.add('matched');
                 card2.classList.add('matched');
                 
-                if (currentPlayerMemory === 'player1') scoresMemory.player1++;
-                else if (currentPlayerMemory === 'player2') scoresMemory.player2++;
-                else if (currentPlayerMemory === 'computer') scoresMemory.computer++;
+                if (gameModeMemory === 'pvp-memory') {
+                    if (currentPlayerMemory === 'player1') scoresMemory.player1++;
+                    else if (currentPlayerMemory === 'player2') scoresMemory.player2++;
+                } else { // solo-memory
+                    scoresMemory.player1++;
+                }
                 
                 updateScoresDisplay();
                 playSound('snd-win');
 
-                revealedByComputer = revealedByComputer.filter(rc => rc.id !== parseInt(card1.dataset.id) && rc.id !== parseInt(card2.dataset.id));
-
                 const totalPairs = cardValues.length;
-                const matchedPairsCount = (scoresMemory.player1 + scoresMemory.player2 + scoresMemory.computer);
+                const matchedPairsCount = scoresMemory.player1 + (gameModeMemory === 'pvp-memory' ? scoresMemory.player2 : 0);
 
                 if (matchedPairsCount === totalPairs) {
                     gameActiveMemory = false;
                     canFlip = false;
                     let winnerMsg = "انتهت اللعبة! ";
                     if (gameModeMemory === 'pvp-memory') {
-                        if (scoresMemory.player1 > scoresMemory.player2) winnerMsg += "فاز اللاعب 1!";
-                        else if (scoresMemory.player2 > scoresMemory.player1) winnerMsg += "فاز اللاعب 2!";
+                        if (scoresMemory.player1 > scoresMemory.player2) winnerMsg += `فاز ${playerNames.player1}!`;
+                        else if (scoresMemory.player2 > scoresMemory.player1) winnerMsg += `فاز ${playerNames.player2}!`;
                         else winnerMsg += "تعادل!";
-                    } else { 
-                        if (scoresMemory.player1 > scoresMemory.computer) winnerMsg += "لقد فزت!";
-                        else if (scoresMemory.computer > scoresMemory.player1) winnerMsg += "فاز الكمبيوتر!";
-                        else winnerMsg += "تعادل!";
+                    } else { // solo-memory
+                        winnerMsg += `لقد وجدت كل الأزواج في ${scoresMemory.player1} محاولة!`; // Or just "أحسنت!"
                     }
                     updateElementText(statusElement, winnerMsg, 'success');
                     showHideElement(restartButton, true); 
                 } else {
                     flippedCards = [];
                     canFlip = true; 
-                    updateStatus(); 
-                    if (gameModeMemory === 'pvc-memory' && currentPlayerMemory === 'computer' && gameActiveMemory) {
-                         cardsContainer.classList.add('disabled');
-                         setTimeout(computerTurnMemory, 1500); 
-                    } else {
-                        cardsContainer.classList.remove('disabled');
-                    }
+                    // In PvP, current player gets another turn. In Solo, just continue.
+                    if (gameModeMemory === 'pvp-memory') updateStatus(); 
                 }
             } else {
                 playSound('snd-lose');
@@ -980,131 +1010,19 @@
                     card1.classList.remove('flipped');
                     card2.classList.remove('flipped');
                     flippedCards = [];
-                    if (gameActiveMemory) switchPlayerMemory(); 
+                    if (gameActiveMemory) {
+                        if (gameModeMemory === 'pvp-memory') switchPlayerMemory();
+                        else canFlip = true; // For solo, allow flipping again
+                    }
                 }, FLIP_BACK_DELAY); 
             }
         }
 
-        function switchPlayerMemory() {
-            if (!gameActiveMemory) return;
-
-            if (gameModeMemory === 'pvp-memory') {
-                currentPlayerMemory = currentPlayerMemory === 'player1' ? 'player2' : 'player1';
-            } else if (gameModeMemory === 'pvc-memory') {
-                currentPlayerMemory = currentPlayerMemory === 'player1' ? 'computer' : 'player1';
-            }
+        function switchPlayerMemory() { // Only relevant for PvP
+            if (!gameActiveMemory || gameModeMemory !== 'pvp-memory') return;
+            currentPlayerMemory = currentPlayerMemory === 'player1' ? 'player2' : 'player1';
             updateStatus();
             canFlip = true; 
-
-            if (gameModeMemory === 'pvc-memory' && currentPlayerMemory === 'computer' && gameActiveMemory) {
-                cardsContainer.classList.add('disabled'); 
-                setTimeout(computerTurnMemory, 1800); 
-            } else {
-                cardsContainer.classList.remove('disabled'); 
-            }
-        }
-
-        function computerTurnMemory() {
-            if (!gameActiveMemory || currentPlayerMemory !== 'computer' || !canFlip) {
-                cardsContainer.classList.remove('disabled'); 
-                return;
-            }
-            canFlip = false; 
-            cardsContainer.classList.add('disabled');
-            updateStatus(); 
-
-            let firstCardToFlip = null;
-            let secondCardToFlip = null;
-
-            const potentialMatches = revealedByComputer.filter(rc => rc.revealedOnce && !rc.element.classList.contains('matched'));
-            for (let i = 0; i < potentialMatches.length; i++) {
-                for (let j = i + 1; j < potentialMatches.length; j++) {
-                    if (potentialMatches[i].value === potentialMatches[j].value) {
-                        firstCardToFlip = potentialMatches[i].element;
-                        secondCardToFlip = potentialMatches[j].element;
-                        break;
-                    }
-                }
-                if (firstCardToFlip) break;
-            }
-
-            if (!firstCardToFlip) {
-                const knownUnmatched = revealedByComputer.filter(rc => rc.revealedOnce && !rc.element.classList.contains('matched') && !rc.element.classList.contains('flipped'));
-                if (knownUnmatched.length > 0) {
-                    firstCardToFlip = knownUnmatched[Math.floor(Math.random() * knownUnmatched.length)].element;
-                    
-                    let availableNewCards = gameCards.filter(gc => 
-                        !gc.classList.contains('flipped') && 
-                        !gc.classList.contains('matched') &&
-                        gc !== firstCardToFlip 
-                    );
-                    if (availableNewCards.length > 0) {
-                        secondCardToFlip = availableNewCards[Math.floor(Math.random() * availableNewCards.length)];
-                    } else { 
-                        const otherKnownToPair = knownUnmatched.filter(rc => rc.element !== firstCardToFlip);
-                        if(otherKnownToPair.length > 0) secondCardToFlip = otherKnownToPair[0].element;
-                    }
-                }
-            }
-
-            if (!firstCardToFlip || !secondCardToFlip || firstCardToFlip === secondCardToFlip) {
-                let availableCards = gameCards.filter(gc => !gc.classList.contains('flipped') && !gc.classList.contains('matched'));
-                if (availableCards.length >= 2) {
-                    shuffle(availableCards);
-                    firstCardToFlip = availableCards[0];
-                    secondCardToFlip = availableCards[1];
-                } else if (availableCards.length === 1) { 
-                     firstCardToFlip = availableCards[0];
-                     const knownButNotFlipped = revealedByComputer.filter(rc => rc.revealedOnce && !rc.element.classList.contains('matched') && !rc.element.classList.contains('flipped') && rc.element !== firstCardToFlip);
-                     if (knownButNotFlipped.length > 0) {
-                        secondCardToFlip = knownButNotFlipped[0].element;
-                     } else { 
-                        secondCardToFlip = null; 
-                     }
-                }
-            }
-            
-            if (!firstCardToFlip) { 
-                canFlip = true;
-                cardsContainer.classList.remove('disabled');
-                if (gameActiveMemory) switchPlayerMemory(); 
-                return;
-            }
-
-            setTimeout(() => { // Delay for first computer pick
-                if (firstCardToFlip && !firstCardToFlip.classList.contains('flipped')) {
-                    firstCardToFlip.classList.add('flipped');
-                    flippedCards.push(firstCardToFlip);
-                    const entry1 = revealedByComputer.find(c => c.id === parseInt(firstCardToFlip.dataset.id));
-                    if (entry1) entry1.revealedOnce = true; else revealedByComputer.push({id: parseInt(firstCardToFlip.dataset.id), value: firstCardToFlip.dataset.value, element: firstCardToFlip, revealedOnce: true});
-                    playSound('snd-click');
-                }
-
-                if (!secondCardToFlip && flippedCards.length === 1) { 
-                    setTimeout(() => {
-                        if (firstCardToFlip) firstCardToFlip.classList.remove('flipped'); 
-                        flippedCards = [];
-                        if (gameActiveMemory) switchPlayerMemory();
-                    }, FLIP_BACK_DELAY); 
-                    return;
-                }
-                
-                if (secondCardToFlip) {
-                    setTimeout(() => { // MODIFIED: Delay for second computer pick
-                        if (secondCardToFlip && !secondCardToFlip.classList.contains('flipped')) {
-                            secondCardToFlip.classList.add('flipped');
-                            flippedCards.push(secondCardToFlip);
-                            const entry2 = revealedByComputer.find(c => c.id === parseInt(secondCardToFlip.dataset.id));
-                            if (entry2) entry2.revealedOnce = true; else revealedByComputer.push({id: parseInt(secondCardToFlip.dataset.id), value: secondCardToFlip.dataset.value, element: secondCardToFlip, revealedOnce: true});
-                            playSound('snd-click');
-                        }
-                        if(flippedCards.length === 2) checkForMatchMemory();
-                        else { 
-                             if (gameActiveMemory) switchPlayerMemory();
-                        }
-                    }, COMPUTER_SECOND_PICK_DELAY); // MODIFIED: Used COMPUTER_SECOND_PICK_DELAY
-                }
-            }, 1000); // Initial delay before computer picks first card
         }
         
         function resetMemoryGame() {
@@ -1112,8 +1030,8 @@
             gameModeMemory = null;
             cardsContainer.innerHTML = '';
             showHideElement(optionsDivMemory, true);
+            showHideElement(playerNamesInputDiv, false);
             showHideElement(cardsContainer, false);
-            cardsContainer.classList.remove('disabled');
             showHideElement(scoresDivMemory, false);
             showHideElement(restartButton, false);
             updateElementText(statusElement, 'اختر نمط اللعبة');
@@ -1121,13 +1039,14 @@
             playSound('snd-click');
         }
 
-        if(pvpButtonMemory) pvpButtonMemory.addEventListener('click', () => startGameMemory('pvp-memory'));
-        if(pvcButtonMemory) pvcButtonMemory.addEventListener('click', () => startGameMemory('pvc-memory'));
+        if(pvpButtonMemory) pvpButtonMemory.addEventListener('click', preparePvpNameInputs);
+        if(startPvpNamedButton) startPvpNamedButton.addEventListener('click', () => startGameMemory('pvp-memory'));
+        if(soloButtonMemory) soloButtonMemory.addEventListener('click', () => startGameMemory('solo-memory'));
         if(restartButton) restartButton.addEventListener('click', resetMemoryGame);
         
         resetMemoryGame();
 
-        const observer = new MutationObserver((mutationsList, obs) => {
+        const observer = new MutationObserver((mutationsList) => {
             for(const mutation of mutationsList) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     if (section.classList.contains('active') && !gameActiveMemory) {
@@ -1139,7 +1058,7 @@
         if(section) observer.observe(section, { attributes: true });
       };
       
-      // ... (init functions for RPS, ClickTarget, React, Dice, Math, GuessNum, BigSmall, Typing)
+      // ... (init functions for other games remain the same)
       const initRPSGame = () => { 
         const section = document.querySelector('#rps'); if(!section) return;
         const resultElement = section.querySelector('.result');
