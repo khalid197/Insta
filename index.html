@@ -119,7 +119,7 @@
     section:not(#login):not(#game-launcher) button:disabled { background:#ccc; cursor:not-allowed; }
     .status, .result, .message, .timebox { margin:15px 0; font-size:1.1rem; min-height: 1.2em; text-align: center;}
     
-    .game-controls { margin-top: 15px; text-align: center; } /* For End Game buttons */
+    .game-controls { margin-top: 15px; text-align: center; } 
 
     .xo-board-container { position: relative; width: 316px; height: 316px; margin: 0 auto 20px auto; }
     .board { display:grid; grid-template-columns:repeat(3,100px); gap:8px; justify-content:center; }
@@ -169,6 +169,15 @@
     #settings p { margin-bottom: 10px; font-size: 1.1rem; }
     #settings .info-value { font-weight: bold; color: #005A9C; }
     #settings-status { margin-top: 15px; font-size: 0.9em; }
+
+    #admin-area h3 { margin-top: 20px; margin-bottom: 10px; color: #003B73; }
+    #admin-users-list-container ul { list-style: none; padding: 0; }
+    #admin-users-list-container li { background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 10px; margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    #admin-users-list-container li span { margin-right: 10px; word-break: break-all; }
+    #admin-users-list-container li .user-actions button { font-size: 0.8rem; padding: 5px 8px; margin-left: 5px;}
+    #admin-user-details-container p { margin-bottom: 5px; }
+    .banned-user-indicator { color: red; font-weight: bold; }
+
   </style>
 </head>
 <body>
@@ -268,9 +277,24 @@
   <section id="admin-area" class="game-section" style="display:none;">
       <h2>لوحة تحكم الأدمن 👑</h2>
       <p>مرحباً بك أيها الأدمن!</p>
-      <p>في هذه المنطقة، يمكنك (نظريًا) إدارة المستخدمين.</p>
-      <p><strong>ملاحظة:</strong> عرض قائمة المستخدمين وحذفهم يتطلب إعدادات من جهة الخادم (Backend) باستخدام Firebase Admin SDK لضمان الأمان. هذا الجزء هو مجرد واجهة توضيحية حاليًا.</p>
-      <div id="admin-status" class="info"></div>
+      
+      <div id="admin-users-section">
+          <h3>إدارة المستخدمين</h3>
+          <p><strong>ملاحظة:</strong> "الحظر" هنا هو على مستوى التطبيق (يمنع اللعب)، ولا يحذف الحساب من Firebase Authentication.</p>
+          <div id="admin-users-list-container">
+              <p>جاري تحميل قائمة المستخدمين...</p>
+          </div>
+          <div id="admin-user-details-container" style="display:none; margin-top:15px; padding:10px; border:1px solid #ccc; border-radius:8px;">
+              <h4>تفاصيل المستخدم:</h4>
+              <p id="details-email"></p>
+              <p id="details-uid"></p>
+              <p id="details-created"></p>
+              <p id="details-last-login"></p>
+              <p id="details-banned-status"></p>
+              <button id="details-close-btn">إغلاق التفاصيل</button>
+          </div>
+      </div>
+      <div id="admin-status" class="info" style="margin-top: 20px;"></div>
   </section>
 
 
@@ -290,6 +314,8 @@
 
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
 
   <script>
     const firebaseConfig = {
@@ -304,7 +330,9 @@
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-    const ADMIN_EMAIL = "ka6761386@gmail.com";
+    const db = firebase.firestore(); 
+    const ADMIN_EMAIL = "ka6761386@gmail.com"; 
+    let currentUserIsAdmin = false; 
 
     document.addEventListener('DOMContentLoaded', () => {
       const playSound = (id) => { const s = document.getElementById(id); if (s) { s.currentTime = 0; s.play().catch(e => console.warn(`Sound ${id} play failed:`, e)); } };
@@ -353,27 +381,93 @@
       const btnChangePassword = document.getElementById('btn-change-password');
       const settingsStatusDiv = document.getElementById('settings-status');
 
-       const updateAuthUI = (isLoggedIn, user, isVerified = true) => {
+      const adminUsersListContainer = document.getElementById('admin-users-list-container');
+      const adminUserDetailsContainer = document.getElementById('admin-user-details-container');
+      const adminStatusDiv = document.getElementById('admin-status');
+      const detailsCloseBtn = document.getElementById('details-close-btn');
+      if (detailsCloseBtn) detailsCloseBtn.addEventListener('click', () => showHideElement(adminUserDetailsContainer, false));
+
+
+      const updateUserDocument = (user) => {
+          if (!user) return;
+          const userDocRef = db.collection('users').doc(user.uid);
+          userDocRef.set({
+              email: user.email,
+              uid: user.uid,
+              displayName: user.displayName || user.email.split('@')[0],
+              lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+              createdAt: user.metadata.creationTime ? firebase.firestore.Timestamp.fromDate(new Date(user.metadata.creationTime)) : firebase.firestore.FieldValue.serverTimestamp(),
+              isBanned: false 
+          }, { merge: true }) 
+          .then(() => {
+              userDocRef.get().then(doc => {
+                  if (doc.exists && doc.data().isAdmin === true) {
+                      currentUserIsAdmin = true;
+                  } else {
+                      currentUserIsAdmin = false;
+                  }
+                  showHideElement(adminButtonSidebar, currentUserIsAdmin && user.emailVerified);
+              }).catch(err => {
+                  console.error("Error fetching user admin status:", err);
+                  currentUserIsAdmin = false; 
+                  showHideElement(adminButtonSidebar, false);
+              });
+          })
+          .catch(error => {
+              console.error("Error updating user document in Firestore: ", error);
+          });
+      };
+      
+      const checkIfUserIsBanned = async (userId) => {
+          if (!userId) return false;
+          try {
+              const userDoc = await db.collection('users').doc(userId).get();
+              if (userDoc.exists && userDoc.data().isBanned === true) {
+                  return true;
+              }
+              return false;
+          } catch (error) {
+              console.error("Error checking ban status:", error);
+              return false; 
+          }
+      };
+
+
+       const updateAuthUI = async (isLoggedIn, user, isVerified = true) => {
         showHideElement(authFormFields, !isLoggedIn);
         showHideElement(mainActionButton, !isLoggedIn);
         showHideElement(toggleAuthModeText.parentElement, !isLoggedIn);
         showHideElement(btnLogout, isLoggedIn); 
 
         showHideElement(navLoginLinkSidebar, true); 
+        
+        let isBanned = false;
+        if (isLoggedIn && user) {
+            isBanned = await checkIfUserIsBanned(user.uid);
+            if (isBanned) {
+                updateElementText(authStatusDiv, `حسابك (${user.email}) محظور. لا يمكنك الوصول للألعاب.`, 'error');
+                isVerified = false; 
+                 if (auth.currentUser) { 
+                    await auth.signOut().catch(e => console.warn("Error signing out banned user", e));
+                    return; 
+                }
+            }
+        }
+        
         showHideElement(navGamesLauncherLinkSidebar, isLoggedIn && isVerified);
         showHideElement(navSettingsLinkSidebar, isLoggedIn && isVerified);
-        showHideElement(adminButtonSidebar, isLoggedIn && user && user.email === ADMIN_EMAIL);
-
+        
         const currentActiveSection = document.querySelector('section.active');
         const activeSectionId = currentActiveSection ? currentActiveSection.id : 'login';
 
         if (isLoggedIn) {
           loginTitle.textContent = `أهلاً بك`;
-          if (isVerified) {
+          if (isVerified) { 
             updateElementText(authStatusDiv, user.email, 'success');
             if(gameIconsGridContainer && gameIconsGridContainer.children.length === 0) populateGameLauncher();
             if(settingsUserEmailEl) settingsUserEmailEl.textContent = user.email;
-          } else {
+            updateUserDocument(user); 
+          } else if (!isBanned) { 
             updateElementText(authStatusDiv, `تم تسجيل الدخول كـ ${user.email}. يرجى التحقق من بريدك الإلكتروني للوصول الكامل.`, 'info');
             if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
             if(settingsUserEmailEl) settingsUserEmailEl.textContent = "يرجى التحقق من بريدك أولاً.";
@@ -381,6 +475,7 @@
           navLoginLinkSidebar.textContent = 'تسجيل الخروج';
           navLoginLinkSidebar.href = "#logout"; 
         } else {
+          currentUserIsAdmin = false; 
           isLoginMode = true; 
           updateLoginModeUI(); 
           updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
@@ -390,8 +485,9 @@
           if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
           if(settingsUserEmailEl) settingsUserEmailEl.textContent = "غير مسجل الدخول";
           updateElementText(settingsStatusDiv, '', 'info');
+          showHideElement(adminButtonSidebar, false); 
           allSections.forEach(s => { 
-                if(s.id !== 'login' && s.id !== 'admin-area') s.classList.remove('active');
+                if(s.id !== 'login') s.classList.remove('active'); 
           });
         }
         updateSidebarActiveLink(activeSectionId); 
@@ -431,12 +527,18 @@
 
         if (isLoginMode) { 
             auth.signInWithEmailAndPassword(email, password)
-              .then((userCredential) => {
-                if (userCredential.user && !userCredential.user.emailVerified) {
-                  updateElementText(authStatusDiv, "لقد سجلت الدخول، ولكن يجب التحقق من بريدك الإلكتروني أولاً.", 'error');
-                  auth.signOut(); 
-                } else {
-                  loginEmailInput.value = ''; loginPasswordInput.value = '';
+              .then(async (userCredential) => { 
+                if (userCredential.user) {
+                    const isBanned = await checkIfUserIsBanned(userCredential.user.uid);
+                    if (isBanned) {
+                        updateElementText(authStatusDiv, "هذا الحساب محظور.", 'error');
+                        auth.signOut();
+                    } else if (!userCredential.user.emailVerified) {
+                        updateElementText(authStatusDiv, "لقد سجلت الدخول، ولكن يجب التحقق من بريدك الإلكتروني أولاً.", 'error');
+                        auth.signOut(); 
+                    } else {
+                        loginEmailInput.value = ''; loginPasswordInput.value = '';
+                    }
                 }
               })
               .catch((error) => {
@@ -505,9 +607,107 @@
           });
       }
 
+      const displayUsersForAdmin = () => {
+          if (!adminUsersListContainer) return;
+          adminUsersListContainer.innerHTML = '<p>جاري تحميل قائمة المستخدمين...</p>';
+          updateElementText(adminStatusDiv, '', 'info');
+
+          db.collection('users').orderBy('createdAt', 'desc').get()
+              .then(querySnapshot => {
+                  if (querySnapshot.empty) {
+                      adminUsersListContainer.innerHTML = '<p>لا يوجد مستخدمون لعرضهم.</p>';
+                      return;
+                  }
+                  let html = '<ul>';
+                  querySnapshot.forEach(doc => {
+                      const userData = doc.data();
+                      const isAdminText = userData.isAdmin ? ' (أدمن)' : '';
+                      const bannedIndicator = userData.isBanned ? '<span class="banned-user-indicator"> (محظور)</span>' : '';
+                      const disableBanForSelfOrOtherAdmins = (userData.uid === auth.currentUser.uid || userData.isAdmin) && auth.currentUser.email !== ADMIN_EMAIL ; 
+
+                      html += `<li>
+                                 <span>${userData.displayName || userData.email}${isAdminText}${bannedIndicator}</span>
+                                 <div class="user-actions">
+                                     <button onclick="viewUserDetails('${doc.id}')">تفاصيل</button>
+                                     <button onclick="toggleUserBanStatus('${doc.id}', ${userData.isBanned || false})" 
+                                             ${disableBanForSelfOrOtherAdmins ? 'disabled title="لا يمكن حظر هذا الحساب"' : ''}>
+                                         ${userData.isBanned ? 'إلغاء الحظر' : 'حظر'}
+                                     </button>
+                                 </div>
+                               </li>`;
+                  });
+                  html += '</ul>';
+                  adminUsersListContainer.innerHTML = html;
+              })
+              .catch(error => {
+                  console.error("Error fetching users for admin:", error);
+                  adminUsersListContainer.innerHTML = '<p>خطأ في جلب المستخدمين.</p>';
+                  if (error.code === 'permission-denied') {
+                      adminUsersListContainer.innerHTML += '<br><b>تحذير:</b> لا تملك صلاحية الوصول. تأكد من أن قواعد الأمان في Firestore صحيحة وأنك مسجل كأدمن.';
+                  }
+                  updateElementText(adminStatusDiv, 'فشل تحميل المستخدمين. تحقق من صلاحيات Firestore.', 'error');
+              });
+      };
+
+      window.viewUserDetails = (userId) => {
+          db.collection('users').doc(userId).get().then(doc => {
+              if (doc.exists) {
+                  const data = doc.data();
+                  document.getElementById('details-email').textContent = `البريد: ${data.email || 'غير متوفر'}`;
+                  document.getElementById('details-uid').textContent = `UID: ${data.uid || 'غير متوفر'}`;
+                  document.getElementById('details-created').textContent = `تاريخ الإنشاء: ${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString() : 'غير متوفر'}`;
+                  document.getElementById('details-last-login').textContent = `آخر تسجيل دخول: ${data.lastLogin ? new Date(data.lastLogin.toDate()).toLocaleString() : 'غير متوفر'}`;
+                  document.getElementById('details-banned-status').textContent = `الحالة: ${data.isBanned ? 'محظور' : 'نشط'}${data.isAdmin ? ' (أدمن)' : ''}`;
+                  showHideElement(adminUserDetailsContainer, true);
+              } else {
+                  updateElementText(adminStatusDiv, 'لم يتم العثور على تفاصيل المستخدم.', 'error');
+              }
+          }).catch(err => {
+              console.error("Error fetching user details:", err);
+              updateElementText(adminStatusDiv, 'خطأ في جلب تفاصيل المستخدم.', 'error');
+          });
+      };
+
+      window.toggleUserBanStatus = (userIdToManage, currentBanStatus) => {
+          if (auth.currentUser && userIdToManage === auth.currentUser.uid) {
+              updateElementText(adminStatusDiv, 'لا يمكنك حظر نفسك.', 'error');
+              return;
+          }
+          db.collection('users').doc(userIdToManage).get().then(doc => {
+            if (doc.exists && doc.data().isAdmin && auth.currentUser && auth.currentUser.email !== ADMIN_EMAIL) { 
+                updateElementText(adminStatusDiv, 'لا يمكنك حظر حساب أدمن آخر.', 'error');
+                return;
+            }
+
+            const newBanStatus = !currentBanStatus;
+            db.collection('users').doc(userIdToManage).update({
+                isBanned: newBanStatus
+            })
+            .then(() => {
+                updateElementText(adminStatusDiv, `تم ${newBanStatus ? 'حظر' : 'إلغاء حظر'} المستخدم بنجاح.`, 'success');
+                displayUsersForAdmin(); 
+                showHideElement(adminUserDetailsContainer, false); 
+            })
+            .catch(error => {
+                console.error("Error updating ban status:", error);
+                updateElementText(adminStatusDiv, 'فشل تحديث حالة الحظر.', 'error');
+            });
+          }).catch(err => {
+             console.error("Error checking if target user is admin:", err);
+             updateElementText(adminStatusDiv, 'خطأ في التحقق من صلاحيات المستخدم الهدف.', 'error');
+          });
+      };
+
+
       window.showAdminArea = (event) => { 
           event.preventDefault();
-          window.location.hash = "admin-area";
+          if (currentUserIsAdmin) { 
+              window.location.hash = "admin-area";
+              displayUsersForAdmin(); 
+          } else {
+              alert("ليس لديك صلاحيات الأدمن للوصول لهذه المنطقة.");
+              window.location.hash = "game-launcher"; 
+          }
           closeSidebar();
       };
 
@@ -524,14 +724,24 @@
             nameSpan.textContent = game.text;
             card.appendChild(icon);
             card.appendChild(nameSpan);
-            card.addEventListener('click', (e) => {
+            card.addEventListener('click', async (e) => { 
                 const targetId = e.currentTarget.dataset.targetId;
                 const currentUser = auth.currentUser;
                 if (currentUser && currentUser.emailVerified) {
-                    playSound('snd-click');
-                    window.location.hash = targetId;
+                    const isBanned = await checkIfUserIsBanned(currentUser.uid);
+                    if (isBanned) {
+                        updateElementText(authStatusDiv, "حسابك محظور. لا يمكنك لعب الألعاب.", "error");
+                        auth.signOut(); 
+                        window.location.hash = 'login';
+                    } else {
+                        playSound('snd-click');
+                        window.location.hash = targetId;
+                    }
+                } else if (currentUser && !currentUser.emailVerified) {
+                     updateElementText(authStatusDiv, "يجب التحقق من بريدك الإلكتروني أولاً للعب.", "error");
+                    window.location.hash = 'login';
                 } else {
-                    updateElementText(authStatusDiv, "يجب تسجيل الدخول والتحقق من بريدك الإلكتروني أولاً للعب.", "error");
+                    updateElementText(authStatusDiv, "يجب تسجيل الدخول للعب.", "error");
                     window.location.hash = 'login';
                 }
             });
@@ -548,31 +758,50 @@
             }
         });
         if (activeSectionId === 'login' && auth.currentUser) {
-            // No specific active state for logout, handled by text change
         } else if (activeSectionId === 'login' && !auth.currentUser) {
             if(navLoginLinkSidebar) navLoginLinkSidebar.classList.add('active-nav-link');
         }
       };
 
-      const showSectionByHash = () => {
+      const showSectionByHash = async () => { 
         let hash = window.location.hash.slice(1);
         const currentUser = auth.currentUser;
-        const isVerified = currentUser && currentUser.emailVerified;
+        
+        let isBanned = false;
+        let isVerified = false;
+
+        if (currentUser) {
+            isVerified = currentUser.emailVerified;
+            isBanned = await checkIfUserIsBanned(currentUser.uid);
+            if (isBanned) {
+                isVerified = false; 
+                if (hash !== 'login') {
+                     window.location.hash = 'login'; 
+                     return; 
+                }
+            }
+        }
+
 
         if (!hash) { 
-            if (isVerified) {
+            if (isVerified) { 
                 hash = 'game-launcher'; 
             } else {
                 hash = 'login';
             }
-            window.location.hash = hash; 
-            return; 
+            if (window.location.hash.slice(1) !== hash) {
+                window.location.hash = hash; 
+                return; 
+            }
         }
         
         let targetIdToShow = 'login'; 
-        if (isVerified) {
-            if (hash === 'game-launcher' || gameNavLinksData.some(game => game.id === hash) || hash === 'settings' || (hash === 'admin-area' && currentUser.email === ADMIN_EMAIL)) {
+        if (isVerified) { 
+            if (hash === 'game-launcher' || gameNavLinksData.some(game => game.id === hash) || hash === 'settings') {
                 targetIdToShow = hash;
+            } else if (hash === 'admin-area' && currentUserIsAdmin) { 
+                targetIdToShow = hash;
+                displayUsersForAdmin(); 
             } else if (hash === 'login'){ 
                  targetIdToShow = 'game-launcher'; 
                  if (window.location.hash !== '#game-launcher') window.location.hash = 'game-launcher';
@@ -598,10 +827,20 @@
         });
         updateSidebarActiveLink(targetIdToShow);
         if (targetIdToShow === 'settings' && settingsStatusDiv) updateElementText(settingsStatusDiv, '', 'info'); 
+        if (targetIdToShow === 'admin-area' && adminStatusDiv) updateElementText(adminStatusDiv, 'مرحباً أيها الأدمن.', 'info');
       };
       
-      auth.onAuthStateChanged(user => {
-        updateAuthUI(!!user, user, user ? user.emailVerified : false);
+      auth.onAuthStateChanged(async user => { 
+        await updateAuthUI(!!user, user, user ? user.emailVerified : false); 
+        
+        if(user && user.emailVerified) {
+            const userDoc = await db.collection('users').doc(user.uid).get().catch(() => null);
+            currentUserIsAdmin = userDoc && userDoc.exists && userDoc.data().isAdmin === true;
+        } else {
+            currentUserIsAdmin = false;
+        }
+        showHideElement(adminButtonSidebar, currentUserIsAdmin && user && user.emailVerified);
+
         showSectionByHash(); 
       });
 
@@ -610,6 +849,7 @@
           const targetHash = e.currentTarget.getAttribute('href');
           if (targetHash === '#logout') { 
             auth.signOut().then(() => {
+                 currentUserIsAdmin = false; 
                  window.location.hash = 'login'; 
             }).catch(err => console.error('Logout error', err));
           } else {
@@ -636,7 +876,6 @@
         }
       });
 
-      // --- Game Initializations ---
       const initXOGame = () => { 
           const section = document.querySelector('#xo');
           if (!section) return;
@@ -720,8 +959,16 @@
             return null;
           };
 
-          const handleClick = (index) => {
-              if (!gameActive || boardState[index] || !auth.currentUser || !auth.currentUser.emailVerified || !boardElement) return;
+          const handleClick = async (index) => { 
+              const user = auth.currentUser;
+              if (!gameActive || boardState[index] || !user || !user.emailVerified) return;
+
+              const isBanned = await checkIfUserIsBanned(user.uid);
+              if (isBanned) {
+                  updateElementText(statusElement, 'حسابك محظور!', 'error');
+                  auth.signOut(); window.location.hash = 'login'; return;
+              }
+
               boardState[index] = currentPlayer;
               boardElement.children[index].textContent = currentPlayer;
               playSound('snd-click');
@@ -772,10 +1019,17 @@
             return -1; 
           };
 
-          const startGameMode = (mode) => {
-              if (!auth.currentUser || !auth.currentUser.emailVerified) {
+          const startGameMode = async (mode) => { 
+              const user = auth.currentUser;
+              if (!user || !user.emailVerified) {
                   updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
               }
+              const isBanned = await checkIfUserIsBanned(user.uid);
+              if (isBanned) {
+                  updateElementText(statusElement, 'حسابك محظور!', 'error');
+                  auth.signOut(); window.location.hash = 'login'; return;
+              }
+
               gameMode = mode; gameActive = true; boardState.fill(''); currentPlayer = playerSymbol; 
               if (boardElement) Array.from(boardElement.children).forEach(cell => cell.textContent = '');
               if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height); 
@@ -792,7 +1046,7 @@
           
           if(pvpButton) pvpButton.addEventListener('click', () => startGameMode('pvp'));
           if(pvcHardButton) pvcHardButton.addEventListener('click', () => startGameMode('pvc-hard')); 
-          if(restartButton) restartButton.addEventListener('click', () => { playSound('snd-click'); startGameMode(gameMode); }); // Restart current mode
+          if(restartButton) restartButton.addEventListener('click', () => { playSound('snd-click'); startGameMode(gameMode); }); 
           if(exitGameButton) exitGameButton.addEventListener('click', () => {
               playSound('snd-click');
               resetGame();
@@ -805,9 +1059,9 @@
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     if (section.classList.contains('active')) {
                         resizeCanvas(); 
-                        if (!gameActive) resetGame(); // If navigating to XO and game wasn't active, show mode selection
+                        if (!gameActive) resetGame(); 
                     } else {
-                        if (gameActive) resetGame(); // If navigating away from XO and game was active, reset it
+                        if (gameActive) resetGame(); 
                     }
                 }
             }
@@ -842,7 +1096,7 @@
         let scoresMemory = { player1: 0, player2: 0 };
         const FLIP_BACK_DELAY = 1800; 
 
-        function shuffle(array) { /* ... */ for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
+        function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
         
         const resetMemoryGame = () => {
             gameActiveMemory = false; gameModeMemory = null; 
@@ -854,11 +1108,19 @@
             canFlip = true; 
         };
 
-        function updateScoresDisplay() { /* ... */ if (gameModeMemory === 'pvp-memory') { player1ScoreEl.textContent = `${playerNames.player1}: ${scoresMemory.player1}`; player2ScoreEl.textContent = `${playerNames.player2}: ${scoresMemory.player2}`; showHideElement(player2ScoreEl, true); showHideElement(player2Separator, true); } else if (gameModeMemory === 'solo-memory') { player1ScoreEl.textContent = `النقاط: ${scoresMemory.player1}`; showHideElement(player2ScoreEl, false); showHideElement(player2Separator, false); } }
-        function updateStatus() { /* ... */ if (!gameActiveMemory) { updateElementText(statusElement, "اختر نمط اللعبة"); return; } let turnText = ""; if (gameModeMemory === 'pvp-memory') { turnText = currentPlayerMemory === 'player1' ? `دور ${playerNames.player1}` : `دور ${playerNames.player2}`; } else if (gameModeMemory === 'solo-memory') { turnText = "ابحث عن التطابقات!"; } updateElementText(statusElement, turnText); }
-        function preparePvpNameInputs() { /* ... */ showHideElement(optionsDivMemory, false); showHideElement(playerNamesInputDiv, true); player1NameInput.value = ''; player2NameInput.value = ''; showHideElement(restartButton, false); showHideElement(exitGameButton, false); }
-        function startGameMemory(mode, pvpSetupDone = false) {
-            if (!auth.currentUser || !auth.currentUser.emailVerified) { updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
+        function updateScoresDisplay() { if (gameModeMemory === 'pvp-memory') { player1ScoreEl.textContent = `${playerNames.player1}: ${scoresMemory.player1}`; player2ScoreEl.textContent = `${playerNames.player2}: ${scoresMemory.player2}`; showHideElement(player2ScoreEl, true); showHideElement(player2Separator, true); } else if (gameModeMemory === 'solo-memory') { player1ScoreEl.textContent = `النقاط: ${scoresMemory.player1}`; showHideElement(player2ScoreEl, false); showHideElement(player2Separator, false); } }
+        function updateStatus() { if (!gameActiveMemory) { updateElementText(statusElement, "اختر نمط اللعبة"); return; } let turnText = ""; if (gameModeMemory === 'pvp-memory') { turnText = currentPlayerMemory === 'player1' ? `دور ${playerNames.player1}` : `دور ${playerNames.player2}`; } else if (gameModeMemory === 'solo-memory') { turnText = "ابحث عن التطابقات!"; } updateElementText(statusElement, turnText); }
+        function preparePvpNameInputs() { showHideElement(optionsDivMemory, false); showHideElement(playerNamesInputDiv, true); player1NameInput.value = ''; player2NameInput.value = ''; showHideElement(restartButton, false); showHideElement(exitGameButton, false); }
+        
+        async function startGameMemory(mode, pvpSetupDone = false) { 
+            const user = auth.currentUser;
+            if (!user || !user.emailVerified) { updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
+            const isBanned = await checkIfUserIsBanned(user.uid);
+            if (isBanned) {
+                updateElementText(statusElement, 'حسابك محظور!', 'error');
+                auth.signOut(); window.location.hash = 'login'; return;
+            }
+
             if (mode === 'pvp-memory' && !pvpSetupDone) { preparePvpNameInputs(); return; }
             if (mode === 'pvp-memory' && pvpSetupDone) {
                  playerNames.player1 = player1NameInput.value.trim() || "اللاعب 1";
@@ -872,15 +1134,26 @@
             showHideElement(restartButton, true); showHideElement(exitGameButton, true);
             updateScoresDisplay(); createMemoryBoard(); updateStatus(); playSound('snd-click');
         }
-        function createMemoryBoard() { /* ... */ if(!cardsContainer) return; cardsContainer.innerHTML = ''; let items = shuffle([...cardValues, ...cardValues]); gameCards = []; items.forEach((value, index) => { const card = document.createElement('div'); card.classList.add('card'); card.dataset.value = value; card.dataset.id = index;  const cardFaceFront = document.createElement('div'); cardFaceFront.classList.add('card-face', 'card-front'); const cardFaceBack = document.createElement('div'); cardFaceBack.classList.add('card-face', 'card-back'); cardFaceBack.textContent = value; card.appendChild(cardFaceFront); card.appendChild(cardFaceBack); card.addEventListener('click', () => flipCardMemory(card)); cardsContainer.appendChild(card); gameCards.push(card); }); }
-        function flipCardMemory(card) { /* ... */ if (!auth.currentUser || !auth.currentUser.emailVerified) { updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } if (!gameActiveMemory || !canFlip || card.classList.contains('flipped') || card.classList.contains('matched')) return; card.classList.add('flipped'); flippedCards.push(card); playSound('snd-click'); if (flippedCards.length === 2) { canFlip = false; checkForMatchMemory(); } }
-        function checkForMatchMemory() { /* ... */ const [card1, card2] = flippedCards; const isMatch = card1.dataset.value === card2.dataset.value; if (isMatch) { card1.classList.add('matched'); card2.classList.add('matched'); if (gameModeMemory === 'pvp-memory') { if (currentPlayerMemory === 'player1') scoresMemory.player1++; else if (currentPlayerMemory === 'player2') scoresMemory.player2++; } else { scoresMemory.player1++; } updateScoresDisplay(); playSound('snd-win'); const totalPairs = cardValues.length; const matchedPairsCount = scoresMemory.player1 + (gameModeMemory === 'pvp-memory' ? scoresMemory.player2 : 0); if (matchedPairsCount === totalPairs) { gameActiveMemory = false; canFlip = false; let winnerMsg = "انتهت اللعبة! "; if (gameModeMemory === 'pvp-memory') { if (scoresMemory.player1 > scoresMemory.player2) winnerMsg += `فاز ${playerNames.player1}!`; else if (scoresMemory.player2 > scoresMemory.player1) winnerMsg += `فاز ${playerNames.player2}!`; else winnerMsg += "تعادل!"; } else { winnerMsg += `أحسنت!`; } updateElementText(statusElement, winnerMsg, 'success'); showHideElement(restartButton, true); showHideElement(exitGameButton, true); } else { flippedCards = []; canFlip = true;  if (gameModeMemory === 'pvp-memory') updateStatus();  } } else { playSound('snd-lose'); setTimeout(() => { card1.classList.remove('flipped'); card2.classList.remove('flipped'); flippedCards = []; if (gameActiveMemory) { if (gameModeMemory === 'pvp-memory') switchPlayerMemory(); else canFlip = true;  } }, FLIP_BACK_DELAY);  } }
-        function switchPlayerMemory() { /* ... */  if (!gameActiveMemory || gameModeMemory !== 'pvp-memory') return; currentPlayerMemory = currentPlayerMemory === 'player1' ? 'player2' : 'player1'; updateStatus(); canFlip = true;  }
+        function createMemoryBoard() { if(!cardsContainer) return; cardsContainer.innerHTML = ''; let items = shuffle([...cardValues, ...cardValues]); gameCards = []; items.forEach((value, index) => { const card = document.createElement('div'); card.classList.add('card'); card.dataset.value = value; card.dataset.id = index;  const cardFaceFront = document.createElement('div'); cardFaceFront.classList.add('card-face', 'card-front'); const cardFaceBack = document.createElement('div'); cardFaceBack.classList.add('card-face', 'card-back'); cardFaceBack.textContent = value; card.appendChild(cardFaceFront); card.appendChild(cardFaceBack); card.addEventListener('click', () => flipCardMemory(card)); cardsContainer.appendChild(card); gameCards.push(card); }); }
+        
+        async function flipCardMemory(card) { 
+            const user = auth.currentUser;
+            if (!user || !user.emailVerified) { updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
+            const isBanned = await checkIfUserIsBanned(user.uid);
+            if (isBanned) {
+                updateElementText(statusElement, 'حسابك محظور!', 'error');
+                auth.signOut(); window.location.hash = 'login'; return;
+            }
+            if (!gameActiveMemory || !canFlip || card.classList.contains('flipped') || card.classList.contains('matched')) return; 
+            card.classList.add('flipped'); flippedCards.push(card); playSound('snd-click'); if (flippedCards.length === 2) { canFlip = false; checkForMatchMemory(); } 
+        }
+        function checkForMatchMemory() { const [card1, card2] = flippedCards; const isMatch = card1.dataset.value === card2.dataset.value; if (isMatch) { card1.classList.add('matched'); card2.classList.add('matched'); if (gameModeMemory === 'pvp-memory') { if (currentPlayerMemory === 'player1') scoresMemory.player1++; else if (currentPlayerMemory === 'player2') scoresMemory.player2++; } else { scoresMemory.player1++; } updateScoresDisplay(); playSound('snd-win'); const totalPairs = cardValues.length; const matchedPairsCount = scoresMemory.player1 + (gameModeMemory === 'pvp-memory' ? scoresMemory.player2 : 0); if (matchedPairsCount === totalPairs) { gameActiveMemory = false; canFlip = false; let winnerMsg = "انتهت اللعبة! "; if (gameModeMemory === 'pvp-memory') { if (scoresMemory.player1 > scoresMemory.player2) winnerMsg += `فاز ${playerNames.player1}!`; else if (scoresMemory.player2 > scoresMemory.player1) winnerMsg += `فاز ${playerNames.player2}!`; else winnerMsg += "تعادل!"; } else { winnerMsg += `أحسنت!`; } updateElementText(statusElement, winnerMsg, 'success'); showHideElement(restartButton, true); showHideElement(exitGameButton, true); } else { flippedCards = []; canFlip = true;  if (gameModeMemory === 'pvp-memory') updateStatus();  } } else { playSound('snd-lose'); setTimeout(() => { card1.classList.remove('flipped'); card2.classList.remove('flipped'); flippedCards = []; if (gameActiveMemory) { if (gameModeMemory === 'pvp-memory') switchPlayerMemory(); else canFlip = true;  } }, FLIP_BACK_DELAY);  } }
+        function switchPlayerMemory() {  if (!gameActiveMemory || gameModeMemory !== 'pvp-memory') return; currentPlayerMemory = currentPlayerMemory === 'player1' ? 'player2' : 'player1'; updateStatus(); canFlip = true;  }
         
         if(pvpButtonMemory) pvpButtonMemory.addEventListener('click', () => startGameMemory('pvp-memory', false));
         if(startPvpNamedButton) startPvpNamedButton.addEventListener('click', () => startGameMemory('pvp-memory', true));
         if(soloButtonMemory) soloButtonMemory.addEventListener('click', () => startGameMemory('solo-memory'));
-        if(restartButton) restartButton.addEventListener('click', () => { playSound('snd-click'); startGameMemory(gameModeMemory, true); }); // Restart current mode
+        if(restartButton) restartButton.addEventListener('click', () => { playSound('snd-click'); startGameMemory(gameModeMemory, true); }); 
         if(exitGameButton) exitGameButton.addEventListener('click', () => {
             playSound('snd-click');
             resetMemoryGame();
@@ -891,9 +1164,9 @@
             for(const mutation of mutationsList) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     if (section.classList.contains('active')) {
-                        if (!gameActiveMemory) resetMemoryGame(); // If navigating to Memory and game wasn't active
+                        if (!gameActiveMemory) resetMemoryGame(); 
                     } else {
-                        if (gameActiveMemory) resetMemoryGame(); // If navigating away and game was active
+                        if (gameActiveMemory) resetMemoryGame(); 
                     }
                 }
             }
@@ -913,8 +1186,14 @@
             if(resultElement) updateElementText(resultElement, 'اختر لبدء!');
         };
 
-        choiceButtons.forEach(button => button.addEventListener('click', () => {
-          if(!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.','info'); return;}
+        choiceButtons.forEach(button => button.addEventListener('click', async () => { 
+          const user = auth.currentUser;
+          if(!user||!user.emailVerified) {updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.','info'); return;}
+          const isBanned = await checkIfUserIsBanned(user.uid);
+          if (isBanned) {
+              updateElementText(resultElement, 'حسابك محظور!', 'error');
+              auth.signOut(); window.location.hash = 'login'; return;
+          }
           const playerChoice = button.dataset.choice;
           const computerChoice = options[Math.floor(Math.random() * options.length)];
           let message = 'تعادل';
@@ -934,9 +1213,8 @@
             for (const mutation of mutationsList) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     if (section.classList.contains('active')) {
-                         resetRPSGame(); // Always reset to initial "اختر لبدء!" when activated
+                         resetRPSGame(); 
                     } 
-                    // No specific reset needed on deactivation as state is simple and reset on activation
                 }
             }
         });
@@ -966,14 +1244,24 @@
             gameActiveClick = false;
         };
 
-        const spawnTarget = () => { /* ... */ if(!targetArea) return; if (targetElement) targetElement.remove(); targetElement = document.createElement('div'); targetElement.id = 'clickable-target'; targetElement.textContent = '🎯'; const areaRect = targetArea.getBoundingClientRect(); const targetSize = 50; if (areaRect.height <= targetSize || areaRect.width <= targetSize) { gameActiveClick = false; resetClickTargetGame(); return; } targetElement.style.top = Math.random() * (areaRect.height - targetSize) + 'px'; targetElement.style.left = Math.random() * (areaRect.width - targetSize) + 'px'; targetElement.onclick = () => { if(!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.','info'); return;} if(!gameActiveClick) return; score++; updateElementText(statusElement, `النقاط: ${score}`); playSound('snd-click'); spawnTarget(); }; targetArea.appendChild(targetElement); };
-        const startGame = () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.','info'); return;}
+        const spawnTarget = () => { if(!targetArea) return; if (targetElement) targetElement.remove(); targetElement = document.createElement('div'); targetElement.id = 'clickable-target'; targetElement.textContent = '🎯'; const areaRect = targetArea.getBoundingClientRect(); const targetSize = 50; if (areaRect.height <= targetSize || areaRect.width <= targetSize) { gameActiveClick = false; resetClickTargetGame(); return; } targetElement.style.top = Math.random() * (areaRect.height - targetSize) + 'px'; targetElement.style.left = Math.random() * (areaRect.width - targetSize) + 'px'; targetElement.onclick = async () => { 
+            const user = auth.currentUser; 
+            if(!user||!user.emailVerified) {updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.','info'); return;}
+            const isBanned = await checkIfUserIsBanned(user.uid);
+            if (isBanned) { updateElementText(statusElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            if(!gameActiveClick) return; score++; updateElementText(statusElement, `النقاط: ${score}`); playSound('snd-click'); spawnTarget(); }; targetArea.appendChild(targetElement); };
+        
+        const startGame = async () => { 
+            const user = auth.currentUser;
+            if (!user||!user.emailVerified) {updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.','info'); return;}
+            const isBanned = await checkIfUserIsBanned(user.uid);
+            if (isBanned) { updateElementText(statusElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            
             gameActiveClick = true; score = 0;
             updateElementText(statusElement, 'النقاط: 0');
             showHideElement(startButton, false); showHideElement(exitGameButton, true);
             showHideElement(targetArea, true); disableElement(startButton, true);
-            setTimeout(spawnTarget, 50); // Delay spawn slightly to ensure area is visible
+            setTimeout(spawnTarget, 50); 
             clearTimeout(gameTimerId);
             gameTimerId = setTimeout(() => {
                 gameActiveClick = false;
@@ -1019,12 +1307,15 @@
             if(reactBox) reactBox.classList.remove('waiting', 'ready');
         };
 
-        const startGame = () => {
+        const startGame = async () => { 
             if(!reactBox) return;
-            if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(reactBox, 'يرجى التحقق من بريدك للعب.','info'); if(reactBox) reactBox.classList.remove('waiting', 'ready'); return;}
+            const user = auth.currentUser;
+            if (!user||!user.emailVerified) {updateElementText(reactBox, 'يرجى التحقق من بريدك للعب.','info'); if(reactBox) reactBox.classList.remove('waiting', 'ready'); return;}
+            const isBanned = await checkIfUserIsBanned(user.uid);
+             if (isBanned) { updateElementText(reactBox, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
             
             if (waitingForClick) { 
-                gameActiveReact = false; // Game ends here
+                gameActiveReact = false; 
                 if (reactBox.classList.contains('ready')) { 
                     const reactionTime = Date.now() - startTime;
                     updateElementText(reactBox, `وقتك: ${reactionTime} مللي ثانية. اضغط للبدء من جديد.`);
@@ -1039,7 +1330,7 @@
             }
             
             updateElementText(reactBox, 'انتظر اللون الأخضر...', 'waiting');
-            waitingForClick = true; gameActiveReact = true; // Game starts here
+            waitingForClick = true; gameActiveReact = true; 
             const randomDelay = Math.random() * 3000 + 1000; 
             timeoutId = setTimeout(() => {
                 if (waitingForClick) { 
@@ -1081,8 +1372,12 @@
             if(resultElement) updateElementText(resultElement, '--');
         };
 
-        if(rollButton) rollButton.addEventListener('click', () => {
-            if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(resultElement, '--'); if(resultElement) resultElement.textContent = 'يرجى التحقق من بريدك.'; return;}
+        if(rollButton) rollButton.addEventListener('click', async () => { 
+            const user = auth.currentUser;
+            if (!user||!user.emailVerified) {updateElementText(resultElement, '--'); if(resultElement) resultElement.textContent = 'يرجى التحقق من بريدك.'; return;}
+            const isBanned = await checkIfUserIsBanned(user.uid);
+            if (isBanned) { updateElementText(resultElement, 'محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+
             const roll = Math.floor(Math.random() * 6);
             updateElementText(resultElement, diceFaces[roll]);
             playSound('snd-click');
@@ -1097,7 +1392,7 @@
              for (const mutation of mutationsList) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     if (section.classList.contains('active')) {
-                        resetDiceRollGame(); // Always reset to initial "--" when activated
+                        resetDiceRollGame(); 
                     }
                 }
             }
@@ -1127,15 +1422,25 @@
             gameActiveMath = false;
         };
 
-        const generateQuestion = () => { /* ... */ const num1 = Math.floor(Math.random() * 10) + 1; const num2 = Math.floor(Math.random() * 10) + 1; correctAnswer = num1 + num2; if(questionArea) questionArea.textContent = `${num1} + ${num2} = ?`; if(answerInput) answerInput.value = ''; if(resultElement) updateElementText(resultElement, '--'); };
-        const startGame = () => {
-            if (!auth.currentUser || !auth.currentUser.emailVerified) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
+        const generateQuestion = () => { const num1 = Math.floor(Math.random() * 10) + 1; const num2 = Math.floor(Math.random() * 10) + 1; correctAnswer = num1 + num2; if(questionArea) questionArea.textContent = `${num1} + ${num2} = ?`; if(answerInput) answerInput.value = ''; if(resultElement) updateElementText(resultElement, '--'); };
+        
+        const startGame = async () => { 
+            const user = auth.currentUser;
+            if (!user || !user.emailVerified) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
+            const isBanned = await checkIfUserIsBanned(user.uid);
+            if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            
             gameActiveMath = true;
             showHideElement(startButton, false); showHideElement(exitGameButton, true);
             showHideElement(questionArea, true); showHideElement(inputGroupDiv, true, 'block'); 
             generateQuestion(); if(answerInput) answerInput.focus(); playSound('snd-click');
         };
-        const checkAnswer = () => { /* ... */ if (!auth.currentUser || !auth.currentUser.emailVerified || !answerInput || !resultElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } if (!gameActiveMath) return; const userAnswer = parseInt(answerInput.value); if (isNaN(userAnswer)) { updateElementText(resultElement, 'الرجاء إدخال رقم صحيح.', 'error'); return; } if (userAnswer === correctAnswer) { updateElementText(resultElement, 'صحيح! 🎉', 'success'); playSound('snd-win'); setTimeout(() => {  if (gameActiveMath && section.classList.contains('active') && auth.currentUser && auth.currentUser.emailVerified) generateQuestion();  }, 1500); } else { updateElementText(resultElement, `خطأ. الإجابة الصحيحة: ${correctAnswer}`, 'error'); playSound('snd-lose'); }  if(answerInput) {answerInput.value = ''; answerInput.focus(); } };
+        const checkAnswer = async () => { 
+            const user = auth.currentUser;
+            if (!user || !user.emailVerified || !answerInput || !resultElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } 
+            const isBanned = await checkIfUserIsBanned(user.uid);
+            if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            if (!gameActiveMath) return; const userAnswer = parseInt(answerInput.value); if (isNaN(userAnswer)) { updateElementText(resultElement, 'الرجاء إدخال رقم صحيح.', 'error'); return; } if (userAnswer === correctAnswer) { updateElementText(resultElement, 'صحيح! 🎉', 'success'); playSound('snd-win'); setTimeout(() => {  if (gameActiveMath && section.classList.contains('active') && auth.currentUser && auth.currentUser.emailVerified) generateQuestion();  }, 1500); } else { updateElementText(resultElement, `خطأ. الإجابة الصحيحة: ${correctAnswer}`, 'error'); playSound('snd-lose'); }  if(answerInput) {answerInput.value = ''; answerInput.focus(); } };
 
         if(startButton) startButton.addEventListener('click', startGame);
         if(submitButton) submitButton.addEventListener('click', checkAnswer);
@@ -1180,13 +1485,25 @@
             if(inputField) inputField.value = '';
             if(messageElement) updateElementText(messageElement, `خمن رقمًا بين 1 و 100.`);
             if(resultElement) updateElementText(resultElement, '--');
-            disableElement(submitButton, false); // Re-enable for next game
-            disableElement(inputField, false);   // Re-enable for next game
+            disableElement(submitButton, false); 
+            disableElement(inputField, false);   
             gameActiveGuessNum = false;
         };
 
-        const startGame = () => { /* ... */ if (!auth.currentUser || !auth.currentUser.emailVerified) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } gameActiveGuessNum = true; secretNumber = Math.floor(Math.random() * 100) + 1; attempts = 0; showHideElement(startButton, false); showHideElement(exitGameButton, true); showHideElement(inputGroupDiv, true, 'block'); if(inputField) inputField.value = ''; if(messageElement) updateElementText(messageElement, `خمن رقمًا بين 1 و 100. لديك ${maxAttempts} محاولات.`); if(resultElement) updateElementText(resultElement, '--'); if(inputField) inputField.focus(); disableElement(submitButton, false); disableElement(inputField, false); playSound('snd-click'); };
-        const checkGuess = () => { /* ... */ if (!auth.currentUser || !auth.currentUser.emailVerified || !inputField || !resultElement || !messageElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } if (!gameActiveGuessNum) return; const guess = parseInt(inputField.value); if (isNaN(guess) || guess < 1 || guess > 100) { updateElementText(resultElement, 'الرجاء إدخال رقم بين 1 و 100.', 'error'); return; } attempts++; if (guess === secretNumber) { updateElementText(resultElement, `أحسنت! لقد خمنت الرقم ${secretNumber} في ${attempts} محاولات.`, 'success'); playSound('snd-win'); if(messageElement) updateElementText(messageElement, 'اضغط "ابدأ اللعبة" للعب مرة أخرى.'); showHideElement(startButton, true); showHideElement(exitGameButton, false); disableElement(submitButton, true); disableElement(inputField, true); gameActiveGuessNum = false; } else { playSound('snd-click'); const remainingAttempts = maxAttempts - attempts; if (remainingAttempts <= 0) { updateElementText(resultElement, `للأسف انتهت محاولاتك. الرقم الصحيح كان ${secretNumber}.`, 'error'); playSound('snd-lose'); if(messageElement) updateElementText(messageElement, 'اضغط "ابدأ اللعبة" للعب مرة أخرى.'); showHideElement(startButton, true); showHideElement(exitGameButton, false); disableElement(submitButton, true); disableElement(inputField, true); gameActiveGuessNum = false; } else { updateElementText(resultElement, guess < secretNumber ? 'أعلى!' : 'أقل!', 'info'); if(messageElement) updateElementText(messageElement, `محاولات متبقية: ${remainingAttempts}`); } } if(inputField) { inputField.value = ''; inputField.focus(); } };
+        const startGame = async () => { 
+            const user = auth.currentUser;
+            if (!user || !user.emailVerified) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
+            const isBanned = await checkIfUserIsBanned(user.uid);
+            if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            
+            gameActiveGuessNum = true; secretNumber = Math.floor(Math.random() * 100) + 1; attempts = 0; showHideElement(startButton, false); showHideElement(exitGameButton, true); showHideElement(inputGroupDiv, true, 'block'); if(inputField) inputField.value = ''; if(messageElement) updateElementText(messageElement, `خمن رقمًا بين 1 و 100. لديك ${maxAttempts} محاولات.`); if(resultElement) updateElementText(resultElement, '--'); if(inputField) inputField.focus(); disableElement(submitButton, false); disableElement(inputField, false); playSound('snd-click'); };
+        
+        const checkGuess = async () => { 
+            const user = auth.currentUser;
+            if (!user || !user.emailVerified || !inputField || !resultElement || !messageElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } 
+            const isBanned = await checkIfUserIsBanned(user.uid);
+            if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            if (!gameActiveGuessNum) return; const guess = parseInt(inputField.value); if (isNaN(guess) || guess < 1 || guess > 100) { updateElementText(resultElement, 'الرجاء إدخال رقم بين 1 و 100.', 'error'); return; } attempts++; if (guess === secretNumber) { updateElementText(resultElement, `أحسنت! لقد خمنت الرقم ${secretNumber} في ${attempts} محاولات.`, 'success'); playSound('snd-win'); if(messageElement) updateElementText(messageElement, 'اضغط "ابدأ اللعبة" للعب مرة أخرى.'); showHideElement(startButton, true); showHideElement(exitGameButton, false); disableElement(submitButton, true); disableElement(inputField, true); gameActiveGuessNum = false; } else { playSound('snd-click'); const remainingAttempts = maxAttempts - attempts; if (remainingAttempts <= 0) { updateElementText(resultElement, `للأسف انتهت محاولاتك. الرقم الصحيح كان ${secretNumber}.`, 'error'); playSound('snd-lose'); if(messageElement) updateElementText(messageElement, 'اضغط "ابدأ اللعبة" للعب مرة أخرى.'); showHideElement(startButton, true); showHideElement(exitGameButton, false); disableElement(submitButton, true); disableElement(inputField, true); gameActiveGuessNum = false; } else { updateElementText(resultElement, guess < secretNumber ? 'أعلى!' : 'أقل!', 'info'); if(messageElement) updateElementText(messageElement, `محاولات متبقية: ${remainingAttempts}`); } } if(inputField) { inputField.value = ''; inputField.focus(); } };
         
         if(startButton) startButton.addEventListener('click', startGame);
         if(submitButton) submitButton.addEventListener('click', checkGuess);
@@ -1233,9 +1550,22 @@
             gameActiveBigSmall = false;
         };
 
-        const generateNumbers = () => { /* ... */ num1 = Math.floor(Math.random() * 100) + 1; do { num2 = Math.floor(Math.random() * 100) + 1; } while (num1 === num2);  biggerNum = Math.max(num1, num2); if(questionArea) questionArea.textContent = `أي الرقمين أكبر: ${num1} أم ${num2}؟`; if(answerInput) answerInput.value = ''; if(resultElement) updateElementText(resultElement, '--'); };
-        const startGame = () => { /* ... */ if (!auth.currentUser || !auth.currentUser.emailVerified) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } gameActiveBigSmall = true; showHideElement(startButton, false); showHideElement(exitGameButton, true); showHideElement(questionArea, true); showHideElement(inputGroupDiv, true, 'block'); generateNumbers(); if(answerInput) answerInput.focus(); playSound('snd-click'); };
-        const checkAnswer = () => { /* ... */ if (!auth.currentUser || !auth.currentUser.emailVerified || !answerInput || !resultElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } if (!gameActiveBigSmall) return; const userAnswer = parseInt(answerInput.value); if (isNaN(userAnswer)) { updateElementText(resultElement, 'الرجاء إدخال رقم.', 'error'); return; } if (userAnswer === biggerNum) { updateElementText(resultElement, 'صحيح! 🎉', 'success'); playSound('snd-win');  setTimeout(() => {  if (gameActiveBigSmall && section.classList.contains('active') && auth.currentUser && auth.currentUser.emailVerified) generateNumbers(); }, 1500); } else { updateElementText(resultElement, `خطأ. الرقم الأكبر كان ${biggerNum}.`, 'error'); playSound('snd-lose'); } if(answerInput) {answerInput.value = ''; answerInput.focus();} };
+        const generateNumbers = () => { num1 = Math.floor(Math.random() * 100) + 1; do { num2 = Math.floor(Math.random() * 100) + 1; } while (num1 === num2);  biggerNum = Math.max(num1, num2); if(questionArea) questionArea.textContent = `أي الرقمين أكبر: ${num1} أم ${num2}؟`; if(answerInput) answerInput.value = ''; if(resultElement) updateElementText(resultElement, '--'); };
+        
+        const startGame = async () => { 
+            const user = auth.currentUser;
+            if (!user || !user.emailVerified) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
+            const isBanned = await checkIfUserIsBanned(user.uid);
+            if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            
+            gameActiveBigSmall = true; showHideElement(startButton, false); showHideElement(exitGameButton, true); showHideElement(questionArea, true); showHideElement(inputGroupDiv, true, 'block'); generateNumbers(); if(answerInput) answerInput.focus(); playSound('snd-click'); };
+        
+        const checkAnswer = async () => { 
+            const user = auth.currentUser;
+            if (!user || !user.emailVerified || !answerInput || !resultElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } 
+            const isBanned = await checkIfUserIsBanned(user.uid);
+            if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            if (!gameActiveBigSmall) return; const userAnswer = parseInt(answerInput.value); if (isNaN(userAnswer)) { updateElementText(resultElement, 'الرجاء إدخال رقم.', 'error'); return; } if (userAnswer === biggerNum) { updateElementText(resultElement, 'صحيح! 🎉', 'success'); playSound('snd-win');  setTimeout(() => {  if (gameActiveBigSmall && section.classList.contains('active') && auth.currentUser && auth.currentUser.emailVerified) generateNumbers(); }, 1500); } else { updateElementText(resultElement, `خطأ. الرقم الأكبر كان ${biggerNum}.`, 'error'); playSound('snd-lose'); } if(answerInput) {answerInput.value = ''; answerInput.focus();} };
         
         if(startButton) startButton.addEventListener('click', startGame);
         if(submitButton) submitButton.addEventListener('click', checkAnswer);
@@ -1279,14 +1609,26 @@
             showHideElement(textToTypeElement, false);
             showHideElement(inputGroupDiv, false); 
             if(inputField) inputField.value = '';
-            disableElement(inputField, false); // Re-enable for next game
-            disableElement(submitButton, false); // Re-enable for next game
+            disableElement(inputField, false); 
+            disableElement(submitButton, false); 
             if(statusElement) updateElementText(statusElement, 'اضغط "ابدأ الاختبار"');
             gameActiveTyping = false;
         };
 
-        const startGame = () => { /* ... */ if (!auth.currentUser || !auth.currentUser.emailVerified) { if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } gameActiveTyping = true; currentTextToType = sampleTexts[Math.floor(Math.random() * sampleTexts.length)]; if(textToTypeElement) textToTypeElement.textContent = currentTextToType; if(inputField) inputField.value = ''; showHideElement(startButton, false); showHideElement(exitGameButton, true); showHideElement(textToTypeElement, true); showHideElement(inputGroupDiv, true, 'block');  disableElement(inputField, false); disableElement(submitButton, false); if(statusElement) updateElementText(statusElement, 'ابدأ الكتابة...'); if(inputField) inputField.focus(); startTime = new Date(); playSound('snd-click'); };
-        const checkTyping = () => { /* ... */ if (!auth.currentUser || !auth.currentUser.emailVerified || !inputField || !textToTypeElement || !statusElement) { if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } if(!gameActiveTyping) return; const typedText = inputField.value; const originalText = textToTypeElement.textContent;  const endTime = new Date(); const timeTaken = (endTime - startTime) / 1000;  if (typedText.length < originalText.length && typedText !== originalText) { updateElementText(statusElement, 'أكمل النص أولاً ثم اضغط تحقق.'); playSound('snd-lose'); return; } let errors = 0; for (let i = 0; i < originalText.length; i++) { if (i >= typedText.length || typedText[i] !== originalText[i]) { errors++; } } if (typedText.length > originalText.length) {  errors += (typedText.length - originalText.length); } const words = originalText.split(/\s+/).filter(Boolean).length; const wpm = timeTaken > 0 ? Math.round((words / timeTaken) * 60) : 0; const accuracy = originalText.length > 0 ? Math.round(((originalText.length - errors) / originalText.length) * 100) : 0;  updateElementText(statusElement, `الوقت: ${timeTaken.toFixed(1)} ثانية, السرعة: ${wpm} ك/د, الدقة: ${Math.max(0, accuracy)}%, الأخطاء: ${errors}`); playSound(accuracy >= 80 ? 'snd-win' : 'snd-lose'); showHideElement(startButton, true); showHideElement(exitGameButton, false); disableElement(inputField, true); disableElement(submitButton, true); gameActiveTyping = false; };
+        const startGame = async () => { 
+            const user = auth.currentUser;
+            if (!user || !user.emailVerified) { if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
+            const isBanned = await checkIfUserIsBanned(user.uid);
+            if (isBanned) { updateElementText(statusElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            
+            gameActiveTyping = true; currentTextToType = sampleTexts[Math.floor(Math.random() * sampleTexts.length)]; if(textToTypeElement) textToTypeElement.textContent = currentTextToType; if(inputField) inputField.value = ''; showHideElement(startButton, false); showHideElement(exitGameButton, true); showHideElement(textToTypeElement, true); showHideElement(inputGroupDiv, true, 'block');  disableElement(inputField, false); disableElement(submitButton, false); if(statusElement) updateElementText(statusElement, 'ابدأ الكتابة...'); if(inputField) inputField.focus(); startTime = new Date(); playSound('snd-click'); };
+        
+        const checkTyping = async () => { 
+            const user = auth.currentUser;
+            if (!user || !user.emailVerified || !inputField || !textToTypeElement || !statusElement) { if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } 
+            const isBanned = await checkIfUserIsBanned(user.uid);
+            if (isBanned) { updateElementText(statusElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
+            if(!gameActiveTyping) return; const typedText = inputField.value; const originalText = textToTypeElement.textContent;  const endTime = new Date(); const timeTaken = (endTime - startTime) / 1000;  if (typedText.length < originalText.length && typedText !== originalText) { updateElementText(statusElement, 'أكمل النص أولاً ثم اضغط تحقق.'); playSound('snd-lose'); return; } let errors = 0; for (let i = 0; i < originalText.length; i++) { if (i >= typedText.length || typedText[i] !== originalText[i]) { errors++; } } if (typedText.length > originalText.length) {  errors += (typedText.length - originalText.length); } const words = originalText.split(/\s+/).filter(Boolean).length; const wpm = timeTaken > 0 ? Math.round((words / timeTaken) * 60) : 0; const accuracy = originalText.length > 0 ? Math.round(((originalText.length - errors) / originalText.length) * 100) : 0;  updateElementText(statusElement, `الوقت: ${timeTaken.toFixed(1)} ثانية, السرعة: ${wpm} ك/د, الدقة: ${Math.max(0, accuracy)}%, الأخطاء: ${errors}`); playSound(accuracy >= 80 ? 'snd-win' : 'snd-lose'); showHideElement(startButton, true); showHideElement(exitGameButton, false); disableElement(inputField, true); disableElement(submitButton, true); gameActiveTyping = false; };
         
         if(startButton) startButton.addEventListener('click', startGame);
         if(submitButton) submitButton.addEventListener('click', checkTyping);
