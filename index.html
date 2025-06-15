@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="ltr">
 <head>
@@ -165,9 +166,19 @@
     .game-icon-card:hover i { color: #fff; }
     .game-icon-card span { color: #fff; font-size: 1rem; font-weight: 500; }
 
-    #settings p { margin-bottom: 10px; font-size: 1.1rem; }
+    #settings p, #settings .input-group-settings { margin-bottom: 15px; } /* Changed class name for settings input group */
     #settings .info-value { font-weight: bold; color: #005A9C; }
-    #settings-status { margin-top: 15px; font-size: 0.9em; }
+    #settings-status, #profile-settings-status { margin-top: 15px; font-size: 0.9em; min-height: 1.2em; text-align: center;}
+    #settings label { display: block; margin-bottom: 5px; font-weight: 500;}
+    #settings input[type="text"], #settings input[type="url"] {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+        direction: rtl; /* Ensure RTL for these inputs */
+    }
+
 
     #admin-area h3 { margin-top: 20px; margin-bottom: 10px; color: #003B73; }
     #admin-users-list-container ul { list-style: none; padding: 0; }
@@ -176,6 +187,101 @@
     #admin-users-list-container li .user-actions button { font-size: 0.8rem; padding: 5px 8px; margin-left: 5px;}
     #admin-user-details-container p { margin-bottom: 5px; }
     .banned-user-indicator { color: red; font-weight: bold; }
+
+    /* User Search and Profile Styles */
+    #user-search .input-group-search { display: flex; align-items: center; margin-bottom: 15px;}
+    #user-search input[type="text"] { width: calc(100% - 90px); padding: 10px; border-radius: 0 6px 6px 0; border: 1px solid #ccc; font-size: 1rem; display: inline-block; vertical-align: middle; order:1; direction: rtl;} /* RTL for search input */
+    #user-search button#btn-user-search { width: 80px; border-radius: 6px 0 0 6px; display: inline-block; vertical-align: middle; height: 40px; line-height: 1; padding-top: 0; padding-bottom:0; order:2; margin-left: -1px; }
+    #search-results-container { margin-top: 20px; }
+    .user-profile-card {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .user-profile-card .profile-pic-default {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: #005A9C;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem; /* Icon size */
+    }
+    .user-profile-card .user-info p { margin: 2px 0; }
+    .user-profile-card .user-info .username-search { font-weight: bold; color: #003B73; }
+    .user-profile-card .user-actions button { font-size: 0.85rem; padding: 6px 10px;}
+    #user-search-status { margin-top:15px; font-size:0.9em; min-height:1.2em; text-align: center; }
+
+    /* Chat Styles */
+    #chat-room h2 { margin-bottom: 10px; }
+    #messages-container {
+        height: 350px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+        display: flex;
+        flex-direction: column;
+        direction: ltr; /* Messages flow LTR, but individual bubbles can be RTL */
+    }
+    .message-bubble {
+        padding: 8px 12px;
+        border-radius: 18px;
+        margin-bottom: 8px;
+        max-width: 75%;
+        word-wrap: break-word;
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+    .message-bubble.sent {
+        background-color: #005A9C;
+        color: white;
+        margin-left: auto; /* Align to right */
+        border-bottom-right-radius: 5px;
+        text-align: right; /* Text inside bubble */
+        direction: rtl;
+    }
+    .message-bubble.received {
+        background-color: #e9e9e9;
+        color: #333;
+        margin-right: auto; /* Align to left */
+        border-bottom-left-radius: 5px;
+        text-align: right; /* Text inside bubble */
+        direction: rtl;
+    }
+    .message-timestamp {
+        font-size: 0.7em;
+        color: #999;
+        display: block;
+        margin-top: 3px;
+    }
+    .sent .message-timestamp { text-align: left; color: #cce7ff; } /* Timestamp for sent */
+    .received .message-timestamp { text-align: left; } /* Timestamp for received */
+
+    #chat-input-area { display: flex; }
+    #chat-input-area input[type="text"] {
+        flex-grow: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 0 20px 20px 0; /* RTL adjusted */
+        font-size: 1rem;
+        direction: rtl;
+    }
+    #chat-input-area button {
+        padding: 10px 15px;
+        border-radius: 20px 0 0 20px; /* RTL adjusted */
+        margin-right: -1px; /* Overlap border */
+    }
+    #chat-room-exit-button { margin-top: 15px; }
+
 
   </style>
 </head>
@@ -189,6 +295,7 @@
     <a href="javascript:void(0)" class="sidebar-close-btn" id="sidebar-close-button">×</a>
     <a href="#login" id="nav-login-link-sidebar">تسجيل الدخول</a>
     <a href="#game-launcher" id="nav-games-launcher-link-sidebar" style="display:none;">الألعاب</a>
+    <a href="#user-search" id="nav-user-search-link-sidebar" style="display:none;">بحث عن مستخدم</a>
     <a href="#settings" id="nav-settings-link-sidebar" style="display:none;">الإعدادات</a>
     <a href="#" id="admin-button-sidebar" style="display:none;" onclick="showAdminArea(event)">لوحة الأدمن</a>
   </div>
@@ -267,11 +374,48 @@
   </section>
   
   <section id="settings" class="game-section">
-      <h2>الإعدادات ⚙️</h2>
+      <h2>الإعدادات الشخصية ⚙️</h2>
       <p>البريد الإلكتروني: <span id="settings-user-email" class="info-value"></span></p>
+      
+      <div class="input-group-settings">
+          <label for="settings-username">اسم المستخدم (فريد، حروف إنجليزية وأرقام فقط):</label>
+          <input type="text" id="settings-username" placeholder="مثال: gamer123">
+      </div>
+      <div class="input-group-settings">
+          <label for="settings-display-name">الاسم المعروض (سيظهر للآخرين):</label>
+          <input type="text" id="settings-display-name" placeholder="مثال: أحمد القيمر">
+      </div>
+      <button id="btn-save-settings">حفظ التغييرات</button>
+      <div id="profile-settings-status" class="info"></div>
+      <hr style="margin: 20px 0;">
       <button id="btn-change-password">تغيير كلمة المرور</button>
       <div id="settings-status" class="info"></div>
   </section>
+
+  <section id="user-search" class="game-section">
+      <h2>البحث عن مستخدمين 🔎</h2>
+      <div class="input-group-search">
+          <input type="text" id="user-search-input" placeholder="أدخل اسم المستخدم للبحث...">
+          <button id="btn-user-search">بحث</button>
+      </div>
+      <div id="user-search-status" class="info"></div>
+      <div id="search-results-container">
+          <!-- نتائج البحث ستظهر هنا -->
+      </div>
+  </section>
+
+  <section id="chat-room" class="game-section" style="display:none;">
+      <h2 id="chat-room-header">محادثة مع ...</h2>
+      <div id="messages-container">
+          <!-- Messages will appear here -->
+      </div>
+      <div id="chat-input-area">
+          <input type="text" id="message-input" placeholder="اكتب رسالتك هنا...">
+          <button id="send-message-button">إرسال</button>
+      </div>
+      <button id="chat-room-exit-button">العودة إلى البحث</button>
+  </section>
+
 
   <section id="admin-area" class="game-section" style="display:none;">
       <h2>لوحة تحكم الأدمن 👑</h2>
@@ -290,6 +434,8 @@
               <p id="details-created"></p>
               <p id="details-last-login"></p>
               <p id="details-banned-status"></p>
+              <p id="details-username"></p>
+              <p id="details-displayName"></p>
               <button id="details-close-btn">إغلاق التفاصيل</button>
           </div>
       </div>
@@ -310,6 +456,8 @@
   <audio id="snd-click" src="https://actions.google.com/sounds/v1/alarms/button_click.ogg"></audio>
   <audio id="snd-win" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
   <audio id="snd-lose" src="https://actions.google.com/sounds/v1/cartoon/cartoon_cowbell.ogg"></audio>
+  <audio id="snd-message" src="https://actions.google.com/sounds/v1/communication/connect_alert.ogg"></audio>
+
 
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -332,6 +480,11 @@
     const db = firebase.firestore(); 
     const ADMIN_EMAIL = "ka6761386@gmail.com"; 
     let currentUserIsAdmin = false; 
+    let currentChatRoomId = null;
+    let currentChatWithUserId = null;
+    let currentChatWithDisplayName = null;
+    let chatMessagesListener = null;
+
 
     document.addEventListener('DOMContentLoaded', () => {
       const playSound = (id) => { const s = document.getElementById(id); if (s) { s.currentTime = 0; s.play().catch(e => console.warn(`Sound ${id} play failed:`, e)); } };
@@ -347,6 +500,7 @@
       
       const navLoginLinkSidebar = document.getElementById('nav-login-link-sidebar');
       const navGamesLauncherLinkSidebar = document.getElementById('nav-games-launcher-link-sidebar');
+      const navUserSearchLinkSidebar = document.getElementById('nav-user-search-link-sidebar');
       const navSettingsLinkSidebar = document.getElementById('nav-settings-link-sidebar');
       const adminButtonSidebar = document.getElementById('admin-button-sidebar');
 
@@ -376,9 +530,28 @@
       const btnLogout = document.getElementById('btn-logout');
       const authStatusDiv = document.getElementById('auth-status');
 
+      // Settings Elements
       const settingsUserEmailEl = document.getElementById('settings-user-email');
+      const settingsUsernameInput = document.getElementById('settings-username');
+      const settingsDisplayNameInput = document.getElementById('settings-display-name');
+      const btnSaveSettings = document.getElementById('btn-save-settings');
+      const profileSettingsStatusDiv = document.getElementById('profile-settings-status');
       const btnChangePassword = document.getElementById('btn-change-password');
       const settingsStatusDiv = document.getElementById('settings-status');
+
+      // User Search Elements
+      const userSearchInput = document.getElementById('user-search-input');
+      const btnUserSearch = document.getElementById('btn-user-search');
+      const userSearchStatusDiv = document.getElementById('user-search-status');
+      const searchResultsContainer = document.getElementById('search-results-container');
+      
+      // Chat Room Elements
+      const chatRoomHeader = document.getElementById('chat-room-header');
+      const messagesContainer = document.getElementById('messages-container');
+      const messageInput = document.getElementById('message-input');
+      const sendMessageButton = document.getElementById('send-message-button');
+      const chatRoomExitButton = document.getElementById('chat-room-exit-button');
+
 
       const adminUsersListContainer = document.getElementById('admin-users-list-container');
       const adminUserDetailsContainer = document.getElementById('admin-user-details-container');
@@ -386,34 +559,127 @@
       const detailsCloseBtn = document.getElementById('details-close-btn');
       if (detailsCloseBtn) detailsCloseBtn.addEventListener('click', () => showHideElement(adminUserDetailsContainer, false));
 
+      const loadUserProfileSettings = async (userId) => {
+        if (!settingsUsernameInput || !settingsDisplayNameInput) return;
+        try {
+            const userDoc = await db.collection('users').doc(userId).get();
+            if (userDoc.exists) {
+                const userData = userDoc.data();
+                settingsUsernameInput.value = userData.username || '';
+                settingsDisplayNameInput.value = userData.displayName || '';
+            }
+        } catch (error) {
+            console.error("Error loading user profile settings:", error);
+            updateElementText(profileSettingsStatusDiv, "خطأ في تحميل بيانات الملف الشخصي.", 'error');
+        }
+      };
+      
+      if (btnSaveSettings) {
+        btnSaveSettings.addEventListener('click', async () => {
+            const user = auth.currentUser;
+            if (!user) {
+                updateElementText(profileSettingsStatusDiv, "يجب تسجيل الدخول لحفظ الإعدادات.", 'error');
+                return;
+            }
+            const newUsername = settingsUsernameInput.value.trim().toLowerCase();
+            const newDisplayName = settingsDisplayNameInput.value.trim();
+
+            if (!newUsername) {
+                updateElementText(profileSettingsStatusDiv, "اسم المستخدم مطلوب.", 'error');
+                return;
+            }
+            if (!/^[a-z0-9_]{3,20}$/.test(newUsername)) {
+                updateElementText(profileSettingsStatusDiv, "اسم المستخدم يجب أن يتكون من 3-20 حرف إنجليزي صغير أو أرقام أو '_'.", 'error');
+                return;
+            }
+            if (!newDisplayName) {
+                 updateElementText(profileSettingsStatusDiv, "الاسم المعروض مطلوب.", 'error');
+                return;
+            }
+
+
+            updateElementText(profileSettingsStatusDiv, "جاري الحفظ...", 'info');
+            disableElement(btnSaveSettings, true);
+
+            try {
+                // Check if username is taken by another user
+                const usernameQuery = await db.collection('users').where('username', '==', newUsername).get();
+                let usernameTaken = false;
+                usernameQuery.forEach(doc => {
+                    if (doc.id !== user.uid) {
+                        usernameTaken = true;
+                    }
+                });
+
+                if (usernameTaken) {
+                    updateElementText(profileSettingsStatusDiv, "اسم المستخدم هذا مأخوذ بالفعل.", 'error');
+                    disableElement(btnSaveSettings, false);
+                    return;
+                }
+                
+                // If username is unique or belongs to current user, update profile
+                await db.collection('users').doc(user.uid).set({
+                    username: newUsername,
+                    displayName: newDisplayName
+                }, { merge: true });
+
+                updateElementText(profileSettingsStatusDiv, "تم حفظ الإعدادات بنجاح!", 'success');
+            } catch (error) {
+                console.error("Error saving profile settings:", error);
+                updateElementText(profileSettingsStatusDiv, "حدث خطأ أثناء حفظ الإعدادات.", 'error');
+            } finally {
+                disableElement(btnSaveSettings, false);
+            }
+        });
+      }
+
 
       const updateUserDocument = (user) => {
           if (!user) return;
           const userDocRef = db.collection('users').doc(user.uid);
-          userDocRef.set({
-              email: user.email,
-              uid: user.uid,
-              displayName: user.displayName || user.email.split('@')[0],
-              lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-              createdAt: user.metadata.creationTime ? firebase.firestore.Timestamp.fromDate(new Date(user.metadata.creationTime)) : firebase.firestore.FieldValue.serverTimestamp(),
-              isBanned: false 
-          }, { merge: true }) 
-          .then(() => {
-              userDocRef.get().then(doc => {
-                  if (doc.exists && doc.data().isAdmin === true) {
-                      currentUserIsAdmin = true;
-                  } else {
-                      currentUserIsAdmin = false;
-                  }
-                  showHideElement(adminButtonSidebar, currentUserIsAdmin && user.emailVerified);
-              }).catch(err => {
-                  console.error("Error fetching user admin status:", err);
-                  currentUserIsAdmin = false; 
-                  showHideElement(adminButtonSidebar, false);
-              });
-          })
-          .catch(error => {
-              console.error("Error updating user document in Firestore: ", error);
+          
+          userDocRef.get().then(docSnapshot => {
+            const existingData = docSnapshot.exists ? docSnapshot.data() : {};
+            const defaultDisplayName = user.email.split('@')[0];
+
+            const dataToSet = {
+                email: user.email,
+                uid: user.uid,
+                displayName: existingData.displayName || defaultDisplayName, // Keep existing or set default
+                username: existingData.username || '', // Keep existing or set empty
+                lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                createdAt: existingData.createdAt || (user.metadata.creationTime ? firebase.firestore.Timestamp.fromDate(new Date(user.metadata.creationTime)) : firebase.firestore.FieldValue.serverTimestamp()),
+                isBanned: existingData.isBanned || false 
+            };
+             if (existingData.isAdmin) { // Preserve admin status if already set
+                dataToSet.isAdmin = true;
+            }
+
+
+            userDocRef.set(dataToSet, { merge: true }) 
+            .then(() => {
+                userDocRef.get().then(doc => { // Re-fetch to confirm admin status
+                    if (doc.exists && doc.data().isAdmin === true) {
+                        currentUserIsAdmin = true;
+                    } else {
+                        currentUserIsAdmin = false;
+                    }
+                    showHideElement(adminButtonSidebar, currentUserIsAdmin && user.emailVerified);
+                    if (user.emailVerified) {
+                        loadUserProfileSettings(user.uid); // Load profile data into settings page
+                    }
+                }).catch(err => {
+                    console.error("Error fetching user admin status:", err);
+                    currentUserIsAdmin = false; 
+                    showHideElement(adminButtonSidebar, false);
+                });
+            })
+            .catch(error => {
+                console.error("Error updating user document in Firestore: ", error);
+            });
+
+          }).catch(error => {
+             console.error("Error getting user document for update: ", error);
           });
       };
       
@@ -444,7 +710,7 @@
         if (isLoggedIn && user) {
             isBanned = await checkIfUserIsBanned(user.uid);
             if (isBanned) {
-                updateElementText(authStatusDiv, `حسابك (${user.email}) محظور. لا يمكنك الوصول للألعاب.`, 'error');
+                updateElementText(authStatusDiv, `حسابك (${user.email}) محظور. لا يمكنك الوصول للتطبيق.`, 'error');
                 isVerified = false; 
                  if (auth.currentUser) { 
                     await auth.signOut().catch(e => console.warn("Error signing out banned user", e));
@@ -454,6 +720,7 @@
         }
         
         showHideElement(navGamesLauncherLinkSidebar, isLoggedIn && isVerified);
+        showHideElement(navUserSearchLinkSidebar, isLoggedIn && isVerified);
         showHideElement(navSettingsLinkSidebar, isLoggedIn && isVerified);
         
         const currentActiveSection = document.querySelector('section.active');
@@ -470,6 +737,8 @@
             updateElementText(authStatusDiv, `تم تسجيل الدخول كـ ${user.email}. يرجى التحقق من بريدك الإلكتروني للوصول الكامل.`, 'info');
             if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
             if(settingsUserEmailEl) settingsUserEmailEl.textContent = "يرجى التحقق من بريدك أولاً.";
+            if(settingsUsernameInput) settingsUsernameInput.value = '';
+            if(settingsDisplayNameInput) settingsDisplayNameInput.value = '';
           }
           navLoginLinkSidebar.textContent = 'تسجيل الخروج';
           navLoginLinkSidebar.href = "#logout"; 
@@ -483,7 +752,11 @@
 
           if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
           if(settingsUserEmailEl) settingsUserEmailEl.textContent = "غير مسجل الدخول";
+          if(settingsUsernameInput) settingsUsernameInput.value = '';
+          if(settingsDisplayNameInput) settingsDisplayNameInput.value = '';
+
           updateElementText(settingsStatusDiv, '', 'info');
+          updateElementText(profileSettingsStatusDiv, '', 'info');
           showHideElement(adminButtonSidebar, false); 
           allSections.forEach(s => { 
                 if(s.id !== 'login') s.classList.remove('active'); 
@@ -553,6 +826,7 @@
             auth.createUserWithEmailAndPassword(email, password)
               .then((userCredential) => {
                 if (userCredential.user) {
+                  // updateUserDocument will be called onAuthStateChanged
                   userCredential.user.sendEmailVerification()
                     .then(() => {
                       updateElementText(authStatusDiv, 'تم إنشاء الحساب بنجاح! تم إرسال رسالة تحقق إلى بريدك الإلكتروني. يرجى التحقق منها ثم تسجيل الدخول.', 'success');
@@ -606,6 +880,194 @@
           });
       }
 
+      // User Search Functionality
+      if (btnUserSearch) {
+        btnUserSearch.addEventListener('click', async () => {
+            const searchTerm = userSearchInput.value.trim().toLowerCase();
+            if (!searchTerm) {
+                updateElementText(userSearchStatusDiv, "الرجاء إدخال اسم مستخدم للبحث.", 'error');
+                searchResultsContainer.innerHTML = '';
+                return;
+            }
+            updateElementText(userSearchStatusDiv, "جاري البحث...", 'info');
+            searchResultsContainer.innerHTML = '';
+
+            try {
+                const usersRef = db.collection('users');
+                // Search for exact match first
+                let query = usersRef.where('username', '==', searchTerm);
+                let querySnapshot = await query.get();
+
+                // If no exact match, try prefix search (less efficient, consider alternatives for large datasets)
+                // Firestore doesn't directly support substring/prefix search on non-array fields efficiently without 3rd party services like Algolia.
+                // For this example, we'll fetch users and filter client-side if exact match fails. This is NOT scalable.
+                // A better approach for larger scale would be to use a search service or denormalize data for search.
+                // Here, we'll stick to exact match for simplicity and performance.
+
+                if (querySnapshot.empty) {
+                     updateElementText(userSearchStatusDiv, "لم يتم العثور على مستخدمين بهذا الاسم.", 'info');
+                } else {
+                    querySnapshot.forEach(doc => {
+                        const userData = doc.data();
+                        const user = auth.currentUser;
+                        // Don't show current user in search results
+                        if (user && doc.id === user.uid) return;
+
+                        const card = document.createElement('div');
+                        card.className = 'user-profile-card';
+                        
+                        const profilePicDiv = document.createElement('div');
+                        profilePicDiv.className = 'profile-pic-default';
+                        profilePicDiv.innerHTML = `<i class='bx bxs-user'></i>`;
+
+                        const userInfoDiv = document.createElement('div');
+                        userInfoDiv.className = 'user-info';
+                        userInfoDiv.innerHTML = `
+                            <p class="username-search">@${userData.username || 'غير معروف'}</p>
+                            <p>${userData.displayName || 'اسم غير محدد'}</p>
+                        `;
+
+                        const userActionsDiv = document.createElement('div');
+                        userActionsDiv.className = 'user-actions';
+                        const chatButton = document.createElement('button');
+                        chatButton.textContent = 'محادثة';
+                        chatButton.onclick = () => {
+                            initiateChat(doc.id, userData.displayName || userData.username);
+                        };
+                        userActionsDiv.appendChild(chatButton);
+
+                        card.appendChild(profilePicDiv);
+                        card.appendChild(userInfoDiv);
+                        card.appendChild(userActionsDiv);
+                        searchResultsContainer.appendChild(card);
+                    });
+                    if (searchResultsContainer.children.length > 0) {
+                         updateElementText(userSearchStatusDiv, `تم العثور على ${searchResultsContainer.children.length} مستخدم.`, 'success');
+                    } else {
+                         updateElementText(userSearchStatusDiv, "لم يتم العثور على مستخدمين (قد يكون البحث عن نفسك).", 'info');
+                    }
+                }
+            } catch (error) {
+                console.error("Error searching users:", error);
+                updateElementText(userSearchStatusDiv, "خطأ أثناء البحث عن المستخدمين.", 'error');
+            }
+        });
+      }
+      
+      // Chat Functionality
+      const initiateChat = (otherUid, otherDisplayName) => {
+        const currentUser = auth.currentUser;
+        if (!currentUser) return;
+
+        currentChatWithUserId = otherUid;
+        currentChatWithDisplayName = otherDisplayName || 'مستخدم';
+        
+        // Create a consistent chat room ID
+        const uids = [currentUser.uid, otherUid].sort();
+        currentChatRoomId = uids.join('_');
+
+        if(chatRoomHeader) chatRoomHeader.textContent = `محادثة مع ${currentChatWithDisplayName}`;
+        if(messagesContainer) messagesContainer.innerHTML = ''; // Clear previous messages
+        
+        window.location.hash = `chat-room`; // Navigate to chat section
+        loadChatMessages(currentChatRoomId);
+      };
+
+      const loadChatMessages = (chatId) => {
+        if (chatMessagesListener) {
+            chatMessagesListener(); // Unsubscribe from previous listener
+        }
+        if (!messagesContainer) return;
+        messagesContainer.innerHTML = '<p style="text-align:center; color:#777;">جاري تحميل الرسائل...</p>';
+
+        chatMessagesListener = db.collection('chats').doc(chatId).collection('messages')
+            .orderBy('timestamp')
+            .onSnapshot(snapshot => {
+                messagesContainer.innerHTML = ''; // Clear loading message or old messages
+                if (snapshot.empty && messagesContainer.innerHTML === '') {
+                     messagesContainer.innerHTML = '<p style="text-align:center; color:#777;">لا توجد رسائل بعد. ابدأ المحادثة!</p>';
+                }
+                snapshot.docChanges().forEach(change => {
+                    if (change.type === "added") {
+                        const messageData = change.doc.data();
+                        displayMessage(messageData);
+                        if(messageData.senderId !== auth.currentUser.uid && document.hidden) { // Play sound if doc hidden and received msg
+                             playSound('snd-message');
+                        }
+                    }
+                });
+                messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll to bottom
+            }, error => {
+                console.error("Error fetching chat messages: ", error);
+                messagesContainer.innerHTML = '<p style="text-align:center; color:red;">خطأ في تحميل الرسائل.</p>';
+            });
+      };
+
+      const displayMessage = (msgData) => {
+        if (!messagesContainer || !auth.currentUser) return;
+        const msgBubble = document.createElement('div');
+        msgBubble.classList.add('message-bubble');
+        
+        const isSentByCurrentUser = msgData.senderId === auth.currentUser.uid;
+        msgBubble.classList.add(isSentByCurrentUser ? 'sent' : 'received');
+        
+        const textNode = document.createElement('span');
+        textNode.textContent = msgData.text;
+        msgBubble.appendChild(textNode);
+
+        if (msgData.timestamp) {
+            const timestampNode = document.createElement('span');
+            timestampNode.classList.add('message-timestamp');
+            timestampNode.textContent = new Date(msgData.timestamp.toDate()).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+            msgBubble.appendChild(timestampNode);
+        }
+        
+        messagesContainer.appendChild(msgBubble);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      };
+
+      if (sendMessageButton && messageInput) {
+        const handleSendMessage = async () => {
+            const text = messageInput.value.trim();
+            if (text === '' || !currentChatRoomId || !auth.currentUser) return;
+
+            try {
+                await db.collection('chats').doc(currentChatRoomId).collection('messages').add({
+                    text: text,
+                    senderId: auth.currentUser.uid,
+                    receiverId: currentChatWithUserId, // Good for querying/notifications later
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                messageInput.value = '';
+                // The onSnapshot listener will display the message
+            } catch (error) {
+                console.error("Error sending message: ", error);
+                // Optionally show an error to the user
+            }
+        };
+        sendMessageButton.addEventListener('click', handleSendMessage);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Prevent form submission if it's in a form
+                handleSendMessage();
+            }
+        });
+      }
+      
+      if(chatRoomExitButton) {
+        chatRoomExitButton.addEventListener('click', () => {
+            if (chatMessagesListener) {
+                chatMessagesListener(); // Unsubscribe
+                chatMessagesListener = null;
+            }
+            currentChatRoomId = null;
+            currentChatWithUserId = null;
+            currentChatWithDisplayName = null;
+            window.location.hash = 'user-search'; // Go back to search or another appropriate page
+        });
+      }
+
+
       const displayUsersForAdmin = () => {
           if (!adminUsersListContainer) return;
           adminUsersListContainer.innerHTML = '<p>جاري تحميل قائمة المستخدمين...</p>';
@@ -625,7 +1087,7 @@
                       const disableBanForSelfOrOtherAdmins = (userData.uid === auth.currentUser.uid || userData.isAdmin) && auth.currentUser.email !== ADMIN_EMAIL ; 
 
                       html += `<li>
-                                 <span>${userData.displayName || userData.email}${isAdminText}${bannedIndicator}</span>
+                                 <span>${userData.displayName || userData.username || userData.email}${isAdminText}${bannedIndicator}</span>
                                  <div class="user-actions">
                                      <button onclick="viewUserDetails('${doc.id}')">تفاصيل</button>
                                      <button onclick="toggleUserBanStatus('${doc.id}', ${userData.isBanned || false})" 
@@ -654,6 +1116,8 @@
                   const data = doc.data();
                   document.getElementById('details-email').textContent = `البريد: ${data.email || 'غير متوفر'}`;
                   document.getElementById('details-uid').textContent = `UID: ${data.uid || 'غير متوفر'}`;
+                  document.getElementById('details-username').textContent = `اسم المستخدم: ${data.username || 'غير محدد'}`;
+                  document.getElementById('details-displayName').textContent = `الاسم المعروض: ${data.displayName || 'غير محدد'}`;
                   document.getElementById('details-created').textContent = `تاريخ الإنشاء: ${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString() : 'غير متوفر'}`;
                   document.getElementById('details-last-login').textContent = `آخر تسجيل دخول: ${data.lastLogin ? new Date(data.lastLogin.toDate()).toLocaleString() : 'غير متوفر'}`;
                   document.getElementById('details-banned-status').textContent = `الحالة: ${data.isBanned ? 'محظور' : 'نشط'}${data.isAdmin ? ' (أدمن)' : ''}`;
@@ -757,6 +1221,7 @@
             }
         });
         if (activeSectionId === 'login' && auth.currentUser) {
+            // Handled by specific link highlighting for logout/profile
         } else if (activeSectionId === 'login' && !auth.currentUser) {
             if(navLoginLinkSidebar) navLoginLinkSidebar.classList.add('active-nav-link');
         }
@@ -766,6 +1231,23 @@
         let hash = window.location.hash.slice(1);
         const currentUser = auth.currentUser;
         
+        // Handle chat room deeplink or state restoration (basic)
+        if (hash.startsWith('chat-room') && currentChatRoomId) {
+             // Already in chat, or re-navigating to it, ensure chat elements are updated
+             if(chatRoomHeader) chatRoomHeader.textContent = `محادثة مع ${currentChatWithDisplayName || '...'}`;
+             if (!chatMessagesListener) { // If listener was somehow cleared
+                loadChatMessages(currentChatRoomId);
+             }
+        } else if (!hash.startsWith('chat-room') && chatMessagesListener) {
+            // Navigating away from chat, clear listener
+            chatMessagesListener();
+            chatMessagesListener = null;
+            currentChatRoomId = null;
+            currentChatWithUserId = null;
+            currentChatWithDisplayName = null;
+        }
+
+
         let isBanned = false;
         let isVerified = false;
 
@@ -796,7 +1278,7 @@
         
         let targetIdToShow = 'login'; 
         if (isVerified) { 
-            if (hash === 'game-launcher' || gameNavLinksData.some(game => game.id === hash) || hash === 'settings') {
+            if (hash === 'game-launcher' || gameNavLinksData.some(game => game.id === hash) || hash === 'settings' || hash === 'user-search' || (hash === 'chat-room' && currentChatRoomId) ) {
                 targetIdToShow = hash;
             } else if (hash === 'admin-area' && currentUserIsAdmin) { 
                 targetIdToShow = hash;
@@ -826,7 +1308,9 @@
         });
         updateSidebarActiveLink(targetIdToShow);
         if (targetIdToShow === 'settings' && settingsStatusDiv) updateElementText(settingsStatusDiv, '', 'info'); 
+        if (targetIdToShow === 'settings' && profileSettingsStatusDiv) updateElementText(profileSettingsStatusDiv, 'قم بتحديث معلومات ملفك الشخصي.', 'info');
         if (targetIdToShow === 'admin-area' && adminStatusDiv) updateElementText(adminStatusDiv, 'مرحباً أيها الأدمن.', 'info');
+        if (targetIdToShow === 'user-search' && userSearchStatusDiv) updateElementText(userSearchStatusDiv, 'أدخل اسم مستخدم للبحث.', 'info');
       };
       
       auth.onAuthStateChanged(async user => { 
@@ -835,6 +1319,9 @@
         if(user && user.emailVerified) {
             const userDoc = await db.collection('users').doc(user.uid).get().catch(() => null);
             currentUserIsAdmin = userDoc && userDoc.exists && userDoc.data().isAdmin === true;
+            if (settingsUsernameInput && settingsDisplayNameInput) { // Load profile on auth change
+                loadUserProfileSettings(user.uid);
+            }
         } else {
             currentUserIsAdmin = false;
         }
@@ -849,6 +1336,8 @@
           if (targetHash === '#logout') { 
             auth.signOut().then(() => {
                  currentUserIsAdmin = false; 
+                 if (chatMessagesListener) { chatMessagesListener(); chatMessagesListener = null; } // Clear chat listener on logout
+                 currentChatRoomId = null; currentChatWithUserId = null; currentChatWithDisplayName = null;
                  window.location.hash = 'login'; 
             }).catch(err => console.error('Logout error', err));
           } else {
@@ -859,6 +1348,7 @@
 
       navLoginLinkSidebar.addEventListener('click', handleSidebarLinkClick);
       if (navGamesLauncherLinkSidebar) navGamesLauncherLinkSidebar.addEventListener('click', handleSidebarLinkClick);
+      if (navUserSearchLinkSidebar) navUserSearchLinkSidebar.addEventListener('click', handleSidebarLinkClick);
       if (navSettingsLinkSidebar) navSettingsLinkSidebar.addEventListener('click', handleSidebarLinkClick);
       
       window.addEventListener('hashchange', showSectionByHash);
@@ -875,6 +1365,7 @@
         }
       });
 
+      // --- GAME INITIALIZATIONS (No changes here, keeping them as is) ---
       const initXOGame = () => { 
           const section = document.querySelector('#xo');
           if (!section) return;
@@ -929,12 +1420,8 @@
               
               const getCellCenter = (index) => {
                   const row = Math.floor(index / 3);
-                  const logicalCol = index % 3; // العمود المنطقي (0 لليسار, 1 للوسط, 2 لليمين في نموذج LTR)
-                  
-                  // بسبب اتجاه الشبكة direction: rtl, العمود المنطقي 0 يظهر في أقصى اليمين بصريًا.
-                  // إحداثيات Canvas دائمًا LTR (0 لليسار). لذا نحتاج لعكس ترتيب الأعمدة للرسم.
+                  const logicalCol = index % 3;
                   const canvasCol = 2 - logicalCol; 
-                  
                   const x = canvasCol * (cellSize + gap) + cellSize / 2;
                   const y = row * (cellSize + gap) + cellSize / 2;
                   return { x, y };
