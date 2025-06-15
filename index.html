@@ -9,14 +9,14 @@
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;700;800;900&display=swap");
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-    body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat; background-size: cover; background-position: center; overflow-y: auto; position: relative; 
+    body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat; background-size: cover; background-position: center; overflow-y: auto; position: relative;
     }
 
     /* --- Sidebar Styles --- */
     .sidebar-toggle {
         position: fixed;
         top: 15px;
-        right: 20px; 
+        right: 20px;
         font-size: 2.2rem;
         color: white;
         background-color: #002b4d;
@@ -24,36 +24,36 @@
         padding: 5px 10px;
         border-radius: 8px;
         cursor: pointer;
-        z-index: 1002; 
+        z-index: 1002;
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     .sidebar-toggle:focus { outline: none; }
 
     .sidebar {
         height: 100%;
-        width: 0; 
+        width: 0;
         position: fixed;
         z-index: 1001;
         top: 0;
-        right: 0; 
-        background-color: #00233a; 
+        right: 0;
+        background-color: #00233a;
         overflow-x: hidden;
         transition: 0.35s ease-out;
-        padding-top: 70px; 
+        padding-top: 70px;
         direction: rtl;
-        box-shadow: -5px 0 15px rgba(0,0,0,0.2); 
+        box-shadow: -5px 0 15px rgba(0,0,0,0.2);
     }
     .sidebar.open {
-        width: 260px; 
+        width: 260px;
     }
     .sidebar a {
-        padding: 12px 15px 12px 30px; 
+        padding: 12px 15px 12px 30px;
         text-decoration: none;
         font-size: 1.15rem;
-        color: #b0bec5; 
+        color: #b0bec5;
         display: block;
         transition: 0.2s;
-        border-bottom: 1px solid #002b4d; 
+        border-bottom: 1px solid #002b4d;
     }
     .sidebar a:last-child {
         border-bottom: none;
@@ -66,7 +66,7 @@
     .sidebar .sidebar-close-btn {
         position: absolute;
         top: 15px;
-        left: 25px; 
+        left: 25px;
         font-size: 2rem;
         color: #b0bec5;
         cursor: pointer;
@@ -77,7 +77,7 @@
 
     #admin-button-sidebar {
         background-color: rgba(220, 53, 69, 0.7);
-        color: white !important; 
+        color: white !important;
     }
     #admin-button-sidebar:hover {
          background-color: #dc3545;
@@ -104,22 +104,22 @@
     #auth-status.success { background-color: rgba(40, 167, 69, 0.3); border: 1px solid rgba(40, 167, 69, 0.6); }
     #auth-status.error { background-color: rgba(220, 53, 69, 0.3); border: 1px solid rgba(220, 53, 69, 0.6); }
     #auth-status.info { background-color: rgba(23, 162, 184, 0.3); border: 1px solid rgba(23, 162, 184, 0.6); }
-    
-    nav#main-nav { display: none; } 
-    
+
+    nav#main-nav { display: none; }
+
     section { display: none; padding: 20px; max-width: 600px; margin: 20px auto; margin-top: 80px; background: rgba(255, 255, 255, 0.95); color: #333; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); direction: rtl; }
-    section.active { display:block !important; } 
-    section#login.active, section#game-launcher.active { background: transparent; box-shadow: none; border: none; padding: 0; max-width: none; } 
+    section.active { display:block !important; }
+    section#login.active, section#game-launcher.active { background: transparent; box-shadow: none; border: none; padding: 0; max-width: none; }
     section#game-launcher.active { margin-top: 80px; padding: 20px; }
     section h2 { margin-top: 0; color: #003B73; text-align: center; margin-bottom: 20px; }
     section#game-launcher h2 { color: #fff; font-size: 2rem; margin-bottom: 30px; }
     section:not(#login):not(#game-launcher) button { padding:10px 15px; margin:8px 4px; font-size:0.9rem; cursor:pointer; border:none; border-radius:8px; background:#005A9C; color:white; transition:background .2s; }
-    section#xo .xo-options button, section#memory .memory-options button { font-size: 0.9rem; padding: 10px 12px;} 
+    section#xo .xo-options button, section#memory .memory-options button { font-size: 0.9rem; padding: 10px 12px;}
     section:not(#login):not(#game-launcher) button:hover { background:#003B73; }
     section:not(#login):not(#game-launcher) button:disabled { background:#ccc; cursor:not-allowed; }
     .status, .result, .message, .timebox { margin:15px 0; font-size:1.1rem; min-height: 1.2em; text-align: center;}
-    
-    .game-controls { margin-top: 15px; text-align: center; } 
+
+    .game-controls { margin-top: 15px; text-align: center; }
 
     .xo-board-container { position: relative; width: 316px; height: 316px; margin: 0 auto 20px auto; }
     .board { display:grid; grid-template-columns:repeat(3,100px); gap:8px; justify-content:center; }
@@ -127,7 +127,7 @@
     .cell:hover { background:#e9e9e9; }
     #xo-winning-line-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
     .xo-options, .memory-options { margin-bottom: 15px; text-align: center; }
-    .xo-options button, .memory-options button { margin: 0 3px; } 
+    .xo-options button, .memory-options button { margin: 0 3px; }
 
     .gamebox, .cards { margin: 0 auto 20px auto; text-align: center; }
     .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 380px; }
@@ -136,11 +136,11 @@
 
     .card { width: 80px; height: 80px; background-color: #007bff; color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; border-radius: 8px; cursor: pointer; transition: transform 0.3s, background-color 0.3s; transform-style: preserve-3d; }
     .card .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
-    .card .card-front { background-color: #005A9C; } 
+    .card .card-front { background-color: #005A9C; }
     .card .card-back { background-color: #f0f0f0; color: #333; transform: rotateY(180deg); }
     .card.flipped { transform: rotateY(180deg); }
     .card.matched { background-color: #28a745 !important; cursor: default; opacity: 0.7; }
-    .card.matched .card-front { background-color: #28a745 !important; } 
+    .card.matched .card-front { background-color: #28a745 !important; }
     .memory-scores { margin-bottom: 10px; font-weight: bold; }
     .memory-player-names-input { margin-bottom:15px; text-align:center; }
     .memory-player-names-input input { padding:8px; margin:0 5px; border-radius:5px; border:1px solid #ccc; text-align:center;}
@@ -148,15 +148,15 @@
     #click-target-area { text-align: left; min-height: 200px; background-color: #e9ecef; position: relative; border-radius: 8px; overflow: hidden; }
     #clickable-target { width: 50px; height: 50px; background-color: red; border-radius: 50%; position: absolute; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: all 0.1s; }
     .timebox { padding: 20px; background-color: #6c757d; color: white; border-radius: 8px; font-size: 1.5rem; cursor: pointer; transition: background-color 0.3s; }
-    .timebox.waiting { background-color: #dc3545; } 
-    .timebox.ready { background-color: #28a745; } 
+    .timebox.waiting { background-color: #dc3545; }
+    .timebox.ready { background-color: #28a745; }
 
     .text-to-type { padding: 15px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 15px; font-size: 1.1rem; line-height: 1.6; background-color: #f8f9fa; direction: rtl; text-align: right; }
     #typing-input { width: 100%; padding: 10px; font-size: 1rem; border-radius: 8px; border: 1px solid #ccc; direction: rtl; text-align: right; }
-    .input-group { text-align: center; } 
+    .input-group { text-align: center; }
     .input-group input { margin: 0 auto 10px auto; display: block; max-width: 250px; text-align: center; padding:10px; border-radius: 8px; border:1px solid #ccc; }
 
-    .hidden-by-auth { display: none !important; } 
+    .hidden-by-auth { display: none !important; }
     .button-text { margin: 0 5px; }
 
     .game-icons-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 25px; padding: 20px; max-width: 800px; margin: 0 auto; }
@@ -166,18 +166,19 @@
     .game-icon-card:hover i { color: #fff; }
     .game-icon-card span { color: #fff; font-size: 1rem; font-weight: 500; }
 
-    #settings p, #settings .input-group-settings { margin-bottom: 15px; } /* Changed class name for settings input group */
+    #settings p, #settings .input-group-settings { margin-bottom: 15px; }
     #settings .info-value { font-weight: bold; color: #005A9C; }
     #settings-status, #profile-settings-status { margin-top: 15px; font-size: 0.9em; min-height: 1.2em; text-align: center;}
     #settings label { display: block; margin-bottom: 5px; font-weight: 500;}
-    #settings input[type="text"], #settings input[type="url"] {
+    #settings input[type="text"], #settings textarea {
         width: 100%;
         padding: 10px;
         border-radius: 6px;
         border: 1px solid #ccc;
         font-size: 1rem;
-        direction: rtl; /* Ensure RTL for these inputs */
+        direction: rtl;
     }
+    #settings textarea { min-height: 80px; resize: vertical;}
 
 
     #admin-area h3 { margin-top: 20px; margin-bottom: 10px; color: #003B73; }
@@ -190,7 +191,7 @@
 
     /* User Search and Profile Styles */
     #user-search .input-group-search { display: flex; align-items: center; margin-bottom: 15px;}
-    #user-search input[type="text"] { width: calc(100% - 90px); padding: 10px; border-radius: 0 6px 6px 0; border: 1px solid #ccc; font-size: 1rem; display: inline-block; vertical-align: middle; order:1; direction: rtl;} /* RTL for search input */
+    #user-search input[type="text"] { width: calc(100% - 90px); padding: 10px; border-radius: 0 6px 6px 0; border: 1px solid #ccc; font-size: 1rem; display: inline-block; vertical-align: middle; order:1; direction: rtl;}
     #user-search button#btn-user-search { width: 80px; border-radius: 6px 0 0 6px; display: inline-block; vertical-align: middle; height: 40px; line-height: 1; padding-top: 0; padding-bottom:0; order:2; margin-left: -1px; }
     #search-results-container { margin-top: 20px; }
     .user-profile-card {
@@ -212,12 +213,33 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 2rem; /* Icon size */
+        font-size: 2rem;
+        flex-shrink: 0;
     }
+    .user-profile-card .user-info { flex-grow: 1; }
     .user-profile-card .user-info p { margin: 2px 0; }
     .user-profile-card .user-info .username-search { font-weight: bold; color: #003B73; }
-    .user-profile-card .user-actions button { font-size: 0.85rem; padding: 6px 10px;}
+    .user-profile-card .user-info .bio-search { font-size: 0.85em; color: #555; margin-top: 4px; max-height: 40px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;}
+    .user-profile-card .user-actions { flex-shrink: 0; display: flex; flex-direction: column; gap: 5px; }
+    .user-profile-card .user-actions button { font-size: 0.8rem; padding: 5px 8px; min-width: 90px; text-align: center;}
     #user-search-status { margin-top:15px; font-size:0.9em; min-height:1.2em; text-align: center; }
+
+    /* Friends Section Styles */
+    #friends-section .tabs { display: flex; margin-bottom: 15px; border-bottom: 1px solid #ccc; }
+    #friends-section .tabs button {
+        background: none; border: none; padding: 10px 15px; cursor: pointer; font-size: 1rem; color: #555;
+        border-bottom: 3px solid transparent; margin-bottom: -1px; /* For active tab underline */
+    }
+    #friends-section .tabs button.active { color: #003B73; border-bottom-color: #003B73; font-weight: bold;}
+    .friends-list-item {
+        background-color: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 6px;
+        padding: 10px 15px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .friends-list-item .user-info p { margin: 0; }
+    .friends-list-item .user-info .username-friend { font-weight: bold; }
+    .friends-list-item .friend-actions button { font-size: 0.8rem; padding: 5px 8px; margin-left: 5px; }
+    .friends-list-status { margin-top: 10px; font-size: 0.9em; text-align: center; }
+
 
     /* Chat Styles */
     #chat-room h2 { margin-bottom: 10px; }
@@ -230,7 +252,7 @@
         background-color: #f9f9f9;
         display: flex;
         flex-direction: column;
-        direction: ltr; /* Messages flow LTR, but individual bubbles can be RTL */
+        direction: ltr;
     }
     .message-bubble {
         padding: 8px 12px;
@@ -244,17 +266,17 @@
     .message-bubble.sent {
         background-color: #005A9C;
         color: white;
-        margin-left: auto; /* Align to right */
+        margin-left: auto;
         border-bottom-right-radius: 5px;
-        text-align: right; /* Text inside bubble */
+        text-align: right;
         direction: rtl;
     }
     .message-bubble.received {
         background-color: #e9e9e9;
         color: #333;
-        margin-right: auto; /* Align to left */
+        margin-right: auto;
         border-bottom-left-radius: 5px;
-        text-align: right; /* Text inside bubble */
+        text-align: right;
         direction: rtl;
     }
     .message-timestamp {
@@ -263,22 +285,22 @@
         display: block;
         margin-top: 3px;
     }
-    .sent .message-timestamp { text-align: left; color: #cce7ff; } /* Timestamp for sent */
-    .received .message-timestamp { text-align: left; } /* Timestamp for received */
+    .sent .message-timestamp { text-align: left; color: #cce7ff; }
+    .received .message-timestamp { text-align: left; }
 
     #chat-input-area { display: flex; }
     #chat-input-area input[type="text"] {
         flex-grow: 1;
         padding: 10px;
         border: 1px solid #ccc;
-        border-radius: 0 20px 20px 0; /* RTL adjusted */
+        border-radius: 0 20px 20px 0;
         font-size: 1rem;
         direction: rtl;
     }
     #chat-input-area button {
         padding: 10px 15px;
-        border-radius: 20px 0 0 20px; /* RTL adjusted */
-        margin-right: -1px; /* Overlap border */
+        border-radius: 20px 0 0 20px;
+        margin-right: -1px;
     }
     #chat-room-exit-button { margin-top: 15px; }
 
@@ -296,6 +318,7 @@
     <a href="#login" id="nav-login-link-sidebar">تسجيل الدخول</a>
     <a href="#game-launcher" id="nav-games-launcher-link-sidebar" style="display:none;">الألعاب</a>
     <a href="#user-search" id="nav-user-search-link-sidebar" style="display:none;">بحث عن مستخدم</a>
+    <a href="#friends-section" id="nav-friends-link-sidebar" style="display:none;">الأصدقاء</a>
     <a href="#settings" id="nav-settings-link-sidebar" style="display:none;">الإعدادات</a>
     <a href="#" id="admin-button-sidebar" style="display:none;" onclick="showAdminArea(event)">لوحة الأدمن</a>
   </div>
@@ -332,25 +355,25 @@
     </div>
   </section>
 
-  <section id="xo" class="game-section"> 
+  <section id="xo" class="game-section">
     <h2>إكس أو (XO)</h2>
     <div class="xo-options">
         <button id="xo-pvp">لاعب ضد لاعب</button>
-        <button id="xo-pvc-hard">لاعب ضد كمبيوتر (صعب)</button> 
+        <button id="xo-pvc-hard">لاعب ضد كمبيوتر (صعب)</button>
     </div>
     <div class="xo-board-container">
-        <div class="board"></div> 
+        <div class="board"></div>
         <canvas id="xo-winning-line-canvas"></canvas>
     </div>
-    <div class="status">اختر نمط اللعبة</div> 
+    <div class="status">اختر نمط اللعبة</div>
     <div class="game-controls">
-        <button id="xo-restart" style="display:none;">إعادة اللعبة</button> 
+        <button id="xo-restart" style="display:none;">إعادة اللعبة</button>
         <button id="xo-exit-game" style="display:none;">إنهاء اللعب</button>
     </div>
   </section>
 
-  <section id="memory" class="game-section"> 
-    <h2>لعبة الذاكرة 🧠</h2> 
+  <section id="memory" class="game-section">
+    <h2>لعبة الذاكرة 🧠</h2>
     <div class="memory-options">
         <button id="memory-pvp">لاعب ضد لاعب</button>
         <button id="memory-solo">لاعب واحد</button>
@@ -365,25 +388,29 @@
         <span id="memory-player2-separator" style="display:none;"> | </span>
         <span id="memory-player2-score" style="display:none;">اللاعب 2: 0</span>
     </div>
-    <div class="cards" style="display:none;"></div> 
-    <div class="status">اختر نمط اللعبة</div> 
+    <div class="cards" style="display:none;"></div>
+    <div class="status">اختر نمط اللعبة</div>
     <div class="gamebox game-controls">
         <button id="memory-restart" style="display:none;">إعادة اللعبة</button>
         <button id="memory-exit-game" style="display:none;">إنهاء اللعب</button>
-    </div> 
+    </div>
   </section>
-  
+
   <section id="settings" class="game-section">
       <h2>الإعدادات الشخصية ⚙️</h2>
       <p>البريد الإلكتروني: <span id="settings-user-email" class="info-value"></span></p>
-      
+
       <div class="input-group-settings">
-          <label for="settings-username">اسم المستخدم (فريد، حروف إنجليزية وأرقام فقط):</label>
+          <label for="settings-username">اسم المستخدم (فريد، حروف إنجليزية وأرقام و "_"):</label>
           <input type="text" id="settings-username" placeholder="مثال: gamer123">
       </div>
       <div class="input-group-settings">
           <label for="settings-display-name">الاسم المعروض (سيظهر للآخرين):</label>
           <input type="text" id="settings-display-name" placeholder="مثال: أحمد القيمر">
+      </div>
+      <div class="input-group-settings">
+          <label for="settings-bio">نبذة تعريفية (Bio):</label>
+          <textarea id="settings-bio" placeholder="اكتب شيئًا عن نفسك..."></textarea>
       </div>
       <button id="btn-save-settings">حفظ التغييرات</button>
       <div id="profile-settings-status" class="info"></div>
@@ -400,27 +427,39 @@
       </div>
       <div id="user-search-status" class="info"></div>
       <div id="search-results-container">
-          <!-- نتائج البحث ستظهر هنا -->
       </div>
   </section>
+
+  <section id="friends-section" class="game-section">
+      <h2>الأصدقاء وطلبات الصداقة 🤝</h2>
+      <div class="tabs">
+          <button id="tab-my-friends" class="active" onclick="showFriendsTab('my-friends')">أصدقائي</button>
+          <button id="tab-received-requests" onclick="showFriendsTab('received-requests')">طلبات واردة (<span id="received-requests-count">0</span>)</button>
+          <button id="tab-sent-requests" onclick="showFriendsTab('sent-requests')">طلبات مرسلة</button>
+      </div>
+      <div id="my-friends-list" class="friends-tab-content"></div>
+      <div id="received-requests-list" class="friends-tab-content" style="display:none;"></div>
+      <div id="sent-requests-list" class="friends-tab-content" style="display:none;"></div>
+      <div class="friends-list-status info"></div>
+  </section>
+
 
   <section id="chat-room" class="game-section" style="display:none;">
       <h2 id="chat-room-header">محادثة مع ...</h2>
       <div id="messages-container">
-          <!-- Messages will appear here -->
       </div>
       <div id="chat-input-area">
           <input type="text" id="message-input" placeholder="اكتب رسالتك هنا...">
           <button id="send-message-button">إرسال</button>
       </div>
-      <button id="chat-room-exit-button">العودة إلى البحث</button>
+      <button id="chat-room-exit-button">العودة</button>
   </section>
 
 
   <section id="admin-area" class="game-section" style="display:none;">
       <h2>لوحة تحكم الأدمن 👑</h2>
       <p>مرحباً بك أيها الأدمن!</p>
-      
+
       <div id="admin-users-section">
           <h3>إدارة المستخدمين</h3>
           <p><strong>ملاحظة:</strong> "الحظر" هنا هو على مستوى التطبيق (يمنع اللعب)، ولا يحذف الحساب من Firebase Authentication.</p>
@@ -436,6 +475,7 @@
               <p id="details-banned-status"></p>
               <p id="details-username"></p>
               <p id="details-displayName"></p>
+              <p id="details-bio"></p>
               <button id="details-close-btn">إغلاق التفاصيل</button>
           </div>
       </div>
@@ -457,6 +497,7 @@
   <audio id="snd-win" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
   <audio id="snd-lose" src="https://actions.google.com/sounds/v1/cartoon/cartoon_cowbell.ogg"></audio>
   <audio id="snd-message" src="https://actions.google.com/sounds/v1/communication/connect_alert.ogg"></audio>
+  <audio id="snd-friend-request" src="https://actions.google.com/sounds/v1/notifications/quick_notification.ogg"></audio>
 
 
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -466,7 +507,7 @@
 
   <script>
     const firebaseConfig = {
-        apiKey: "AIzaSyDLzpa2HYzJZdZvY_YuviKZ6Zg0FhWTfJw", 
+        apiKey: "AIzaSyDLzpa2HYzJZdZvY_YuviKZ6Zg0FhWTfJw",
         authDomain: "my-site-cdd00.firebaseapp.com",
         projectId: "my-site-cdd00",
         storageBucket: "my-site-cdd00.firebasestorage.app",
@@ -477,13 +518,17 @@
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-    const db = firebase.firestore(); 
-    const ADMIN_EMAIL = "ka6761386@gmail.com"; 
-    let currentUserIsAdmin = false; 
+    const db = firebase.firestore();
+    const ADMIN_EMAIL = "ka6761386@gmail.com";
+    let currentUserIsAdmin = false;
     let currentChatRoomId = null;
     let currentChatWithUserId = null;
     let currentChatWithDisplayName = null;
     let chatMessagesListener = null;
+    let friendsListener = null;
+    let receivedRequestsListener = null;
+    let sentRequestsListener = null;
+    let currentUserData = null;
 
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -497,26 +542,26 @@
       const sidebar = document.getElementById('mySidebar');
       const sidebarToggleButton = document.getElementById('sidebar-toggle-button');
       const sidebarCloseButton = document.getElementById('sidebar-close-button');
-      
+
       const navLoginLinkSidebar = document.getElementById('nav-login-link-sidebar');
       const navGamesLauncherLinkSidebar = document.getElementById('nav-games-launcher-link-sidebar');
       const navUserSearchLinkSidebar = document.getElementById('nav-user-search-link-sidebar');
+      const navFriendsLinkSidebar = document.getElementById('nav-friends-link-sidebar');
       const navSettingsLinkSidebar = document.getElementById('nav-settings-link-sidebar');
       const adminButtonSidebar = document.getElementById('admin-button-sidebar');
 
-      const gameLauncherSection = document.getElementById('game-launcher');
       const gameIconsGridContainer = document.getElementById('game-icons-grid-container');
-      
-      const gameNavLinksData = [ 
-          { id: "xo", text: "إكس أو", icon: "bxs-grid-alt" }, 
+
+      const gameNavLinksData = [
+          { id: "xo", text: "إكس أو", icon: "bxs-grid-alt" },
           { id: "rps", text: "حجر ورقة مقص", icon: "bxs-joystick-button" },
-          { id: "click", text: "اصطياد الهدف", icon: "bxs-bullseye" }, 
+          { id: "click", text: "اصطياد الهدف", icon: "bxs-bullseye" },
           { id: "react", text: "سرعة الضغط", icon: "bxs-stopwatch" },
-          { id: "dice", text: "النرد", icon: "bxs-dice-5" }, 
+          { id: "dice", text: "النرد", icon: "bxs-dice-5" },
           { id: "memory", text: "الذاكرة", icon: "bxs-brain" },
-          { id: "math", text: "الرياضيات", icon: "bxs-calculator" }, 
+          { id: "math", text: "الرياضيات", icon: "bxs-calculator" },
           { id: "guessnum", text: "تخمين الرقم", icon: "bxs-help-circle" },
-          { id: "bigsmall", text: "من الأكبر", icon: "bxs-sort-alt" }, 
+          { id: "bigsmall", text: "من الأكبر", icon: "bxs-sort-alt" },
           { id: "typing", text: "الكتابة", icon: "bxs-keyboard" }
       ];
       let isLoginMode = true;
@@ -530,22 +575,27 @@
       const btnLogout = document.getElementById('btn-logout');
       const authStatusDiv = document.getElementById('auth-status');
 
-      // Settings Elements
       const settingsUserEmailEl = document.getElementById('settings-user-email');
       const settingsUsernameInput = document.getElementById('settings-username');
       const settingsDisplayNameInput = document.getElementById('settings-display-name');
+      const settingsBioInput = document.getElementById('settings-bio');
       const btnSaveSettings = document.getElementById('btn-save-settings');
       const profileSettingsStatusDiv = document.getElementById('profile-settings-status');
       const btnChangePassword = document.getElementById('btn-change-password');
       const settingsStatusDiv = document.getElementById('settings-status');
 
-      // User Search Elements
       const userSearchInput = document.getElementById('user-search-input');
       const btnUserSearch = document.getElementById('btn-user-search');
       const userSearchStatusDiv = document.getElementById('user-search-status');
       const searchResultsContainer = document.getElementById('search-results-container');
-      
-      // Chat Room Elements
+
+      const myFriendsListDiv = document.getElementById('my-friends-list');
+      const receivedRequestsListDiv = document.getElementById('received-requests-list');
+      const sentRequestsListDiv = document.getElementById('sent-requests-list');
+      const friendsListStatusDiv = document.querySelector('#friends-section .friends-list-status');
+      const receivedRequestsCountSpan = document.getElementById('received-requests-count');
+
+
       const chatRoomHeader = document.getElementById('chat-room-header');
       const messagesContainer = document.getElementById('messages-container');
       const messageInput = document.getElementById('message-input');
@@ -560,20 +610,22 @@
       if (detailsCloseBtn) detailsCloseBtn.addEventListener('click', () => showHideElement(adminUserDetailsContainer, false));
 
       const loadUserProfileSettings = async (userId) => {
-        if (!settingsUsernameInput || !settingsDisplayNameInput) return;
+        if (!settingsUsernameInput || !settingsDisplayNameInput || !settingsBioInput) return;
         try {
             const userDoc = await db.collection('users').doc(userId).get();
             if (userDoc.exists) {
                 const userData = userDoc.data();
+                currentUserData = userData; 
                 settingsUsernameInput.value = userData.username || '';
                 settingsDisplayNameInput.value = userData.displayName || '';
+                settingsBioInput.value = userData.bio || '';
             }
         } catch (error) {
             console.error("Error loading user profile settings:", error);
             updateElementText(profileSettingsStatusDiv, "خطأ في تحميل بيانات الملف الشخصي.", 'error');
         }
       };
-      
+
       if (btnSaveSettings) {
         btnSaveSettings.addEventListener('click', async () => {
             const user = auth.currentUser;
@@ -583,13 +635,14 @@
             }
             const newUsername = settingsUsernameInput.value.trim().toLowerCase();
             const newDisplayName = settingsDisplayNameInput.value.trim();
+            const newBio = settingsBioInput.value.trim();
 
             if (!newUsername) {
                 updateElementText(profileSettingsStatusDiv, "اسم المستخدم مطلوب.", 'error');
                 return;
             }
             if (!/^[a-z0-9_]{3,20}$/.test(newUsername)) {
-                updateElementText(profileSettingsStatusDiv, "اسم المستخدم يجب أن يتكون من 3-20 حرف إنجليزي صغير أو أرقام أو '_'.", 'error');
+                updateElementText(profileSettingsStatusDiv, "اسم المستخدم: 3-20 حرف إنجليزي صغير، أرقام، أو '_'.", 'error');
                 return;
             }
             if (!newDisplayName) {
@@ -597,12 +650,10 @@
                 return;
             }
 
-
             updateElementText(profileSettingsStatusDiv, "جاري الحفظ...", 'info');
             disableElement(btnSaveSettings, true);
 
             try {
-                // Check if username is taken by another user
                 const usernameQuery = await db.collection('users').where('username', '==', newUsername).get();
                 let usernameTaken = false;
                 usernameQuery.forEach(doc => {
@@ -616,13 +667,13 @@
                     disableElement(btnSaveSettings, false);
                     return;
                 }
-                
-                // If username is unique or belongs to current user, update profile
+
                 await db.collection('users').doc(user.uid).set({
                     username: newUsername,
-                    displayName: newDisplayName
+                    displayName: newDisplayName,
+                    bio: newBio
                 }, { merge: true });
-
+                currentUserData = { ...currentUserData, username: newUsername, displayName: newDisplayName, bio: newBio };
                 updateElementText(profileSettingsStatusDiv, "تم حفظ الإعدادات بنجاح!", 'success');
             } catch (error) {
                 console.error("Error saving profile settings:", error);
@@ -637,7 +688,7 @@
       const updateUserDocument = (user) => {
           if (!user) return;
           const userDocRef = db.collection('users').doc(user.uid);
-          
+
           userDocRef.get().then(docSnapshot => {
             const existingData = docSnapshot.exists ? docSnapshot.data() : {};
             const defaultDisplayName = user.email.split('@')[0];
@@ -645,20 +696,22 @@
             const dataToSet = {
                 email: user.email,
                 uid: user.uid,
-                displayName: existingData.displayName || defaultDisplayName, // Keep existing or set default
-                username: existingData.username || '', // Keep existing or set empty
+                displayName: existingData.displayName || defaultDisplayName,
+                username: existingData.username || '',
+                bio: existingData.bio || '',
+                friends: existingData.friends || [],
                 lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
                 createdAt: existingData.createdAt || (user.metadata.creationTime ? firebase.firestore.Timestamp.fromDate(new Date(user.metadata.creationTime)) : firebase.firestore.FieldValue.serverTimestamp()),
-                isBanned: existingData.isBanned || false 
+                isBanned: existingData.isBanned || false
             };
-             if (existingData.isAdmin) { // Preserve admin status if already set
+             if (existingData.isAdmin) {
                 dataToSet.isAdmin = true;
             }
 
-
-            userDocRef.set(dataToSet, { merge: true }) 
+            userDocRef.set(dataToSet, { merge: true })
             .then(() => {
-                userDocRef.get().then(doc => { // Re-fetch to confirm admin status
+                userDocRef.get().then(doc => {
+                    currentUserData = doc.exists ? doc.data() : null;
                     if (doc.exists && doc.data().isAdmin === true) {
                         currentUserIsAdmin = true;
                     } else {
@@ -666,11 +719,12 @@
                     }
                     showHideElement(adminButtonSidebar, currentUserIsAdmin && user.emailVerified);
                     if (user.emailVerified) {
-                        loadUserProfileSettings(user.uid); // Load profile data into settings page
+                        loadUserProfileSettings(user.uid);
+                        setupFriendSystemListeners(user.uid);
                     }
                 }).catch(err => {
                     console.error("Error fetching user admin status:", err);
-                    currentUserIsAdmin = false; 
+                    currentUserIsAdmin = false;
                     showHideElement(adminButtonSidebar, false);
                 });
             })
@@ -682,7 +736,7 @@
              console.error("Error getting user document for update: ", error);
           });
       };
-      
+
       const checkIfUserIsBanned = async (userId) => {
           if (!userId) return false;
           try {
@@ -693,7 +747,7 @@
               return false;
           } catch (error) {
               console.error("Error checking ban status:", error);
-              return false; 
+              return false;
           }
       };
 
@@ -702,104 +756,109 @@
         showHideElement(authFormFields, !isLoggedIn);
         showHideElement(mainActionButton, !isLoggedIn);
         showHideElement(toggleAuthModeText.parentElement, !isLoggedIn);
-        showHideElement(btnLogout, isLoggedIn); 
+        showHideElement(btnLogout, isLoggedIn);
 
-        showHideElement(navLoginLinkSidebar, true); 
-        
+        showHideElement(navLoginLinkSidebar, true);
+
         let isBanned = false;
         if (isLoggedIn && user) {
             isBanned = await checkIfUserIsBanned(user.uid);
             if (isBanned) {
                 updateElementText(authStatusDiv, `حسابك (${user.email}) محظور. لا يمكنك الوصول للتطبيق.`, 'error');
-                isVerified = false; 
-                 if (auth.currentUser) { 
+                isVerified = false;
+                 if (auth.currentUser) {
                     await auth.signOut().catch(e => console.warn("Error signing out banned user", e));
-                    return; 
+                    return;
                 }
             }
         }
-        
+
         showHideElement(navGamesLauncherLinkSidebar, isLoggedIn && isVerified);
         showHideElement(navUserSearchLinkSidebar, isLoggedIn && isVerified);
+        showHideElement(navFriendsLinkSidebar, isLoggedIn && isVerified);
         showHideElement(navSettingsLinkSidebar, isLoggedIn && isVerified);
-        
+
         const currentActiveSection = document.querySelector('section.active');
         const activeSectionId = currentActiveSection ? currentActiveSection.id : 'login';
 
         if (isLoggedIn) {
           loginTitle.textContent = `أهلاً بك`;
-          if (isVerified) { 
+          if (isVerified) {
             updateElementText(authStatusDiv, user.email, 'success');
             if(gameIconsGridContainer && gameIconsGridContainer.children.length === 0) populateGameLauncher();
             if(settingsUserEmailEl) settingsUserEmailEl.textContent = user.email;
-            updateUserDocument(user); 
-          } else if (!isBanned) { 
+            updateUserDocument(user);
+          } else if (!isBanned) {
             updateElementText(authStatusDiv, `تم تسجيل الدخول كـ ${user.email}. يرجى التحقق من بريدك الإلكتروني للوصول الكامل.`, 'info');
-            if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
+            if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = '';
             if(settingsUserEmailEl) settingsUserEmailEl.textContent = "يرجى التحقق من بريدك أولاً.";
             if(settingsUsernameInput) settingsUsernameInput.value = '';
             if(settingsDisplayNameInput) settingsDisplayNameInput.value = '';
+            if(settingsBioInput) settingsBioInput.value = '';
           }
           navLoginLinkSidebar.textContent = 'تسجيل الخروج';
-          navLoginLinkSidebar.href = "#logout"; 
+          navLoginLinkSidebar.href = "#logout";
         } else {
-          currentUserIsAdmin = false; 
-          isLoginMode = true; 
-          updateLoginModeUI(); 
+          currentUserIsAdmin = false;
+          currentUserData = null;
+          isLoginMode = true;
+          updateLoginModeUI();
           updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
           navLoginLinkSidebar.textContent = 'تسجيل الدخول';
           navLoginLinkSidebar.href = "#login";
 
-          if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
+          if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = '';
           if(settingsUserEmailEl) settingsUserEmailEl.textContent = "غير مسجل الدخول";
           if(settingsUsernameInput) settingsUsernameInput.value = '';
           if(settingsDisplayNameInput) settingsDisplayNameInput.value = '';
+          if(settingsBioInput) settingsBioInput.value = '';
 
           updateElementText(settingsStatusDiv, '', 'info');
           updateElementText(profileSettingsStatusDiv, '', 'info');
-          showHideElement(adminButtonSidebar, false); 
-          allSections.forEach(s => { 
-                if(s.id !== 'login') s.classList.remove('active'); 
+          showHideElement(adminButtonSidebar, false);
+          allSections.forEach(s => {
+                if(s.id !== 'login') s.classList.remove('active');
           });
+          clearFriendSystemListeners();
         }
-        updateSidebarActiveLink(activeSectionId); 
+        updateSidebarActiveLink(activeSectionId);
       };
 
-      const updateLoginModeUI = () => { 
+      const updateLoginModeUI = () => {
         const linkId = 'toggle-auth-mode-link-inner';
         if (isLoginMode) {
           loginTitle.textContent = 'تسجيل الدخول';
-          updateButtonText(mainActionButton, 'تسجيل الدخول'); 
+          updateButtonText(mainActionButton, 'تسجيل الدخول');
           toggleAuthModeText.innerHTML = `ليس لديك حساب؟ <a href="#" id="${linkId}">إنشاء حساب</a>`;
           loginPasswordInput.placeholder = "كلمة المرور";
         } else {
           loginTitle.textContent = 'إنشاء حساب جديد';
-          updateButtonText(mainActionButton, 'إنشاء حساب'); 
+          updateButtonText(mainActionButton, 'إنشاء حساب');
           toggleAuthModeText.innerHTML = `لديك حساب بالفعل؟ <a href="#" id="${linkId}">تسجيل الدخول</a>`;
           loginPasswordInput.placeholder = "كلمة المرور (6+ حروف)";
         }
         const newToggleLink = document.getElementById(linkId);
         if(newToggleLink) newToggleLink.addEventListener('click', toggleMode);
       };
-      
-      const toggleMode = (e) => { 
-        if(e) e.preventDefault(); 
-        isLoginMode = !isLoginMode; 
-        updateLoginModeUI(); 
-        updateElementText(authStatusDiv, isLoginMode ? 'أدخل بيانات تسجيل الدخول.' : 'أدخل بيانات لإنشاء حساب جديد.', 'info'); 
+
+      const toggleMode = (e) => {
+        if(e) e.preventDefault();
+        isLoginMode = !isLoginMode;
+        updateLoginModeUI();
+        updateElementText(authStatusDiv, isLoginMode ? 'أدخل بيانات تسجيل الدخول.' : 'أدخل بيانات لإنشاء حساب جديد.', 'info');
       };
 
-      const handleAuthAction = () => { 
+      const handleAuthAction = () => {
         const email = loginEmailInput.value.trim(); const password = loginPasswordInput.value;
         if (!email || !password) { updateElementText(authStatusDiv, "الرجاء إدخال البريد الإلكتروني وكلمة المرور.", 'error'); return; }
         if (!isLoginMode && password.length < 6) { updateElementText(authStatusDiv, "كلمة المرور يجب أن تكون 6 حروف على الأقل.", 'error'); return; }
-        
+
         updateElementText(authStatusDiv, isLoginMode ? 'جاري تسجيل الدخول...' : 'جاري إنشاء الحساب...', 'info');
         disableElement(mainActionButton, true);
 
-        if (isLoginMode) { 
+        if (isLoginMode) {
             auth.signInWithEmailAndPassword(email, password)
-              .then(async (userCredential) => { 
+              .then(async (userCredential) => {
                 if (userCredential.user) {
                     const isBanned = await checkIfUserIsBanned(userCredential.user.uid);
                     if (isBanned) {
@@ -807,7 +866,7 @@
                         auth.signOut();
                     } else if (!userCredential.user.emailVerified) {
                         updateElementText(authStatusDiv, "لقد سجلت الدخول، ولكن يجب التحقق من بريدك الإلكتروني أولاً.", 'error');
-                        auth.signOut(); 
+                        auth.signOut();
                     } else {
                         loginEmailInput.value = ''; loginPasswordInput.value = '';
                     }
@@ -822,20 +881,19 @@
                 console.error("Auth Error Code:",error.code, "Message:", error.message); updateElementText(authStatusDiv, msg, 'error');
               })
               .finally(() => { disableElement(mainActionButton, false); });
-        } else { 
+        } else {
             auth.createUserWithEmailAndPassword(email, password)
               .then((userCredential) => {
                 if (userCredential.user) {
-                  // updateUserDocument will be called onAuthStateChanged
                   userCredential.user.sendEmailVerification()
                     .then(() => {
                       updateElementText(authStatusDiv, 'تم إنشاء الحساب بنجاح! تم إرسال رسالة تحقق إلى بريدك الإلكتروني. يرجى التحقق منها ثم تسجيل الدخول.', 'success');
-                      auth.signOut(); 
+                      auth.signOut();
                     })
                     .catch((error) => {
                       console.error("Error sending verification email:", error);
                       updateElementText(authStatusDiv, 'تم إنشاء الحساب، ولكن فشل إرسال بريد التحقق. حاول تسجيل الدخول لاحقًا.', 'error');
-                       auth.signOut(); 
+                       auth.signOut();
                     });
                 }
                 loginEmailInput.value = ''; loginPasswordInput.value = '';
@@ -852,17 +910,17 @@
               .finally(() => { disableElement(mainActionButton, false); });
         }
       };
-      updateLoginModeUI(); 
+      updateLoginModeUI();
       mainActionButton.addEventListener('click', handleAuthAction);
-      
-      btnLogout.addEventListener('click', () => { 
-        auth.signOut().catch(e => console.error('Logout error', e)); 
+
+      btnLogout.addEventListener('click', () => {
+        auth.signOut().catch(e => console.error('Logout error', e));
         updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
         window.location.hash = 'login';
         closeSidebar();
       });
 
-      if(btnChangePassword) { 
+      if(btnChangePassword) {
           btnChangePassword.addEventListener('click', () => {
               const user = auth.currentUser;
               if (user && user.email) {
@@ -880,9 +938,14 @@
           });
       }
 
-      // User Search Functionality
       if (btnUserSearch) {
-        btnUserSearch.addEventListener('click', async () => {
+        btnUserSearch.addEventListener('click', () => displaySearchResults());
+        userSearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') displaySearchResults();
+        });
+      }
+
+      async function displaySearchResults() {
             const searchTerm = userSearchInput.value.trim().toLowerCase();
             if (!searchTerm) {
                 updateElementText(userSearchStatusDiv, "الرجاء إدخال اسم مستخدم للبحث.", 'error');
@@ -893,29 +956,23 @@
             searchResultsContainer.innerHTML = '';
 
             try {
-                const usersRef = db.collection('users');
-                // Search for exact match first
-                let query = usersRef.where('username', '==', searchTerm);
-                let querySnapshot = await query.get();
+                const usersQuery = await db.collection('users').where('username', '>=', searchTerm).where('username', '<=', searchTerm + '\uf8ff').limit(10).get();
 
-                // If no exact match, try prefix search (less efficient, consider alternatives for large datasets)
-                // Firestore doesn't directly support substring/prefix search on non-array fields efficiently without 3rd party services like Algolia.
-                // For this example, we'll fetch users and filter client-side if exact match fails. This is NOT scalable.
-                // A better approach for larger scale would be to use a search service or denormalize data for search.
-                // Here, we'll stick to exact match for simplicity and performance.
-
-                if (querySnapshot.empty) {
+                if (usersQuery.empty) {
                      updateElementText(userSearchStatusDiv, "لم يتم العثور على مستخدمين بهذا الاسم.", 'info');
                 } else {
-                    querySnapshot.forEach(doc => {
+                    const currentUser = auth.currentUser;
+                    if (!currentUser) return;
+
+                    let resultsCount = 0;
+                    for (const doc of usersQuery.docs) {
                         const userData = doc.data();
-                        const user = auth.currentUser;
-                        // Don't show current user in search results
-                        if (user && doc.id === user.uid) return;
+                        if (doc.id === currentUser.uid) continue;
+                        resultsCount++;
 
                         const card = document.createElement('div');
                         card.className = 'user-profile-card';
-                        
+
                         const profilePicDiv = document.createElement('div');
                         profilePicDiv.className = 'profile-pic-default';
                         profilePicDiv.innerHTML = `<i class='bx bxs-user'></i>`;
@@ -925,24 +982,28 @@
                         userInfoDiv.innerHTML = `
                             <p class="username-search">@${userData.username || 'غير معروف'}</p>
                             <p>${userData.displayName || 'اسم غير محدد'}</p>
+                            ${userData.bio ? `<p class="bio-search">${userData.bio}</p>` : ''}
                         `;
 
                         const userActionsDiv = document.createElement('div');
                         userActionsDiv.className = 'user-actions';
+
                         const chatButton = document.createElement('button');
                         chatButton.textContent = 'محادثة';
-                        chatButton.onclick = () => {
-                            initiateChat(doc.id, userData.displayName || userData.username);
-                        };
+                        chatButton.onclick = () => initiateChat(doc.id, userData.displayName || userData.username);
                         userActionsDiv.appendChild(chatButton);
+
+                        const friendButton = await createFriendButton(doc.id, userData.username);
+                        if (friendButton) userActionsDiv.appendChild(friendButton);
+
 
                         card.appendChild(profilePicDiv);
                         card.appendChild(userInfoDiv);
                         card.appendChild(userActionsDiv);
                         searchResultsContainer.appendChild(card);
-                    });
-                    if (searchResultsContainer.children.length > 0) {
-                         updateElementText(userSearchStatusDiv, `تم العثور على ${searchResultsContainer.children.length} مستخدم.`, 'success');
+                    }
+                    if (resultsCount > 0) {
+                         updateElementText(userSearchStatusDiv, `تم العثور على ${resultsCount} مستخدم/مستخدمين.`, 'success');
                     } else {
                          updateElementText(userSearchStatusDiv, "لم يتم العثور على مستخدمين (قد يكون البحث عن نفسك).", 'info');
                     }
@@ -951,122 +1012,181 @@
                 console.error("Error searching users:", error);
                 updateElementText(userSearchStatusDiv, "خطأ أثناء البحث عن المستخدمين.", 'error');
             }
-        });
       }
-      
-      // Chat Functionality
+
+      async function createFriendButton(targetUserId, targetUsername) {
+        const currentUser = auth.currentUser;
+        if (!currentUser || !currentUserData) return null;
+
+        const button = document.createElement('button');
+
+        if (currentUserData.friends && currentUserData.friends.includes(targetUserId)) {
+            button.textContent = 'أصدقاء';
+            button.disabled = true;
+            return button;
+        }
+
+        const sentRequestQuery = await db.collection('friendRequests')
+            .where('senderId', '==', currentUser.uid)
+            .where('receiverId', '==', targetUserId)
+            .where('status', '==', 'pending')
+            .limit(1).get();
+
+        if (!sentRequestQuery.empty) {
+            button.textContent = 'تم إرسال الطلب';
+            button.disabled = true;
+            return button;
+        }
+
+        const receivedRequestQuery = await db.collection('friendRequests')
+            .where('senderId', '==', targetUserId)
+            .where('receiverId', '==', currentUser.uid)
+            .where('status', '==', 'pending')
+            .limit(1).get();
+
+        if (!receivedRequestQuery.empty) {
+            button.textContent = 'قبول الطلب';
+            button.style.backgroundColor = '#28a745';
+            button.onclick = async () => {
+                await handleFriendRequest(receivedRequestQuery.docs[0].id, 'accepted');
+                displaySearchResults();
+            };
+            return button;
+        }
+
+        button.textContent = 'إضافة صديق';
+        button.onclick = async () => {
+            await sendFriendRequest(targetUserId);
+            displaySearchResults();
+        };
+        return button;
+      }
+
+
       const initiateChat = (otherUid, otherDisplayName) => {
         const currentUser = auth.currentUser;
         if (!currentUser) return;
 
         currentChatWithUserId = otherUid;
         currentChatWithDisplayName = otherDisplayName || 'مستخدم';
-        
-        // Create a consistent chat room ID
+
         const uids = [currentUser.uid, otherUid].sort();
         currentChatRoomId = uids.join('_');
 
         if(chatRoomHeader) chatRoomHeader.textContent = `محادثة مع ${currentChatWithDisplayName}`;
-        if(messagesContainer) messagesContainer.innerHTML = ''; // Clear previous messages
-        
-        window.location.hash = `chat-room`; // Navigate to chat section
+        if(messagesContainer) messagesContainer.innerHTML = '';
+        if(messageInput) messageInput.value = '';
+
+        window.location.hash = `chat-room`;
         loadChatMessages(currentChatRoomId);
       };
 
       const loadChatMessages = (chatId) => {
         if (chatMessagesListener) {
-            chatMessagesListener(); // Unsubscribe from previous listener
+            chatMessagesListener();
         }
         if (!messagesContainer) return;
-        messagesContainer.innerHTML = '<p style="text-align:center; color:#777;">جاري تحميل الرسائل...</p>';
+        messagesContainer.innerHTML = '<p id="chat-loading-msg" style="text-align:center; color:#777;">جاري تحميل الرسائل...</p>';
+        let firstSnapshotProcessed = false;
 
         chatMessagesListener = db.collection('chats').doc(chatId).collection('messages')
             .orderBy('timestamp')
             .onSnapshot(snapshot => {
-                messagesContainer.innerHTML = ''; // Clear loading message or old messages
-                if (snapshot.empty && messagesContainer.innerHTML === '') {
+                const loadingMsg = messagesContainer.querySelector('#chat-loading-msg');
+                if (loadingMsg) loadingMsg.remove();
+
+                if (!firstSnapshotProcessed && snapshot.empty && messagesContainer.children.length === 0) {
                      messagesContainer.innerHTML = '<p style="text-align:center; color:#777;">لا توجد رسائل بعد. ابدأ المحادثة!</p>';
                 }
+                firstSnapshotProcessed = true;
+
                 snapshot.docChanges().forEach(change => {
                     if (change.type === "added") {
-                        const messageData = change.doc.data();
-                        displayMessage(messageData);
-                        if(messageData.senderId !== auth.currentUser.uid && document.hidden) { // Play sound if doc hidden and received msg
+                        const existingMsgEl = messagesContainer.querySelector(`[data-message-id="${change.doc.id}"]`);
+                        if (!existingMsgEl) {
+                           displayMessage(change.doc.data(), change.doc.id);
+                        }
+                        if(auth.currentUser && change.doc.data().senderId !== auth.currentUser.uid && document.hidden) {
                              playSound('snd-message');
                         }
                     }
                 });
-                messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll to bottom
+                if (messagesContainer.children.length > 0 && messagesContainer.scrollHeight > messagesContainer.clientHeight) {
+                     setTimeout(() => messagesContainer.scrollTop = messagesContainer.scrollHeight, 0); // Ensure scroll after DOM update
+                }
             }, error => {
                 console.error("Error fetching chat messages: ", error);
                 messagesContainer.innerHTML = '<p style="text-align:center; color:red;">خطأ في تحميل الرسائل.</p>';
             });
       };
 
-      const displayMessage = (msgData) => {
+      const displayMessage = (msgData, messageId) => {
         if (!messagesContainer || !auth.currentUser) return;
         const msgBubble = document.createElement('div');
         msgBubble.classList.add('message-bubble');
-        
+        msgBubble.dataset.messageId = messageId;
+
         const isSentByCurrentUser = msgData.senderId === auth.currentUser.uid;
         msgBubble.classList.add(isSentByCurrentUser ? 'sent' : 'received');
-        
+
         const textNode = document.createElement('span');
         textNode.textContent = msgData.text;
         msgBubble.appendChild(textNode);
 
-        if (msgData.timestamp) {
+        if (msgData.timestamp && msgData.timestamp.toDate) {
             const timestampNode = document.createElement('span');
             timestampNode.classList.add('message-timestamp');
             timestampNode.textContent = new Date(msgData.timestamp.toDate()).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
             msgBubble.appendChild(timestampNode);
         }
-        
+
         messagesContainer.appendChild(msgBubble);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        if (messagesContainer.scrollHeight > messagesContainer.clientHeight) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
       };
 
       if (sendMessageButton && messageInput) {
         const handleSendMessage = async () => {
             const text = messageInput.value.trim();
             if (text === '' || !currentChatRoomId || !auth.currentUser) return;
+            const tempMessageId = 'temp_' + Date.now();
+            messageInput.value = '';
 
             try {
                 await db.collection('chats').doc(currentChatRoomId).collection('messages').add({
                     text: text,
                     senderId: auth.currentUser.uid,
-                    receiverId: currentChatWithUserId, // Good for querying/notifications later
+                    receiverId: currentChatWithUserId,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                messageInput.value = '';
-                // The onSnapshot listener will display the message
             } catch (error) {
                 console.error("Error sending message: ", error);
-                // Optionally show an error to the user
+                const tempMsgEl = messagesContainer.querySelector(`[data-message-id="${tempMessageId}"]`);
+                if(tempMsgEl) tempMsgEl.style.backgroundColor = 'lightcoral';
             }
         };
         sendMessageButton.addEventListener('click', handleSendMessage);
         messageInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                e.preventDefault(); // Prevent form submission if it's in a form
+                e.preventDefault();
                 handleSendMessage();
             }
         });
       }
-      
+
       if(chatRoomExitButton) {
         chatRoomExitButton.addEventListener('click', () => {
             if (chatMessagesListener) {
-                chatMessagesListener(); // Unsubscribe
+                chatMessagesListener();
                 chatMessagesListener = null;
             }
             currentChatRoomId = null;
             currentChatWithUserId = null;
             currentChatWithDisplayName = null;
-            window.location.hash = 'user-search'; // Go back to search or another appropriate page
+            window.location.hash = 'user-search';
         });
       }
-
 
       const displayUsersForAdmin = () => {
           if (!adminUsersListContainer) return;
@@ -1084,13 +1204,13 @@
                       const userData = doc.data();
                       const isAdminText = userData.isAdmin ? ' (أدمن)' : '';
                       const bannedIndicator = userData.isBanned ? '<span class="banned-user-indicator"> (محظور)</span>' : '';
-                      const disableBanForSelfOrOtherAdmins = (userData.uid === auth.currentUser.uid || userData.isAdmin) && auth.currentUser.email !== ADMIN_EMAIL ; 
+                      const disableBanForSelfOrOtherAdmins = (userData.uid === auth.currentUser.uid || userData.isAdmin) && auth.currentUser.email !== ADMIN_EMAIL ;
 
                       html += `<li>
                                  <span>${userData.displayName || userData.username || userData.email}${isAdminText}${bannedIndicator}</span>
                                  <div class="user-actions">
                                      <button onclick="viewUserDetails('${doc.id}')">تفاصيل</button>
-                                     <button onclick="toggleUserBanStatus('${doc.id}', ${userData.isBanned || false})" 
+                                     <button onclick="toggleUserBanStatus('${doc.id}', ${userData.isBanned || false})"
                                              ${disableBanForSelfOrOtherAdmins ? 'disabled title="لا يمكن حظر هذا الحساب"' : ''}>
                                          ${userData.isBanned ? 'إلغاء الحظر' : 'حظر'}
                                      </button>
@@ -1104,7 +1224,7 @@
                   console.error("Error fetching users for admin:", error);
                   adminUsersListContainer.innerHTML = '<p>خطأ في جلب المستخدمين.</p>';
                   if (error.code === 'permission-denied') {
-                      adminUsersListContainer.innerHTML += '<br><b>تحذير:</b> لا تملك صلاحية الوصول. تأكد من أن قواعد الأمان في Firestore صحيحة وأنك مسجل كأدمن.';
+                      adminUsersListContainer.innerHTML += '<br><b>تحذير:</b> لا تملك صلاحية الوصول.';
                   }
                   updateElementText(adminStatusDiv, 'فشل تحميل المستخدمين. تحقق من صلاحيات Firestore.', 'error');
               });
@@ -1118,6 +1238,7 @@
                   document.getElementById('details-uid').textContent = `UID: ${data.uid || 'غير متوفر'}`;
                   document.getElementById('details-username').textContent = `اسم المستخدم: ${data.username || 'غير محدد'}`;
                   document.getElementById('details-displayName').textContent = `الاسم المعروض: ${data.displayName || 'غير محدد'}`;
+                  document.getElementById('details-bio').textContent = `النبذة: ${data.bio || 'لا يوجد'}`;
                   document.getElementById('details-created').textContent = `تاريخ الإنشاء: ${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString() : 'غير متوفر'}`;
                   document.getElementById('details-last-login').textContent = `آخر تسجيل دخول: ${data.lastLogin ? new Date(data.lastLogin.toDate()).toLocaleString() : 'غير متوفر'}`;
                   document.getElementById('details-banned-status').textContent = `الحالة: ${data.isBanned ? 'محظور' : 'نشط'}${data.isAdmin ? ' (أدمن)' : ''}`;
@@ -1137,7 +1258,7 @@
               return;
           }
           db.collection('users').doc(userIdToManage).get().then(doc => {
-            if (doc.exists && doc.data().isAdmin && auth.currentUser && auth.currentUser.email !== ADMIN_EMAIL) { 
+            if (doc.exists && doc.data().isAdmin && auth.currentUser && auth.currentUser.email !== ADMIN_EMAIL) {
                 updateElementText(adminStatusDiv, 'لا يمكنك حظر حساب أدمن آخر.', 'error');
                 return;
             }
@@ -1148,8 +1269,8 @@
             })
             .then(() => {
                 updateElementText(adminStatusDiv, `تم ${newBanStatus ? 'حظر' : 'إلغاء حظر'} المستخدم بنجاح.`, 'success');
-                displayUsersForAdmin(); 
-                showHideElement(adminUserDetailsContainer, false); 
+                displayUsersForAdmin();
+                showHideElement(adminUserDetailsContainer, false);
             })
             .catch(error => {
                 console.error("Error updating ban status:", error);
@@ -1162,21 +1283,21 @@
       };
 
 
-      window.showAdminArea = (event) => { 
+      window.showAdminArea = (event) => {
           event.preventDefault();
-          if (currentUserIsAdmin) { 
+          if (currentUserIsAdmin) {
               window.location.hash = "admin-area";
-              displayUsersForAdmin(); 
+              displayUsersForAdmin();
           } else {
               alert("ليس لديك صلاحيات الأدمن للوصول لهذه المنطقة.");
-              window.location.hash = "game-launcher"; 
+              window.location.hash = "game-launcher";
           }
           closeSidebar();
       };
 
-      const populateGameLauncher = () => { 
+      const populateGameLauncher = () => {
         if (!gameIconsGridContainer) return;
-        gameIconsGridContainer.innerHTML = ''; 
+        gameIconsGridContainer.innerHTML = '';
         gameNavLinksData.forEach(game => {
             const card = document.createElement('div');
             card.className = 'game-icon-card';
@@ -1187,14 +1308,14 @@
             nameSpan.textContent = game.text;
             card.appendChild(icon);
             card.appendChild(nameSpan);
-            card.addEventListener('click', async (e) => { 
+            card.addEventListener('click', async (e) => {
                 const targetId = e.currentTarget.dataset.targetId;
                 const currentUser = auth.currentUser;
                 if (currentUser && currentUser.emailVerified) {
                     const isBanned = await checkIfUserIsBanned(currentUser.uid);
                     if (isBanned) {
                         updateElementText(authStatusDiv, "حسابك محظور. لا يمكنك لعب الألعاب.", "error");
-                        auth.signOut(); 
+                        auth.signOut();
                         window.location.hash = 'login';
                     } else {
                         playSound('snd-click');
@@ -1211,8 +1332,8 @@
             gameIconsGridContainer.appendChild(card);
         });
       };
-      
-      const updateSidebarActiveLink = (activeSectionId) => { 
+
+      const updateSidebarActiveLink = (activeSectionId) => {
         const links = sidebar.querySelectorAll('a');
         links.forEach(a => {
             if (a) a.classList.remove('active-nav-link');
@@ -1220,26 +1341,21 @@
                 a.classList.add('active-nav-link');
             }
         });
-        if (activeSectionId === 'login' && auth.currentUser) {
-            // Handled by specific link highlighting for logout/profile
-        } else if (activeSectionId === 'login' && !auth.currentUser) {
+        if (activeSectionId === 'login' && !auth.currentUser) {
             if(navLoginLinkSidebar) navLoginLinkSidebar.classList.add('active-nav-link');
         }
       };
 
-      const showSectionByHash = async () => { 
+      const showSectionByHash = async () => {
         let hash = window.location.hash.slice(1);
         const currentUser = auth.currentUser;
-        
-        // Handle chat room deeplink or state restoration (basic)
+
         if (hash.startsWith('chat-room') && currentChatRoomId) {
-             // Already in chat, or re-navigating to it, ensure chat elements are updated
              if(chatRoomHeader) chatRoomHeader.textContent = `محادثة مع ${currentChatWithDisplayName || '...'}`;
-             if (!chatMessagesListener) { // If listener was somehow cleared
+             if (!chatMessagesListener) {
                 loadChatMessages(currentChatRoomId);
              }
         } else if (!hash.startsWith('chat-room') && chatMessagesListener) {
-            // Navigating away from chat, clear listener
             chatMessagesListener();
             chatMessagesListener = null;
             currentChatRoomId = null;
@@ -1255,50 +1371,50 @@
             isVerified = currentUser.emailVerified;
             isBanned = await checkIfUserIsBanned(currentUser.uid);
             if (isBanned) {
-                isVerified = false; 
+                isVerified = false;
                 if (hash !== 'login') {
-                     window.location.hash = 'login'; 
-                     return; 
+                     window.location.hash = 'login';
+                     return;
                 }
             }
         }
 
 
-        if (!hash) { 
-            if (isVerified) { 
-                hash = 'game-launcher'; 
+        if (!hash) {
+            if (isVerified) {
+                hash = 'game-launcher';
             } else {
                 hash = 'login';
             }
             if (window.location.hash.slice(1) !== hash) {
-                window.location.hash = hash; 
-                return; 
+                window.location.hash = hash;
+                return;
             }
         }
-        
-        let targetIdToShow = 'login'; 
-        if (isVerified) { 
-            if (hash === 'game-launcher' || gameNavLinksData.some(game => game.id === hash) || hash === 'settings' || hash === 'user-search' || (hash === 'chat-room' && currentChatRoomId) ) {
+
+        let targetIdToShow = 'login';
+        if (isVerified) {
+            if (hash === 'game-launcher' || gameNavLinksData.some(game => game.id === hash) || hash === 'settings' || hash === 'user-search' || hash === 'friends-section' || (hash === 'chat-room' && currentChatRoomId) ) {
                 targetIdToShow = hash;
-            } else if (hash === 'admin-area' && currentUserIsAdmin) { 
+            } else if (hash === 'admin-area' && currentUserIsAdmin) {
                 targetIdToShow = hash;
-                displayUsersForAdmin(); 
-            } else if (hash === 'login'){ 
-                 targetIdToShow = 'game-launcher'; 
+                displayUsersForAdmin();
+            } else if (hash === 'login'){
+                 targetIdToShow = 'game-launcher';
                  if (window.location.hash !== '#game-launcher') window.location.hash = 'game-launcher';
-            } else { 
+            } else {
                 targetIdToShow = 'game-launcher';
                 if (window.location.hash !== '#game-launcher') window.location.hash = 'game-launcher';
             }
-        } else { 
-            if (hash !== 'login' && hash !== '') { 
+        } else {
+            if (hash !== 'login' && hash !== '') {
                  if (window.location.hash !== '#login') window.location.hash = 'login';
                  targetIdToShow = 'login';
-            } else { 
+            } else {
                 targetIdToShow = 'login';
             }
         }
-        
+
         allSections.forEach(s => {
             if (s.id === targetIdToShow) {
                 s.classList.add('active');
@@ -1307,38 +1423,48 @@
             }
         });
         updateSidebarActiveLink(targetIdToShow);
-        if (targetIdToShow === 'settings' && settingsStatusDiv) updateElementText(settingsStatusDiv, '', 'info'); 
+        if (targetIdToShow === 'settings' && settingsStatusDiv) updateElementText(settingsStatusDiv, '', 'info');
         if (targetIdToShow === 'settings' && profileSettingsStatusDiv) updateElementText(profileSettingsStatusDiv, 'قم بتحديث معلومات ملفك الشخصي.', 'info');
         if (targetIdToShow === 'admin-area' && adminStatusDiv) updateElementText(adminStatusDiv, 'مرحباً أيها الأدمن.', 'info');
         if (targetIdToShow === 'user-search' && userSearchStatusDiv) updateElementText(userSearchStatusDiv, 'أدخل اسم مستخدم للبحث.', 'info');
+        if (targetIdToShow === 'friends-section') {
+            showFriendsTab('my-friends');
+            loadFriendsData();
+        }
       };
-      
-      auth.onAuthStateChanged(async user => { 
-        await updateAuthUI(!!user, user, user ? user.emailVerified : false); 
-        
+
+      auth.onAuthStateChanged(async user => {
+        await updateAuthUI(!!user, user, user ? user.emailVerified : false);
+
         if(user && user.emailVerified) {
             const userDoc = await db.collection('users').doc(user.uid).get().catch(() => null);
-            currentUserIsAdmin = userDoc && userDoc.exists && userDoc.data().isAdmin === true;
-            if (settingsUsernameInput && settingsDisplayNameInput) { // Load profile on auth change
+            currentUserData = userDoc && userDoc.exists ? userDoc.data() : null;
+            currentUserIsAdmin = currentUserData && currentUserData.isAdmin === true;
+            if (settingsUsernameInput && settingsDisplayNameInput) {
                 loadUserProfileSettings(user.uid);
             }
+            setupFriendSystemListeners(user.uid);
         } else {
             currentUserIsAdmin = false;
+            currentUserData = null;
+            clearFriendSystemListeners();
         }
         showHideElement(adminButtonSidebar, currentUserIsAdmin && user && user.emailVerified);
 
-        showSectionByHash(); 
+        showSectionByHash();
       });
 
       const handleSidebarLinkClick = (e) => {
-          e.preventDefault(); 
+          e.preventDefault();
           const targetHash = e.currentTarget.getAttribute('href');
-          if (targetHash === '#logout') { 
+          if (targetHash === '#logout') {
             auth.signOut().then(() => {
-                 currentUserIsAdmin = false; 
-                 if (chatMessagesListener) { chatMessagesListener(); chatMessagesListener = null; } // Clear chat listener on logout
+                 currentUserIsAdmin = false;
+                 currentUserData = null;
+                 if (chatMessagesListener) { chatMessagesListener(); chatMessagesListener = null; }
+                 clearFriendSystemListeners();
                  currentChatRoomId = null; currentChatWithUserId = null; currentChatWithDisplayName = null;
-                 window.location.hash = 'login'; 
+                 window.location.hash = 'login';
             }).catch(err => console.error('Logout error', err));
           } else {
             window.location.hash = targetHash;
@@ -1349,8 +1475,9 @@
       navLoginLinkSidebar.addEventListener('click', handleSidebarLinkClick);
       if (navGamesLauncherLinkSidebar) navGamesLauncherLinkSidebar.addEventListener('click', handleSidebarLinkClick);
       if (navUserSearchLinkSidebar) navUserSearchLinkSidebar.addEventListener('click', handleSidebarLinkClick);
+      if (navFriendsLinkSidebar) navFriendsLinkSidebar.addEventListener('click', handleSidebarLinkClick);
       if (navSettingsLinkSidebar) navSettingsLinkSidebar.addEventListener('click', handleSidebarLinkClick);
-      
+
       window.addEventListener('hashchange', showSectionByHash);
 
       function openSidebar() { if(sidebar) sidebar.classList.add('open'); }
@@ -1358,15 +1485,278 @@
       if(sidebarToggleButton) sidebarToggleButton.addEventListener('click', openSidebar);
       if(sidebarCloseButton) sidebarCloseButton.addEventListener('click', closeSidebar);
       document.addEventListener('click', function(event) {
-        if (sidebar && sidebar.classList.contains('open') && 
-            !sidebar.contains(event.target) && 
+        if (sidebar && sidebar.classList.contains('open') &&
+            !sidebar.contains(event.target) &&
             !sidebarToggleButton.contains(event.target)) {
             closeSidebar();
         }
       });
 
+      // Friend System Functions
+      async function sendFriendRequest(receiverId) {
+        const currentUser = auth.currentUser;
+        if (!currentUser || !currentUserData || currentUser.uid === receiverId) return;
+
+        try {
+            const existingRequestQuery = await db.collection('friendRequests')
+                .where('senderId', '==', currentUser.uid)
+                .where('receiverId', '==', receiverId)
+                .limit(1).get();
+
+            const existingReceivedRequestQuery = await db.collection('friendRequests')
+                .where('senderId', '==', receiverId)
+                .where('receiverId', '==', currentUser.uid)
+                .limit(1).get();
+
+            if (!existingRequestQuery.empty || !existingReceivedRequestQuery.empty) {
+                console.log("Friend request already exists or received.");
+                updateElementText(userSearchStatusDiv, "طلب الصداقة موجود بالفعل أو تم استلام طلب منك.", 'info');
+                return;
+            }
+
+            await db.collection('friendRequests').add({
+                senderId: currentUser.uid,
+                senderUsername: currentUserData.username || 'مجهول',
+                senderDisplayName: currentUserData.displayName || 'مستخدم',
+                receiverId: receiverId,
+                status: 'pending',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            playSound('snd-friend-request');
+            updateElementText(userSearchStatusDiv, "تم إرسال طلب الصداقة بنجاح!", 'success');
+        } catch (error) {
+            console.error("Error sending friend request:", error);
+            updateElementText(userSearchStatusDiv, "خطأ في إرسال طلب الصداقة.", 'error');
+        }
+      }
+
+      async function handleFriendRequest(requestId, newStatus) {
+        const currentUser = auth.currentUser;
+        if (!currentUser) return;
+        try {
+            const requestRef = db.collection('friendRequests').doc(requestId);
+            const requestDoc = await requestRef.get();
+            if (!requestDoc.exists) return;
+            const requestData = requestDoc.data();
+
+            if (requestData.receiverId !== currentUser.uid && newStatus !== 'cancelled') {
+                 console.error("Not authorized to handle this request"); return;
+            }
+             if (newStatus === 'cancelled' && requestData.senderId !== currentUser.uid) {
+                console.error("Not authorized to cancel this request"); return;
+            }
+
+
+            await requestRef.update({
+                status: newStatus,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            if (newStatus === 'accepted') {
+                const batch = db.batch();
+                const user1Ref = db.collection('users').doc(requestData.senderId);
+                const user2Ref = db.collection('users').doc(requestData.receiverId);
+
+                batch.update(user1Ref, { friends: firebase.firestore.FieldValue.arrayUnion(requestData.receiverId) });
+                batch.update(user2Ref, { friends: firebase.firestore.FieldValue.arrayUnion(requestData.senderId) });
+                await batch.commit();
+                updateElementText(friendsListStatusDiv, `أصبح ${requestData.senderDisplayName} صديقك!`, 'success');
+            } else if (newStatus === 'rejected') {
+                 updateElementText(friendsListStatusDiv, `تم رفض طلب الصداقة من ${requestData.senderDisplayName}.`, 'info');
+            } else if (newStatus === 'cancelled') {
+                 updateElementText(friendsListStatusDiv, `تم إلغاء طلب الصداقة.`, 'info');
+            }
+             playSound('snd-click');
+        } catch (error) {
+            console.error("Error handling friend request:", error);
+            updateElementText(friendsListStatusDiv, "خطأ في معالجة طلب الصداقة.", 'error');
+        }
+      }
+
+
+      function setupFriendSystemListeners(userId) {
+        clearFriendSystemListeners();
+
+        friendsListener = db.collection('users').doc(userId)
+            .onSnapshot(async (doc) => {
+                if (doc.exists) {
+                    currentUserData = doc.data(); // Keep currentUserData synced
+                    const friendsUids = doc.data().friends || [];
+                    await displayFriendsList(friendsUids, myFriendsListDiv, 'friend');
+                }
+            }, err => console.error("Error listening to friends:", err));
+
+        receivedRequestsListener = db.collection('friendRequests')
+            .where('receiverId', '==', userId)
+            .where('status', '==', 'pending')
+            .orderBy('createdAt', 'desc')
+            .onSnapshot(async (snapshot) => {
+                const requests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                await displayFriendsList(requests, receivedRequestsListDiv, 'received');
+                if(receivedRequestsCountSpan) receivedRequestsCountSpan.textContent = requests.length;
+            }, err => console.error("Error listening to received requests:", err));
+
+        sentRequestsListener = db.collection('friendRequests')
+            .where('senderId', '==', userId)
+            .where('status', '==', 'pending')
+            .orderBy('createdAt', 'desc')
+            .onSnapshot(async (snapshot) => {
+                const requests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                await displayFriendsList(requests, sentRequestsListDiv, 'sent');
+            }, err => console.error("Error listening to sent requests:", err));
+      }
+
+      function clearFriendSystemListeners() {
+        if (friendsListener) friendsListener();
+        if (receivedRequestsListener) receivedRequestsListener();
+        if (sentRequestsListener) sentRequestsListener();
+        friendsListener = null; receivedRequestsListener = null; sentRequestsListener = null;
+        if(receivedRequestsCountSpan) receivedRequestsCountSpan.textContent = '0';
+      }
+
+      async function displayFriendsList(items, container, type) {
+        if (!container) return;
+        container.innerHTML = '';
+        if (items.length === 0) {
+            let msg = '';
+            if (type === 'friend') msg = 'ليس لديك أصدقاء بعد. ابحث عن أصدقاء جدد!';
+            else if (type === 'received') msg = 'لا توجد طلبات صداقة واردة حاليًا.';
+            else if (type === 'sent') msg = 'لم تقم بإرسال أي طلبات صداقة معلقة.';
+            container.innerHTML = `<p style="text-align:center; padding:10px; color:#777;">${msg}</p>`;
+            return;
+        }
+
+        for (const item of items) {
+            let userData, requestId;
+            if (type === 'friend') { // item is a UID
+                const userDoc = await db.collection('users').doc(item).get();
+                if (!userDoc.exists) continue;
+                userData = userDoc.data();
+                userData.uid = item;
+            } else { // item is a request object
+                requestId = item.id;
+                if (type === 'received') {
+                    userData = { uid: item.senderId, username: item.senderUsername, displayName: item.senderDisplayName };
+                } else { // sent
+                     const userDoc = await db.collection('users').doc(item.receiverId).get();
+                     if (!userDoc.exists) continue;
+                     userData = userDoc.data();
+                     userData.uid = item.receiverId;
+                }
+            }
+
+
+            const listItem = document.createElement('div');
+            listItem.className = 'friends-list-item';
+
+            const picDiv = document.createElement('div');
+            picDiv.className = 'profile-pic-default';
+            picDiv.innerHTML = `<i class='bx bxs-user'></i>`;
+
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'user-info';
+            infoDiv.innerHTML = `<p class="username-friend">@${userData.username || 'غير معروف'}</p><p>${userData.displayName || 'اسم غير محدد'}</p>`;
+
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'friend-actions';
+
+            if (type === 'friend') {
+                const chatBtn = document.createElement('button');
+                chatBtn.textContent = 'محادثة';
+                chatBtn.onclick = () => initiateChat(userData.uid, userData.displayName || userData.username);
+                actionsDiv.appendChild(chatBtn);
+
+                const unfriendBtn = document.createElement('button');
+                unfriendBtn.textContent = 'إلغاء الصداقة';
+                unfriendBtn.style.backgroundColor = '#dc3545';
+                unfriendBtn.onclick = () => unfriendUser(userData.uid);
+                actionsDiv.appendChild(unfriendBtn);
+
+            } else if (type === 'received') {
+                const acceptBtn = document.createElement('button');
+                acceptBtn.textContent = 'قبول';
+                acceptBtn.style.backgroundColor = '#28a745';
+                acceptBtn.onclick = () => handleFriendRequest(requestId, 'accepted');
+                actionsDiv.appendChild(acceptBtn);
+
+                const rejectBtn = document.createElement('button');
+                rejectBtn.textContent = 'رفض';
+                rejectBtn.style.backgroundColor = '#dc3545';
+                rejectBtn.onclick = () => handleFriendRequest(requestId, 'rejected');
+                actionsDiv.appendChild(rejectBtn);
+            } else if (type === 'sent') {
+                const cancelBtn = document.createElement('button');
+                cancelBtn.textContent = 'إلغاء الطلب';
+                cancelBtn.onclick = () => handleFriendRequest(requestId, 'cancelled');
+                actionsDiv.appendChild(cancelBtn);
+            }
+
+            listItem.appendChild(picDiv);
+            listItem.appendChild(infoDiv);
+            listItem.appendChild(actionsDiv);
+            container.appendChild(listItem);
+        }
+      }
+
+      async function unfriendUser(friendUid) {
+        const currentUser = auth.currentUser;
+        if (!currentUser || !friendUid) return;
+
+        if (!confirm(`هل أنت متأكد أنك تريد إلغاء الصداقة مع هذا المستخدم؟`)) return;
+
+        try {
+            const batch = db.batch();
+            const currentUserRef = db.collection('users').doc(currentUser.uid);
+            const friendUserRef = db.collection('users').doc(friendUid);
+
+            batch.update(currentUserRef, { friends: firebase.firestore.FieldValue.arrayRemove(friendUid) });
+            batch.update(friendUserRef, { friends: firebase.firestore.FieldValue.arrayRemove(currentUser.uid) });
+
+            // Also remove/reject any pending requests between them, just in case
+            const reqQuery1 = db.collection('friendRequests')
+                .where('senderId', '==', currentUser.uid).where('receiverId', '==', friendUid);
+            const reqQuery2 = db.collection('friendRequests')
+                .where('senderId', '==', friendUid).where('receiverId', '==', currentUser.uid);
+
+            const [snap1, snap2] = await Promise.all([reqQuery1.get(), reqQuery2.get()]);
+            snap1.forEach(doc => batch.delete(doc.ref));
+            snap2.forEach(doc => batch.delete(doc.ref));
+
+            await batch.commit();
+            updateElementText(friendsListStatusDiv, `تم إلغاء الصداقة بنجاح.`, 'success');
+            playSound('snd-click');
+        } catch (error) {
+            console.error("Error unfriending user:", error);
+            updateElementText(friendsListStatusDiv, "خطأ في إلغاء الصداقة.", 'error');
+        }
+      }
+
+
+      window.showFriendsTab = (tabName) => {
+        document.querySelectorAll('#friends-section .tabs button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('#friends-section .friends-tab-content').forEach(content => content.style.display = 'none');
+
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+        document.getElementById(`${tabName}-list`).style.display = 'block';
+        updateElementText(friendsListStatusDiv, '', 'info');
+      }
+
+      function loadFriendsData() {
+        const currentUser = auth.currentUser;
+        if (currentUser && currentUser.emailVerified) {
+            // Listeners are already set up by setupFriendSystemListeners if user is logged in
+            // This function can be used to manually refresh if needed, but listeners should handle it
+        } else {
+            if(myFriendsListDiv) myFriendsListDiv.innerHTML = '<p>يرجى تسجيل الدخول لعرض الأصدقاء.</p>';
+            if(receivedRequestsListDiv) receivedRequestsListDiv.innerHTML = '';
+            if(sentRequestsListDiv) sentRequestsListDiv.innerHTML = '';
+        }
+      }
+
+
       // --- GAME INITIALIZATIONS (No changes here, keeping them as is) ---
-      const initXOGame = () => { 
+      const initXOGame = () => {
           const section = document.querySelector('#xo');
           if (!section) return;
           const boardElement = section.querySelector('.board');
@@ -1374,7 +1764,7 @@
           const restartButton = section.querySelector('#xo-restart');
           const exitGameButton = section.querySelector('#xo-exit-game');
           const pvpButton = section.querySelector('#xo-pvp');
-          const pvcHardButton = section.querySelector('#xo-pvc-hard'); 
+          const pvcHardButton = section.querySelector('#xo-pvc-hard');
           const canvas = section.querySelector('#xo-winning-line-canvas');
           const ctx = canvas.getContext('2d');
           const boardContainer = section.querySelector('.xo-board-container');
@@ -1383,14 +1773,14 @@
           let boardState = Array(9).fill('');
           let currentPlayer = '❌';
           let gameActive = false;
-          let gameMode = null; 
+          let gameMode = null;
           const playerSymbol = '❌';
           const computerSymbol = '⭕';
 
           const winningPatterns = [
-              [0, 1, 2], [3, 4, 5], [6, 7, 8], 
-              [0, 3, 6], [1, 4, 7], [2, 5, 8], 
-              [0, 4, 8], [2, 4, 6]             
+              [0, 1, 2], [3, 4, 5], [6, 7, 8],
+              [0, 3, 6], [1, 4, 7], [2, 5, 8],
+              [0, 4, 8], [2, 4, 6]
           ];
 
           const resizeCanvas = () => {
@@ -1398,7 +1788,7 @@
               canvas.width = boardContainer.offsetWidth;
               canvas.height = boardContainer.offsetHeight;
           };
-          
+
           const resetGame = () => {
               gameActive = false; gameMode = null; boardState.fill(''); currentPlayer = playerSymbol;
               if (boardElement) Array.from(boardElement.children).forEach(cell => cell.textContent = '');
@@ -1407,21 +1797,21 @@
               showHideElement(restartButton, false);
               showHideElement(exitGameButton, false);
               showHideElement(optionsDiv, true);
-              disableBoardInteraction(false); 
+              disableBoardInteraction(false);
           };
 
           const drawWinningLine = (combination) => {
               if (!combination || combination.length < 3 || !ctx) return;
-              resizeCanvas(); 
-              ctx.clearRect(0, 0, canvas.width, canvas.height); 
-              ctx.save(); ctx.translate(0.5, 0.5); 
+              resizeCanvas();
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              ctx.save(); ctx.translate(0.5, 0.5);
               ctx.beginPath(); ctx.lineWidth = 10; ctx.strokeStyle = 'rgba(220, 53, 69, 0.9)'; ctx.lineCap = 'round';
-              const cellSize = 100; const gap = 8;      
-              
+              const cellSize = 100; const gap = 8;
+
               const getCellCenter = (index) => {
                   const row = Math.floor(index / 3);
                   const logicalCol = index % 3;
-                  const canvasCol = 2 - logicalCol; 
+                  const canvasCol = 2 - logicalCol;
                   const x = canvasCol * (cellSize + gap) + cellSize / 2;
                   const y = row * (cellSize + gap) + cellSize / 2;
                   return { x, y };
@@ -1429,20 +1819,20 @@
 
               const startCell = getCellCenter(combination[0]); const endCell = getCellCenter(combination[2]);
               ctx.moveTo(startCell.x, startCell.y); ctx.lineTo(endCell.x, endCell.y); ctx.stroke();
-              ctx.restore(); 
+              ctx.restore();
           };
-          
-          const checkWin = () => { 
+
+          const checkWin = () => {
               for (const pattern of winningPatterns) {
                   const [a, b, c] = pattern;
                   if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
                       return { winner: boardState[a], combination: pattern };
                   }
               }
-              if (!boardState.includes('')) return { winner: 'tie', combination: null }; 
-              return null; 
+              if (!boardState.includes('')) return { winner: 'tie', combination: null };
+              return null;
           };
-          
+
           const checkWinWithBoard = (boardToCheck) => {
             for (const pattern of winningPatterns) {
                 const [a, b, c] = pattern;
@@ -1454,7 +1844,7 @@
             return null;
           };
 
-          const handleClick = async (index) => { 
+          const handleClick = async (index) => {
               const user = auth.currentUser;
               if (!gameActive || boardState[index] || !user || !user.emailVerified) return;
 
@@ -1481,27 +1871,27 @@
                   disableBoardInteraction(true);
                   setTimeout(() => {
                       const moveIndex = computerMoveHard();
-                      if (moveIndex !== -1 && boardState[moveIndex] === '') handleClick(moveIndex); 
+                      if (moveIndex !== -1 && boardState[moveIndex] === '') handleClick(moveIndex);
                       disableBoardInteraction(false);
                   }, 300 + Math.random() * 200);
               } else { disableBoardInteraction(false); }
           };
-          
+
           const disableBoardInteraction = (disable) => {
             if (boardElement) Array.from(boardElement.children).forEach(cell => cell.style.pointerEvents = disable ? 'none' : 'auto');
           };
 
-          const computerMoveHard = () => { 
+          const computerMoveHard = () => {
             if (!gameActive) return -1;
             const findStrategicMove = (player, currentBoardState) => {
                 for (let i = 0; i < currentBoardState.length; i++) {
                     if (currentBoardState[i] === '') {
-                        let tempBoard = [...currentBoardState]; tempBoard[i] = player; 
+                        let tempBoard = [...currentBoardState]; tempBoard[i] = player;
                         const winCheck = checkWinWithBoard(tempBoard);
-                        if (winCheck && winCheck.winner === player) return i; 
+                        if (winCheck && winCheck.winner === player) return i;
                     }
                 }
-                return -1; 
+                return -1;
             };
             let move = findStrategicMove(computerSymbol, boardState); if (move !== -1) return move;
             move = findStrategicMove(playerSymbol, boardState); if (move !== -1) return move;
@@ -1511,10 +1901,10 @@
             const sides = [1, 3, 5, 7]; const emptySides = sides.filter(side => boardState[side] === '');
             if (emptySides.length > 0) return emptySides[Math.floor(Math.random() * emptySides.length)];
             for (let i = 0; i < boardState.length; i++) { if (boardState[i] === '') return i;}
-            return -1; 
+            return -1;
           };
 
-          const startGameMode = async (mode) => { 
+          const startGameMode = async (mode) => {
               const user = auth.currentUser;
               if (!user || !user.emailVerified) {
                   updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
@@ -1525,47 +1915,47 @@
                   auth.signOut(); window.location.hash = 'login'; return;
               }
 
-              gameMode = mode; gameActive = true; boardState.fill(''); currentPlayer = playerSymbol; 
+              gameMode = mode; gameActive = true; boardState.fill(''); currentPlayer = playerSymbol;
               if (boardElement) Array.from(boardElement.children).forEach(cell => cell.textContent = '');
-              if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height); 
+              if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
               updateElementText(statusElement, `الدور: ${currentPlayer}`);
-              showHideElement(optionsDiv, false); 
+              showHideElement(optionsDiv, false);
               showHideElement(restartButton, true); showHideElement(exitGameButton, true);
               disableBoardInteraction(false); playSound('snd-click');
           };
-          
+
           if (boardElement) {
              boardElement.innerHTML = Array(9).fill().map((_, i) => `<div class="cell" data-index="${i}"></div>`).join('');
              Array.from(boardElement.children).forEach((cell, i) => cell.addEventListener('click', () => handleClick(i)));
           }
-          
+
           if(pvpButton) pvpButton.addEventListener('click', () => startGameMode('pvp'));
-          if(pvcHardButton) pvcHardButton.addEventListener('click', () => startGameMode('pvc-hard')); 
-          if(restartButton) restartButton.addEventListener('click', () => { playSound('snd-click'); startGameMode(gameMode); }); 
+          if(pvcHardButton) pvcHardButton.addEventListener('click', () => startGameMode('pvc-hard'));
+          if(restartButton) restartButton.addEventListener('click', () => { playSound('snd-click'); startGameMode(gameMode); });
           if(exitGameButton) exitGameButton.addEventListener('click', () => {
               playSound('snd-click');
               resetGame();
               if (auth.currentUser && auth.currentUser.emailVerified) window.location.hash = 'game-launcher';
           });
-          
+
           window.addEventListener('resize', resizeCanvas);
           const observer = new MutationObserver((mutationsList) => {
             for(const mutation of mutationsList) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     if (section.classList.contains('active')) {
-                        resizeCanvas(); 
-                        if (!gameActive) resetGame(); 
+                        resizeCanvas();
+                        if (!gameActive) resetGame();
                     } else {
-                        if (gameActive) resetGame(); 
+                        if (gameActive) resetGame();
                     }
                 }
             }
           });
           if(section) observer.observe(section, { attributes: true });
-          resetGame(); 
+          resetGame();
       };
-      
-      const initMemoryGame = () => { 
+
+      const initMemoryGame = () => {
         const section = document.querySelector('#memory'); if (!section) return;
         const cardsContainer = section.querySelector('.cards');
         const statusElement = section.querySelector('.status');
@@ -1585,29 +1975,29 @@
 
         const cardValues = ['🧠', '🎮', '🎯', '🎲', '💡', '💻', '🌟', '🚀'];
         let gameCards = []; let flippedCards = []; let canFlip = true;
-        let gameActiveMemory = false; let gameModeMemory = null; 
-        let currentPlayerMemory = null; 
+        let gameActiveMemory = false; let gameModeMemory = null;
+        let currentPlayerMemory = null;
         let playerNames = { player1: "اللاعب 1", player2: "اللاعب 2" };
         let scoresMemory = { player1: 0, player2: 0 };
-        const FLIP_BACK_DELAY = 1800; 
+        const FLIP_BACK_DELAY = 1800;
 
         function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
-        
+
         const resetMemoryGame = () => {
-            gameActiveMemory = false; gameModeMemory = null; 
+            gameActiveMemory = false; gameModeMemory = null;
             if(cardsContainer) cardsContainer.innerHTML = '';
             showHideElement(optionsDivMemory, true); showHideElement(playerNamesInputDiv, false);
             showHideElement(cardsContainer, false); showHideElement(scoresDivMemory, false);
             showHideElement(restartButton, false); showHideElement(exitGameButton, false);
             updateElementText(statusElement, 'اختر نمط اللعبة');
-            canFlip = true; 
+            canFlip = true;
         };
 
         function updateScoresDisplay() { if (gameModeMemory === 'pvp-memory') { player1ScoreEl.textContent = `${playerNames.player1}: ${scoresMemory.player1}`; player2ScoreEl.textContent = `${playerNames.player2}: ${scoresMemory.player2}`; showHideElement(player2ScoreEl, true); showHideElement(player2Separator, true); } else if (gameModeMemory === 'solo-memory') { player1ScoreEl.textContent = `النقاط: ${scoresMemory.player1}`; showHideElement(player2ScoreEl, false); showHideElement(player2Separator, false); } }
         function updateStatus() { if (!gameActiveMemory) { updateElementText(statusElement, "اختر نمط اللعبة"); return; } let turnText = ""; if (gameModeMemory === 'pvp-memory') { turnText = currentPlayerMemory === 'player1' ? `دور ${playerNames.player1}` : `دور ${playerNames.player2}`; } else if (gameModeMemory === 'solo-memory') { turnText = "ابحث عن التطابقات!"; } updateElementText(statusElement, turnText); }
         function preparePvpNameInputs() { showHideElement(optionsDivMemory, false); showHideElement(playerNamesInputDiv, true); player1NameInput.value = ''; player2NameInput.value = ''; showHideElement(restartButton, false); showHideElement(exitGameButton, false); }
-        
-        async function startGameMemory(mode, pvpSetupDone = false) { 
+
+        async function startGameMemory(mode, pvpSetupDone = false) {
             const user = auth.currentUser;
             if (!user || !user.emailVerified) { updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
             const isBanned = await checkIfUserIsBanned(user.uid);
@@ -1625,13 +2015,13 @@
             scoresMemory = { player1: 0, player2: 0 }; currentPlayerMemory = 'player1';
             showHideElement(optionsDivMemory, false); showHideElement(playerNamesInputDiv, false);
             showHideElement(scoresDivMemory, true); showHideElement(cardsContainer, true, 'grid');
-            if(cardsContainer) cardsContainer.classList.remove('disabled'); 
+            if(cardsContainer) cardsContainer.classList.remove('disabled');
             showHideElement(restartButton, true); showHideElement(exitGameButton, true);
             updateScoresDisplay(); createMemoryBoard(); updateStatus(); playSound('snd-click');
         }
         function createMemoryBoard() { if(!cardsContainer) return; cardsContainer.innerHTML = ''; let items = shuffle([...cardValues, ...cardValues]); gameCards = []; items.forEach((value, index) => { const card = document.createElement('div'); card.classList.add('card'); card.dataset.value = value; card.dataset.id = index;  const cardFaceFront = document.createElement('div'); cardFaceFront.classList.add('card-face', 'card-front'); const cardFaceBack = document.createElement('div'); cardFaceBack.classList.add('card-face', 'card-back'); cardFaceBack.textContent = value; card.appendChild(cardFaceFront); card.appendChild(cardFaceBack); card.addEventListener('click', () => flipCardMemory(card)); cardsContainer.appendChild(card); gameCards.push(card); }); }
-        
-        async function flipCardMemory(card) { 
+
+        async function flipCardMemory(card) {
             const user = auth.currentUser;
             if (!user || !user.emailVerified) { updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
             const isBanned = await checkIfUserIsBanned(user.uid);
@@ -1639,16 +2029,16 @@
                 updateElementText(statusElement, 'حسابك محظور!', 'error');
                 auth.signOut(); window.location.hash = 'login'; return;
             }
-            if (!gameActiveMemory || !canFlip || card.classList.contains('flipped') || card.classList.contains('matched')) return; 
-            card.classList.add('flipped'); flippedCards.push(card); playSound('snd-click'); if (flippedCards.length === 2) { canFlip = false; checkForMatchMemory(); } 
+            if (!gameActiveMemory || !canFlip || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+            card.classList.add('flipped'); flippedCards.push(card); playSound('snd-click'); if (flippedCards.length === 2) { canFlip = false; checkForMatchMemory(); }
         }
         function checkForMatchMemory() { const [card1, card2] = flippedCards; const isMatch = card1.dataset.value === card2.dataset.value; if (isMatch) { card1.classList.add('matched'); card2.classList.add('matched'); if (gameModeMemory === 'pvp-memory') { if (currentPlayerMemory === 'player1') scoresMemory.player1++; else if (currentPlayerMemory === 'player2') scoresMemory.player2++; } else { scoresMemory.player1++; } updateScoresDisplay(); playSound('snd-win'); const totalPairs = cardValues.length; const matchedPairsCount = scoresMemory.player1 + (gameModeMemory === 'pvp-memory' ? scoresMemory.player2 : 0); if (matchedPairsCount === totalPairs) { gameActiveMemory = false; canFlip = false; let winnerMsg = "انتهت اللعبة! "; if (gameModeMemory === 'pvp-memory') { if (scoresMemory.player1 > scoresMemory.player2) winnerMsg += `فاز ${playerNames.player1}!`; else if (scoresMemory.player2 > scoresMemory.player1) winnerMsg += `فاز ${playerNames.player2}!`; else winnerMsg += "تعادل!"; } else { winnerMsg += `أحسنت!`; } updateElementText(statusElement, winnerMsg, 'success'); showHideElement(restartButton, true); showHideElement(exitGameButton, true); } else { flippedCards = []; canFlip = true;  if (gameModeMemory === 'pvp-memory') updateStatus();  } } else { playSound('snd-lose'); setTimeout(() => { card1.classList.remove('flipped'); card2.classList.remove('flipped'); flippedCards = []; if (gameActiveMemory) { if (gameModeMemory === 'pvp-memory') switchPlayerMemory(); else canFlip = true;  } }, FLIP_BACK_DELAY);  } }
         function switchPlayerMemory() {  if (!gameActiveMemory || gameModeMemory !== 'pvp-memory') return; currentPlayerMemory = currentPlayerMemory === 'player1' ? 'player2' : 'player1'; updateStatus(); canFlip = true;  }
-        
+
         if(pvpButtonMemory) pvpButtonMemory.addEventListener('click', () => startGameMemory('pvp-memory', false));
         if(startPvpNamedButton) startPvpNamedButton.addEventListener('click', () => startGameMemory('pvp-memory', true));
         if(soloButtonMemory) soloButtonMemory.addEventListener('click', () => startGameMemory('solo-memory'));
-        if(restartButton) restartButton.addEventListener('click', () => { playSound('snd-click'); startGameMemory(gameModeMemory, true); }); 
+        if(restartButton) restartButton.addEventListener('click', () => { playSound('snd-click'); startGameMemory(gameModeMemory, true); });
         if(exitGameButton) exitGameButton.addEventListener('click', () => {
             playSound('snd-click');
             resetMemoryGame();
@@ -1659,9 +2049,9 @@
             for(const mutation of mutationsList) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     if (section.classList.contains('active')) {
-                        if (!gameActiveMemory) resetMemoryGame(); 
+                        if (!gameActiveMemory) resetMemoryGame();
                     } else {
-                        if (gameActiveMemory) resetMemoryGame(); 
+                        if (gameActiveMemory) resetMemoryGame();
                     }
                 }
             }
@@ -1669,19 +2059,19 @@
         if(section) observer.observe(section, { attributes: true });
         resetMemoryGame();
       };
-      
-      const initRPSGame = () => { 
+
+      const initRPSGame = () => {
         const section = document.querySelector('#rps'); if(!section) return;
         const resultElement = section.querySelector('.result');
         const choiceButtons = section.querySelectorAll('.gamebox button');
         const exitGameButton = section.querySelector('#rps-exit-game');
-        const options = ['🧱', '📄', '✂️']; 
+        const options = ['🧱', '📄', '✂️'];
 
         const resetRPSGame = () => {
             if(resultElement) updateElementText(resultElement, 'اختر لبدء!');
         };
 
-        choiceButtons.forEach(button => button.addEventListener('click', async () => { 
+        choiceButtons.forEach(button => button.addEventListener('click', async () => {
           const user = auth.currentUser;
           if(!user||!user.emailVerified) {updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.','info'); return;}
           const isBanned = await checkIfUserIsBanned(user.uid);
@@ -1708,23 +2098,23 @@
             for (const mutation of mutationsList) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     if (section.classList.contains('active')) {
-                         resetRPSGame(); 
-                    } 
+                         resetRPSGame();
+                    }
                 }
             }
         });
         if (section) observerRPS.observe(section, { attributes: true });
-        resetRPSGame(); 
+        resetRPSGame();
       };
 
-      const initClickTargetGame = () => { 
+      const initClickTargetGame = () => {
         const section = document.querySelector('#click'); if (!section) return;
         const startButton = section.querySelector('#click-start');
         const exitGameButton = section.querySelector('#click-exit-game');
         const targetArea = section.querySelector('#click-target-area');
         const statusElement = section.querySelector('.status');
         let score = 0; let gameTimerId; let targetElement; let gameActiveClick = false;
-        const gameDuration = 15000; 
+        const gameDuration = 15000;
 
         const resetClickTargetGame = () => {
             clearTimeout(gameTimerId);
@@ -1739,24 +2129,24 @@
             gameActiveClick = false;
         };
 
-        const spawnTarget = () => { if(!targetArea) return; if (targetElement) targetElement.remove(); targetElement = document.createElement('div'); targetElement.id = 'clickable-target'; targetElement.textContent = '🎯'; const areaRect = targetArea.getBoundingClientRect(); const targetSize = 50; if (areaRect.height <= targetSize || areaRect.width <= targetSize) { gameActiveClick = false; resetClickTargetGame(); return; } targetElement.style.top = Math.random() * (areaRect.height - targetSize) + 'px'; targetElement.style.left = Math.random() * (areaRect.width - targetSize) + 'px'; targetElement.onclick = async () => { 
-            const user = auth.currentUser; 
+        const spawnTarget = () => { if(!targetArea) return; if (targetElement) targetElement.remove(); targetElement = document.createElement('div'); targetElement.id = 'clickable-target'; targetElement.textContent = '🎯'; const areaRect = targetArea.getBoundingClientRect(); const targetSize = 50; if (areaRect.height <= targetSize || areaRect.width <= targetSize) { gameActiveClick = false; resetClickTargetGame(); return; } targetElement.style.top = Math.random() * (areaRect.height - targetSize) + 'px'; targetElement.style.left = Math.random() * (areaRect.width - targetSize) + 'px'; targetElement.onclick = async () => {
+            const user = auth.currentUser;
             if(!user||!user.emailVerified) {updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.','info'); return;}
             const isBanned = await checkIfUserIsBanned(user.uid);
             if (isBanned) { updateElementText(statusElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
             if(!gameActiveClick) return; score++; updateElementText(statusElement, `النقاط: ${score}`); playSound('snd-click'); spawnTarget(); }; targetArea.appendChild(targetElement); };
-        
-        const startGame = async () => { 
+
+        const startGame = async () => {
             const user = auth.currentUser;
             if (!user||!user.emailVerified) {updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.','info'); return;}
             const isBanned = await checkIfUserIsBanned(user.uid);
             if (isBanned) { updateElementText(statusElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
-            
+
             gameActiveClick = true; score = 0;
             updateElementText(statusElement, 'النقاط: 0');
             showHideElement(startButton, false); showHideElement(exitGameButton, true);
             showHideElement(targetArea, true); disableElement(startButton, true);
-            setTimeout(spawnTarget, 50); 
+            setTimeout(spawnTarget, 50);
             clearTimeout(gameTimerId);
             gameTimerId = setTimeout(() => {
                 gameActiveClick = false;
@@ -1773,7 +2163,7 @@
             resetClickTargetGame();
             if (auth.currentUser && auth.currentUser.emailVerified) window.location.hash = 'game-launcher';
         });
-        
+
         const observerClick = new MutationObserver((mutationsList) => {
             for (const mutation of mutationsList) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
@@ -1789,7 +2179,7 @@
         resetClickTargetGame();
       };
 
-      const initReactionTestGame = () => { 
+      const initReactionTestGame = () => {
         const section = document.querySelector('#react'); if (!section) return;
         const reactBox = section.querySelector('#react-box');
         const exitGameButton = section.querySelector('#react-exit-game');
@@ -1802,20 +2192,20 @@
             if(reactBox) reactBox.classList.remove('waiting', 'ready');
         };
 
-        const startGame = async () => { 
+        const startGame = async () => {
             if(!reactBox) return;
             const user = auth.currentUser;
             if (!user||!user.emailVerified) {updateElementText(reactBox, 'يرجى التحقق من بريدك للعب.','info'); if(reactBox) reactBox.classList.remove('waiting', 'ready'); return;}
             const isBanned = await checkIfUserIsBanned(user.uid);
              if (isBanned) { updateElementText(reactBox, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
-            
-            if (waitingForClick) { 
-                gameActiveReact = false; 
-                if (reactBox.classList.contains('ready')) { 
+
+            if (waitingForClick) {
+                gameActiveReact = false;
+                if (reactBox.classList.contains('ready')) {
                     const reactionTime = Date.now() - startTime;
                     updateElementText(reactBox, `وقتك: ${reactionTime} مللي ثانية. اضغط للبدء من جديد.`);
                     playSound('snd-win');
-                } else { 
+                } else {
                     updateElementText(reactBox, 'مبكر جداً! اضغط للبدء من جديد.');
                     playSound('snd-lose');
                 }
@@ -1823,12 +2213,12 @@
                 if(reactBox) reactBox.classList.remove('waiting', 'ready');
                 return;
             }
-            
+
             updateElementText(reactBox, 'انتظر اللون الأخضر...', 'waiting');
-            waitingForClick = true; gameActiveReact = true; 
-            const randomDelay = Math.random() * 3000 + 1000; 
+            waitingForClick = true; gameActiveReact = true;
+            const randomDelay = Math.random() * 3000 + 1000;
             timeoutId = setTimeout(() => {
-                if (waitingForClick) { 
+                if (waitingForClick) {
                     updateElementText(reactBox, 'اضغط الآن!', 'ready');
                     startTime = Date.now();
                 }
@@ -1856,7 +2246,7 @@
         resetReactionTestGame();
       };
 
-      const initDiceRollGame = () => { 
+      const initDiceRollGame = () => {
         const section = document.querySelector('#dice'); if (!section) return;
         const rollButton = section.querySelector('#dice-roll');
         const exitGameButton = section.querySelector('#dice-exit-game');
@@ -1867,7 +2257,7 @@
             if(resultElement) updateElementText(resultElement, '--');
         };
 
-        if(rollButton) rollButton.addEventListener('click', async () => { 
+        if(rollButton) rollButton.addEventListener('click', async () => {
             const user = auth.currentUser;
             if (!user||!user.emailVerified) {updateElementText(resultElement, '--'); if(resultElement) resultElement.textContent = 'يرجى التحقق من بريدك.'; return;}
             const isBanned = await checkIfUserIsBanned(user.uid);
@@ -1882,12 +2272,12 @@
             resetDiceRollGame();
             if (auth.currentUser && auth.currentUser.emailVerified) window.location.hash = 'game-launcher';
         });
-        
+
         const observerDice = new MutationObserver((mutationsList) => {
              for (const mutation of mutationsList) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     if (section.classList.contains('active')) {
-                        resetDiceRollGame(); 
+                        resetDiceRollGame();
                     }
                 }
             }
@@ -1895,8 +2285,8 @@
         if (section) observerDice.observe(section, { attributes: true });
         resetDiceRollGame();
       };
-      
-      const initMathQuizGame = () => { 
+
+      const initMathQuizGame = () => {
         const section = document.querySelector('#math'); if (!section) return;
         const startButton = section.querySelector('#math-start');
         const exitGameButton = section.querySelector('#math-exit-game');
@@ -1911,28 +2301,28 @@
             showHideElement(startButton, true);
             showHideElement(exitGameButton, false);
             showHideElement(questionArea, false);
-            showHideElement(inputGroupDiv, false); 
+            showHideElement(inputGroupDiv, false);
             if(resultElement) updateElementText(resultElement, '--');
             if(answerInput) answerInput.value = '';
             gameActiveMath = false;
         };
 
         const generateQuestion = () => { const num1 = Math.floor(Math.random() * 10) + 1; const num2 = Math.floor(Math.random() * 10) + 1; correctAnswer = num1 + num2; if(questionArea) questionArea.textContent = `${num1} + ${num2} = ?`; if(answerInput) answerInput.value = ''; if(resultElement) updateElementText(resultElement, '--'); };
-        
-        const startGame = async () => { 
+
+        const startGame = async () => {
             const user = auth.currentUser;
             if (!user || !user.emailVerified) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
             const isBanned = await checkIfUserIsBanned(user.uid);
             if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
-            
+
             gameActiveMath = true;
             showHideElement(startButton, false); showHideElement(exitGameButton, true);
-            showHideElement(questionArea, true); showHideElement(inputGroupDiv, true, 'block'); 
+            showHideElement(questionArea, true); showHideElement(inputGroupDiv, true, 'block');
             generateQuestion(); if(answerInput) answerInput.focus(); playSound('snd-click');
         };
-        const checkAnswer = async () => { 
+        const checkAnswer = async () => {
             const user = auth.currentUser;
-            if (!user || !user.emailVerified || !answerInput || !resultElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } 
+            if (!user || !user.emailVerified || !answerInput || !resultElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
             const isBanned = await checkIfUserIsBanned(user.uid);
             if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
             if (!gameActiveMath) return; const userAnswer = parseInt(answerInput.value); if (isNaN(userAnswer)) { updateElementText(resultElement, 'الرجاء إدخال رقم صحيح.', 'error'); return; } if (userAnswer === correctAnswer) { updateElementText(resultElement, 'صحيح! 🎉', 'success'); playSound('snd-win'); setTimeout(() => {  if (gameActiveMath && section.classList.contains('active') && auth.currentUser && auth.currentUser.emailVerified) generateQuestion();  }, 1500); } else { updateElementText(resultElement, `خطأ. الإجابة الصحيحة: ${correctAnswer}`, 'error'); playSound('snd-lose'); }  if(answerInput) {answerInput.value = ''; answerInput.focus(); } };
@@ -1945,7 +2335,7 @@
             resetMathQuizGame();
             if (auth.currentUser && auth.currentUser.emailVerified) window.location.hash = 'game-launcher';
         });
-        
+
         const observerMath = new MutationObserver((mutationsList) => {
             for (const mutation of mutationsList) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
@@ -1961,7 +2351,7 @@
         resetMathQuizGame();
       };
 
-      const initGuessNumberGame = () => { 
+      const initGuessNumberGame = () => {
         const section = document.querySelector('#guessnum'); if (!section) return;
         const startButton = section.querySelector('#guessnum-start');
         const exitGameButton = section.querySelector('#guessnum-exit-game');
@@ -1980,26 +2370,26 @@
             if(inputField) inputField.value = '';
             if(messageElement) updateElementText(messageElement, `خمن رقمًا بين 1 و 100.`);
             if(resultElement) updateElementText(resultElement, '--');
-            disableElement(submitButton, false); 
-            disableElement(inputField, false);   
+            disableElement(submitButton, false);
+            disableElement(inputField, false);
             gameActiveGuessNum = false;
         };
 
-        const startGame = async () => { 
+        const startGame = async () => {
             const user = auth.currentUser;
             if (!user || !user.emailVerified) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
             const isBanned = await checkIfUserIsBanned(user.uid);
             if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
-            
+
             gameActiveGuessNum = true; secretNumber = Math.floor(Math.random() * 100) + 1; attempts = 0; showHideElement(startButton, false); showHideElement(exitGameButton, true); showHideElement(inputGroupDiv, true, 'block'); if(inputField) inputField.value = ''; if(messageElement) updateElementText(messageElement, `خمن رقمًا بين 1 و 100. لديك ${maxAttempts} محاولات.`); if(resultElement) updateElementText(resultElement, '--'); if(inputField) inputField.focus(); disableElement(submitButton, false); disableElement(inputField, false); playSound('snd-click'); };
-        
-        const checkGuess = async () => { 
+
+        const checkGuess = async () => {
             const user = auth.currentUser;
-            if (!user || !user.emailVerified || !inputField || !resultElement || !messageElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } 
+            if (!user || !user.emailVerified || !inputField || !resultElement || !messageElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
             const isBanned = await checkIfUserIsBanned(user.uid);
             if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
             if (!gameActiveGuessNum) return; const guess = parseInt(inputField.value); if (isNaN(guess) || guess < 1 || guess > 100) { updateElementText(resultElement, 'الرجاء إدخال رقم بين 1 و 100.', 'error'); return; } attempts++; if (guess === secretNumber) { updateElementText(resultElement, `أحسنت! لقد خمنت الرقم ${secretNumber} في ${attempts} محاولات.`, 'success'); playSound('snd-win'); if(messageElement) updateElementText(messageElement, 'اضغط "ابدأ اللعبة" للعب مرة أخرى.'); showHideElement(startButton, true); showHideElement(exitGameButton, false); disableElement(submitButton, true); disableElement(inputField, true); gameActiveGuessNum = false; } else { playSound('snd-click'); const remainingAttempts = maxAttempts - attempts; if (remainingAttempts <= 0) { updateElementText(resultElement, `للأسف انتهت محاولاتك. الرقم الصحيح كان ${secretNumber}.`, 'error'); playSound('snd-lose'); if(messageElement) updateElementText(messageElement, 'اضغط "ابدأ اللعبة" للعب مرة أخرى.'); showHideElement(startButton, true); showHideElement(exitGameButton, false); disableElement(submitButton, true); disableElement(inputField, true); gameActiveGuessNum = false; } else { updateElementText(resultElement, guess < secretNumber ? 'أعلى!' : 'أقل!', 'info'); if(messageElement) updateElementText(messageElement, `محاولات متبقية: ${remainingAttempts}`); } } if(inputField) { inputField.value = ''; inputField.focus(); } };
-        
+
         if(startButton) startButton.addEventListener('click', startGame);
         if(submitButton) submitButton.addEventListener('click', checkGuess);
         if(inputField) inputField.addEventListener('keypress', (e) => { if (e.key === 'Enter' && gameActiveGuessNum) checkGuess(); });
@@ -2024,7 +2414,7 @@
         resetGuessNumberGame();
       };
 
-      const initBigSmallGame = () => { 
+      const initBigSmallGame = () => {
         const section = document.querySelector('#bigsmall'); if (!section) return;
         const startButton = section.querySelector('#bigsmall-start');
         const exitGameButton = section.querySelector('#bigsmall-exit-game');
@@ -2046,22 +2436,22 @@
         };
 
         const generateNumbers = () => { num1 = Math.floor(Math.random() * 100) + 1; do { num2 = Math.floor(Math.random() * 100) + 1; } while (num1 === num2);  biggerNum = Math.max(num1, num2); if(questionArea) questionArea.textContent = `أي الرقمين أكبر: ${num1} أم ${num2}؟`; if(answerInput) answerInput.value = ''; if(resultElement) updateElementText(resultElement, '--'); };
-        
-        const startGame = async () => { 
+
+        const startGame = async () => {
             const user = auth.currentUser;
             if (!user || !user.emailVerified) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
             const isBanned = await checkIfUserIsBanned(user.uid);
             if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
-            
+
             gameActiveBigSmall = true; showHideElement(startButton, false); showHideElement(exitGameButton, true); showHideElement(questionArea, true); showHideElement(inputGroupDiv, true, 'block'); generateNumbers(); if(answerInput) answerInput.focus(); playSound('snd-click'); };
-        
-        const checkAnswer = async () => { 
+
+        const checkAnswer = async () => {
             const user = auth.currentUser;
-            if (!user || !user.emailVerified || !answerInput || !resultElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } 
+            if (!user || !user.emailVerified || !answerInput || !resultElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
             const isBanned = await checkIfUserIsBanned(user.uid);
             if (isBanned) { updateElementText(resultElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
             if (!gameActiveBigSmall) return; const userAnswer = parseInt(answerInput.value); if (isNaN(userAnswer)) { updateElementText(resultElement, 'الرجاء إدخال رقم.', 'error'); return; } if (userAnswer === biggerNum) { updateElementText(resultElement, 'صحيح! 🎉', 'success'); playSound('snd-win');  setTimeout(() => {  if (gameActiveBigSmall && section.classList.contains('active') && auth.currentUser && auth.currentUser.emailVerified) generateNumbers(); }, 1500); } else { updateElementText(resultElement, `خطأ. الرقم الأكبر كان ${biggerNum}.`, 'error'); playSound('snd-lose'); } if(answerInput) {answerInput.value = ''; answerInput.focus();} };
-        
+
         if(startButton) startButton.addEventListener('click', startGame);
         if(submitButton) submitButton.addEventListener('click', checkAnswer);
         if(answerInput) answerInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && gameActiveBigSmall) checkAnswer(); });
@@ -2086,13 +2476,13 @@
         resetBigSmallGame();
       };
 
-      const initTypingTestGame = () => { 
+      const initTypingTestGame = () => {
         const section = document.querySelector('#typing'); if (!section) return;
         const startButton = section.querySelector('#typing-start');
         const exitGameButton = section.querySelector('#typing-exit-game');
         const textToTypeElement = section.querySelector('.text-to-type');
         const inputField = section.querySelector('#typing-input');
-        const submitButton = section.querySelector('#typing-submit'); 
+        const submitButton = section.querySelector('#typing-submit');
         const statusElement = section.querySelector('.status');
         const inputGroupDiv = section.querySelector('.input-group');
         const sampleTexts = [ "أهلاً بك في اختبار الكتابة السريع. حاول أن تكتب هذه الجملة بدقة وسرعة.", "ممارسة الكتابة بانتظام تحسن من مهارتك بشكل ملحوظ.", "الألعاب الإلكترونية وسيلة رائعة للترفيه وتنمية بعض المهارات الذهنية.", "البرمجة هي لغة المستقبل، وتعلمها يفتح آفاقاً واسعة.", "الذكاء الاصطناعي يتطور بسرعة ويغير حياتنا اليومية." ];
@@ -2102,29 +2492,29 @@
             showHideElement(startButton, true);
             showHideElement(exitGameButton, false);
             showHideElement(textToTypeElement, false);
-            showHideElement(inputGroupDiv, false); 
+            showHideElement(inputGroupDiv, false);
             if(inputField) inputField.value = '';
-            disableElement(inputField, false); 
-            disableElement(submitButton, false); 
+            disableElement(inputField, false);
+            disableElement(submitButton, false);
             if(statusElement) updateElementText(statusElement, 'اضغط "ابدأ الاختبار"');
             gameActiveTyping = false;
         };
 
-        const startGame = async () => { 
+        const startGame = async () => {
             const user = auth.currentUser;
             if (!user || !user.emailVerified) { if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
             const isBanned = await checkIfUserIsBanned(user.uid);
             if (isBanned) { updateElementText(statusElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
-            
+
             gameActiveTyping = true; currentTextToType = sampleTexts[Math.floor(Math.random() * sampleTexts.length)]; if(textToTypeElement) textToTypeElement.textContent = currentTextToType; if(inputField) inputField.value = ''; showHideElement(startButton, false); showHideElement(exitGameButton, true); showHideElement(textToTypeElement, true); showHideElement(inputGroupDiv, true, 'block');  disableElement(inputField, false); disableElement(submitButton, false); if(statusElement) updateElementText(statusElement, 'ابدأ الكتابة...'); if(inputField) inputField.focus(); startTime = new Date(); playSound('snd-click'); };
-        
-        const checkTyping = async () => { 
+
+        const checkTyping = async () => {
             const user = auth.currentUser;
-            if (!user || !user.emailVerified || !inputField || !textToTypeElement || !statusElement) { if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } 
+            if (!user || !user.emailVerified || !inputField || !textToTypeElement || !statusElement) { if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
             const isBanned = await checkIfUserIsBanned(user.uid);
             if (isBanned) { updateElementText(statusElement, 'حسابك محظور!', 'error'); auth.signOut(); window.location.hash = 'login'; return; }
             if(!gameActiveTyping) return; const typedText = inputField.value; const originalText = textToTypeElement.textContent;  const endTime = new Date(); const timeTaken = (endTime - startTime) / 1000;  if (typedText.length < originalText.length && typedText !== originalText) { updateElementText(statusElement, 'أكمل النص أولاً ثم اضغط تحقق.'); playSound('snd-lose'); return; } let errors = 0; for (let i = 0; i < originalText.length; i++) { if (i >= typedText.length || typedText[i] !== originalText[i]) { errors++; } } if (typedText.length > originalText.length) {  errors += (typedText.length - originalText.length); } const words = originalText.split(/\s+/).filter(Boolean).length; const wpm = timeTaken > 0 ? Math.round((words / timeTaken) * 60) : 0; const accuracy = originalText.length > 0 ? Math.round(((originalText.length - errors) / originalText.length) * 100) : 0;  updateElementText(statusElement, `الوقت: ${timeTaken.toFixed(1)} ثانية, السرعة: ${wpm} ك/د, الدقة: ${Math.max(0, accuracy)}%, الأخطاء: ${errors}`); playSound(accuracy >= 80 ? 'snd-win' : 'snd-lose'); showHideElement(startButton, true); showHideElement(exitGameButton, false); disableElement(inputField, true); disableElement(submitButton, true); gameActiveTyping = false; };
-        
+
         if(startButton) startButton.addEventListener('click', startGame);
         if(submitButton) submitButton.addEventListener('click', checkTyping);
         if(exitGameButton) exitGameButton.addEventListener('click', () => {
@@ -2148,18 +2538,18 @@
         resetTypingTestGame();
       };
 
-      initXOGame(); 
-      initRPSGame(); 
-      initClickTargetGame(); 
-      initReactionTestGame(); 
-      initDiceRollGame(); 
-      initMemoryGame(); 
-      initMathQuizGame(); 
-      initGuessNumberGame(); 
-      initBigSmallGame(); 
+      initXOGame();
+      initRPSGame();
+      initClickTargetGame();
+      initReactionTestGame();
+      initDiceRollGame();
+      initMemoryGame();
+      initMathQuizGame();
+      initGuessNumberGame();
+      initBigSmallGame();
       initTypingTestGame();
 
-      showSectionByHash(); 
+      showSectionByHash();
     });
   </script>
 </body>
