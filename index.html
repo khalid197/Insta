@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="ltr">
 <head>
@@ -118,6 +119,8 @@
     section:not(#login):not(#game-launcher) button:disabled { background:#ccc; cursor:not-allowed; }
     .status, .result, .message, .timebox { margin:15px 0; font-size:1.1rem; min-height: 1.2em; text-align: center;}
     
+    .game-controls { margin-top: 15px; text-align: center; } /* For End Game buttons */
+
     .xo-board-container { position: relative; width: 316px; height: 316px; margin: 0 auto 20px auto; }
     .board { display:grid; grid-template-columns:repeat(3,100px); gap:8px; justify-content:center; }
     .cell { width:100px; height:100px; border:2px solid #aaa; display:flex; align-items:center; justify-content:center; font-size:2.8rem; background:#f9f9f9; transition:background .2s; cursor:pointer; border-radius: 8px; color: #333; }
@@ -225,7 +228,10 @@
         <canvas id="xo-winning-line-canvas"></canvas>
     </div>
     <div class="status">اختر نمط اللعبة</div> 
-    <button id="xo-restart" style="display:none;">إعادة اللعبة</button> 
+    <div class="game-controls">
+        <button id="xo-restart" style="display:none;">إعادة اللعبة</button> 
+        <button id="xo-exit-game" style="display:none;">إنهاء اللعب</button>
+    </div>
   </section>
 
   <section id="memory" class="game-section"> 
@@ -246,8 +252,9 @@
     </div>
     <div class="cards" style="display:none;"></div> 
     <div class="status">اختر نمط اللعبة</div> 
-    <div class="gamebox">
+    <div class="gamebox game-controls">
         <button id="memory-restart" style="display:none;">إعادة اللعبة</button>
+        <button id="memory-exit-game" style="display:none;">إنهاء اللعب</button>
     </div> 
   </section>
   
@@ -267,15 +274,14 @@
   </section>
 
 
-  <!-- ... (باقي أقسام الألعاب كما هي) ... -->
-  <section id="rps" class="game-section"> <h2>حجر ورقة مقص 🧱📄✂️</h2> <div class="gamebox"> <button data-choice="🧱">🧱</button> <button data-choice="📄">📄</button> <button data-choice="✂️">✂️</button> </div> <div class="result">اختر لبدء!</d> </div> </section>
-  <section id="click" class="game-section"> <h2>اصطياد الهدف 🎯</h2> <div class="gamebox"><button id="click-start">ابدأ</button></div> <div id="click-target-area" class="gamebox" style="display:none;"></div> <div class="status">اضغط "ابدأ"</div> </section>
-  <section id="react" class="game-section"> <h2>اختبار سرعة الضغط ⌛</h2> <div class="timebox" id="react-box">اضغط للبدء</div> </section>
-  <section id="dice" class="game-section"> <h2>لعبة النرد 🎲</h2> <div class="gamebox"><button id="dice-roll">رمي النرد</button></div> <div class="result" id="dice-result" style="font-size: 3rem;">--</div> </section>
-  <section id="math" class="game-section"> <h2>جمع الأرقام 🧮</h2> <div class="gamebox"><button id="math-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none; font-size: 1.5rem; margin-bottom: 15px; text-align:center;"></div> <div class="input-group" style="display:none;"> <input type="number" id="math-answer" placeholder="أدخل إجابتك"/> <button id="math-submit">تحقق</button> </div> <div class="result">--</div> </section>
-  <section id="guessnum" class="game-section"> <h2>تخمين الرقم 🔢</h2> <div class="gamebox"><button id="guessnum-start">ابدأ اللعبة</button></div> <div class="input-group" style="display:none;"> <input type="number" id="guessnum-input" placeholder="خمن بين 1 و100"/> <button id="guessnum-submit">خمن</button> </div> <div class="result">--</div> <div class="message">خمن رقمًا بين 1 و 100</div> </section>
-  <section id="bigsmall" class="game-section"> <h2>من الأكبر؟ 📏</h2> <div class="gamebox"><button id="bigsmall-start">ابدأ اللعبة</button></div> <div class="question-area" style="display:none; font-size: 1.5rem; margin-bottom: 15px; text-align:center;"></div> <div class="input-group" style="display:none;"> <input type="number" id="bigsmall-answer" placeholder="اكتب الرقم الأكبر"/> <button id="bigsmall-submit">تحقق</button> </div> <div class="result">--</div> </section>
-  <section id="typing" class="game-section"> <h2>اختبار الكتابة ⌨️</h2> <div class="gamebox"><button id="typing-start">ابدأ الاختبار</button></div> <div class="text-to-type" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="text" id="typing-input" placeholder="اكتب النص هنا"/> <button id="typing-submit">تحقق</button> </div> <div class="status">--</div> </section>
+  <section id="rps" class="game-section"> <h2>حجر ورقة مقص 🧱📄✂️</h2> <div class="gamebox"> <button data-choice="🧱">🧱</button> <button data-choice="📄">📄</button> <button data-choice="✂️">✂️</button> </div> <div class="result">اختر لبدء!</d> <div class="game-controls"><button id="rps-exit-game">إنهاء اللعب</button></div> </section>
+  <section id="click" class="game-section"> <h2>اصطياد الهدف 🎯</h2> <div class="gamebox"><button id="click-start">ابدأ</button> <button id="click-exit-game" style="display:none;">إنهاء اللعب</button> </div> <div id="click-target-area" class="gamebox" style="display:none;"></div> <div class="status">اضغط "ابدأ"</div> </section>
+  <section id="react" class="game-section"> <h2>اختبار سرعة الضغط ⌛</h2> <div class="timebox" id="react-box">اضغط للبدء</div> <div class="game-controls" style="margin-top:5px;"><button id="react-exit-game">إنهاء اللعب</button></div></section>
+  <section id="dice" class="game-section"> <h2>لعبة النرد 🎲</h2> <div class="gamebox"><button id="dice-roll">رمي النرد</button> <button id="dice-exit-game">إنهاء اللعب</button></div> <div class="result" id="dice-result" style="font-size: 3rem;">--</div> </section>
+  <section id="math" class="game-section"> <h2>جمع الأرقام 🧮</h2> <div class="gamebox"><button id="math-start">ابدأ اللعبة</button> <button id="math-exit-game" style="display:none;">إنهاء اللعب</button></div> <div class="question-area" style="display:none; font-size: 1.5rem; margin-bottom: 15px; text-align:center;"></div> <div class="input-group" style="display:none;"> <input type="number" id="math-answer" placeholder="أدخل إجابتك"/> <button id="math-submit">تحقق</button> </div> <div class="result">--</div> </section>
+  <section id="guessnum" class="game-section"> <h2>تخمين الرقم 🔢</h2> <div class="gamebox"><button id="guessnum-start">ابدأ اللعبة</button> <button id="guessnum-exit-game" style="display:none;">إنهاء اللعب</button></div> <div class="input-group" style="display:none;"> <input type="number" id="guessnum-input" placeholder="خمن بين 1 و100"/> <button id="guessnum-submit">خمن</button> </div> <div class="result">--</div> <div class="message">خمن رقمًا بين 1 و 100</div> </section>
+  <section id="bigsmall" class="game-section"> <h2>من الأكبر؟ 📏</h2> <div class="gamebox"><button id="bigsmall-start">ابدأ اللعبة</button> <button id="bigsmall-exit-game" style="display:none;">إنهاء اللعب</button></div> <div class="question-area" style="display:none; font-size: 1.5rem; margin-bottom: 15px; text-align:center;"></div> <div class="input-group" style="display:none;"> <input type="number" id="bigsmall-answer" placeholder="اكتب الرقم الأكبر"/> <button id="bigsmall-submit">تحقق</button> </div> <div class="result">--</div> </section>
+  <section id="typing" class="game-section"> <h2>اختبار الكتابة ⌨️</h2> <div class="gamebox"><button id="typing-start">ابدأ الاختبار</button> <button id="typing-exit-game" style="display:none;">إنهاء اللعب</button></div> <div class="text-to-type" style="display:none;"></div> <div class="input-group" style="display:none;"> <input type="text" id="typing-input" placeholder="اكتب النص هنا"/> <button id="typing-submit">تحقق</button> </div> <div class="status">--</div> </section>
 
 
   <audio id="snd-click" src="https://actions.google.com/sounds/v1/alarms/button_click.ogg"></audio>
@@ -320,7 +326,7 @@
       const gameLauncherSection = document.getElementById('game-launcher');
       const gameIconsGridContainer = document.getElementById('game-icons-grid-container');
       
-      const gameNavLinksData = [ // This is still needed for the game launcher page
+      const gameNavLinksData = [ 
           { id: "xo", text: "إكس أو", icon: "bxs-grid-alt" }, 
           { id: "rps", text: "حجر ورقة مقص", icon: "bxs-joystick-button" },
           { id: "click", text: "اصطياد الهدف", icon: "bxs-bullseye" }, 
@@ -353,7 +359,7 @@
         showHideElement(toggleAuthModeText.parentElement, !isLoggedIn);
         showHideElement(btnLogout, isLoggedIn); 
 
-        showHideElement(navLoginLinkSidebar, true); // Always show this link, text will change
+        showHideElement(navLoginLinkSidebar, true); 
         showHideElement(navGamesLauncherLinkSidebar, isLoggedIn && isVerified);
         showHideElement(navSettingsLinkSidebar, isLoggedIn && isVerified);
         showHideElement(adminButtonSidebar, isLoggedIn && user && user.email === ADMIN_EMAIL);
@@ -391,7 +397,7 @@
         updateSidebarActiveLink(activeSectionId); 
       };
 
-      const updateLoginModeUI = () => { /* ... (same as before) ... */ 
+      const updateLoginModeUI = () => { 
         const linkId = 'toggle-auth-mode-link-inner';
         if (isLoginMode) {
           loginTitle.textContent = 'تسجيل الدخول';
@@ -408,14 +414,14 @@
         if(newToggleLink) newToggleLink.addEventListener('click', toggleMode);
       };
       
-      const toggleMode = (e) => { /* ... (same as before) ... */ 
+      const toggleMode = (e) => { 
         if(e) e.preventDefault(); 
         isLoginMode = !isLoginMode; 
         updateLoginModeUI(); 
         updateElementText(authStatusDiv, isLoginMode ? 'أدخل بيانات تسجيل الدخول.' : 'أدخل بيانات لإنشاء حساب جديد.', 'info'); 
       };
 
-      const handleAuthAction = () => { /* ... (same as before) ... */ 
+      const handleAuthAction = () => { 
         const email = loginEmailInput.value.trim(); const password = loginPasswordInput.value;
         if (!email || !password) { updateElementText(authStatusDiv, "الرجاء إدخال البريد الإلكتروني وكلمة المرور.", 'error'); return; }
         if (!isLoginMode && password.length < 6) { updateElementText(authStatusDiv, "كلمة المرور يجب أن تكون 6 حروف على الأقل.", 'error'); return; }
@@ -481,7 +487,7 @@
         closeSidebar();
       });
 
-      if(btnChangePassword) { /* ... (same as before) ... */ 
+      if(btnChangePassword) { 
           btnChangePassword.addEventListener('click', () => {
               const user = auth.currentUser;
               if (user && user.email) {
@@ -505,7 +511,7 @@
           closeSidebar();
       };
 
-      const populateGameLauncher = () => { /* ... (same as before, used for the game-launcher section) ... */ 
+      const populateGameLauncher = () => { 
         if (!gameIconsGridContainer) return;
         gameIconsGridContainer.innerHTML = ''; 
         gameNavLinksData.forEach(game => {
@@ -553,14 +559,14 @@
         const currentUser = auth.currentUser;
         const isVerified = currentUser && currentUser.emailVerified;
 
-        if (!hash) { // No hash in URL
+        if (!hash) { 
             if (isVerified) {
                 hash = 'game-launcher'; 
             } else {
                 hash = 'login';
             }
-            window.location.hash = hash; // Set default hash
-            return; // Hashchange will trigger this function again with the new hash
+            window.location.hash = hash; 
+            return; 
         }
         
         let targetIdToShow = 'login'; 
@@ -631,17 +637,19 @@
       });
 
       // --- Game Initializations ---
-      const initXOGame = () => { /* ... (same as before) ... */ 
+      const initXOGame = () => { 
           const section = document.querySelector('#xo');
           if (!section) return;
           const boardElement = section.querySelector('.board');
           const statusElement = section.querySelector('.status');
           const restartButton = section.querySelector('#xo-restart');
+          const exitGameButton = section.querySelector('#xo-exit-game');
           const pvpButton = section.querySelector('#xo-pvp');
           const pvcHardButton = section.querySelector('#xo-pvc-hard'); 
           const canvas = section.querySelector('#xo-winning-line-canvas');
           const ctx = canvas.getContext('2d');
           const boardContainer = section.querySelector('.xo-board-container');
+          const optionsDiv = section.querySelector('.xo-options');
 
           let boardState = Array(9).fill('');
           let currentPlayer = '❌';
@@ -657,41 +665,36 @@
           ];
 
           const resizeCanvas = () => {
+              if(!boardContainer || !canvas) return;
               canvas.width = boardContainer.offsetWidth;
               canvas.height = boardContainer.offsetHeight;
           };
+          
+          const resetGame = () => {
+              gameActive = false; gameMode = null; boardState.fill(''); currentPlayer = playerSymbol;
+              if (boardElement) Array.from(boardElement.children).forEach(cell => cell.textContent = '');
+              if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+              updateElementText(statusElement, 'اختر نمط اللعبة');
+              showHideElement(restartButton, false);
+              showHideElement(exitGameButton, false);
+              showHideElement(optionsDiv, true);
+              disableBoardInteraction(false); 
+          };
 
           const drawWinningLine = (combination) => {
-              if (!combination || combination.length < 3) return;
+              if (!combination || combination.length < 3 || !ctx) return;
               resizeCanvas(); 
               ctx.clearRect(0, 0, canvas.width, canvas.height); 
-              
-              ctx.save(); 
-              ctx.translate(0.5, 0.5); 
-
-              ctx.beginPath();
-              ctx.lineWidth = 10; 
-              ctx.strokeStyle = 'rgba(220, 53, 69, 0.9)'; 
-              ctx.lineCap = 'round';
-
-              const cellSize = 100; 
-              const gap = 8;      
-
+              ctx.save(); ctx.translate(0.5, 0.5); 
+              ctx.beginPath(); ctx.lineWidth = 10; ctx.strokeStyle = 'rgba(220, 53, 69, 0.9)'; ctx.lineCap = 'round';
+              const cellSize = 100; const gap = 8;      
               const getCellCenter = (index) => {
-                  const row = Math.floor(index / 3);
-                  const col = index % 3;
-                  const x = col * (cellSize + gap) + cellSize / 2;
-                  const y = row * (cellSize + gap) + cellSize / 2;
+                  const row = Math.floor(index / 3); const col = index % 3;
+                  const x = col * (cellSize + gap) + cellSize / 2; const y = row * (cellSize + gap) + cellSize / 2;
                   return { x, y };
               };
-
-              const startCell = getCellCenter(combination[0]);
-              const endCell = getCellCenter(combination[2]);
-
-              ctx.moveTo(startCell.x, startCell.y);
-              ctx.lineTo(endCell.x, endCell.y);
-              ctx.stroke();
-              
+              const startCell = getCellCenter(combination[0]); const endCell = getCellCenter(combination[2]);
+              ctx.moveTo(startCell.x, startCell.y); ctx.lineTo(endCell.x, endCell.y); ctx.stroke();
               ctx.restore(); 
           };
           
@@ -718,49 +721,32 @@
           };
 
           const handleClick = (index) => {
-              if (!gameActive || boardState[index] || !auth.currentUser || !auth.currentUser.emailVerified) return;
-
+              if (!gameActive || boardState[index] || !auth.currentUser || !auth.currentUser.emailVerified || !boardElement) return;
               boardState[index] = currentPlayer;
               boardElement.children[index].textContent = currentPlayer;
               playSound('snd-click');
-
               const winResult = checkWin();
               if (winResult) {
                   gameActive = false;
-                  if (winResult.winner === 'tie') {
-                      updateElementText(statusElement, 'تعادل!');
-                      playSound('snd-lose');
-                  } else {
-                      updateElementText(statusElement, `فاز ${winResult.winner}!`);
-                      playSound('snd-win');
-                      drawWinningLine(winResult.combination);
-                  }
-                  showHideElement(restartButton, true);
+                  if (winResult.winner === 'tie') { updateElementText(statusElement, 'تعادل!'); playSound('snd-lose');
+                  } else { updateElementText(statusElement, `فاز ${winResult.winner}!`); playSound('snd-win'); drawWinningLine(winResult.combination); }
+                  showHideElement(restartButton, true); showHideElement(exitGameButton, true);
                   return;
               }
-              
               currentPlayer = (currentPlayer === playerSymbol) ? computerSymbol : playerSymbol;
               updateElementText(statusElement, `الدور: ${currentPlayer}`);
-
               if (gameMode === 'pvc-hard' && gameActive && currentPlayer === computerSymbol) {
                   disableBoardInteraction(true);
-                  let moveDelay = 300 + Math.random() * 200; 
                   setTimeout(() => {
                       const moveIndex = computerMoveHard();
-                      if (moveIndex !== -1 && boardState[moveIndex] === '') { 
-                          handleClick(moveIndex); 
-                      }
+                      if (moveIndex !== -1 && boardState[moveIndex] === '') handleClick(moveIndex); 
                       disableBoardInteraction(false);
-                  }, moveDelay);
-              } else {
-                  disableBoardInteraction(false);
-              }
+                  }, 300 + Math.random() * 200);
+              } else { disableBoardInteraction(false); }
           };
           
           const disableBoardInteraction = (disable) => {
-            Array.from(boardElement.children).forEach(cell => {
-                cell.style.pointerEvents = disable ? 'none' : 'auto';
-            });
+            if (boardElement) Array.from(boardElement.children).forEach(cell => cell.style.pointerEvents = disable ? 'none' : 'auto');
           };
 
           const computerMoveHard = () => { 
@@ -768,8 +754,7 @@
             const findStrategicMove = (player, currentBoardState) => {
                 for (let i = 0; i < currentBoardState.length; i++) {
                     if (currentBoardState[i] === '') {
-                        let tempBoard = [...currentBoardState];
-                        tempBoard[i] = player; 
+                        let tempBoard = [...currentBoardState]; tempBoard[i] = player; 
                         const winCheck = checkWinWithBoard(tempBoard);
                         if (winCheck && winCheck.winner === player) return i; 
                     }
@@ -779,11 +764,9 @@
             let move = findStrategicMove(computerSymbol, boardState); if (move !== -1) return move;
             move = findStrategicMove(playerSymbol, boardState); if (move !== -1) return move;
             if (boardState[4] === '') return 4;
-            const corners = [0, 2, 6, 8];
-            const emptyCorners = corners.filter(corner => boardState[corner] === '');
+            const corners = [0, 2, 6, 8]; const emptyCorners = corners.filter(corner => boardState[corner] === '');
             if (emptyCorners.length > 0) return emptyCorners[Math.floor(Math.random() * emptyCorners.length)];
-            const sides = [1, 3, 5, 7];
-            const emptySides = sides.filter(side => boardState[side] === '');
+            const sides = [1, 3, 5, 7]; const emptySides = sides.filter(side => boardState[side] === '');
             if (emptySides.length > 0) return emptySides[Math.floor(Math.random() * emptySides.length)];
             for (let i = 0; i < boardState.length; i++) { if (boardState[i] === '') return i;}
             return -1; 
@@ -791,46 +774,40 @@
 
           const startGameMode = (mode) => {
               if (!auth.currentUser || !auth.currentUser.emailVerified) {
-                  updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info');
-                  return;
+                  updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
               }
-              gameMode = mode;
-              gameActive = true;
-              boardState.fill('');
-              currentPlayer = playerSymbol; 
-              Array.from(boardElement.children).forEach(cell => cell.textContent = '');
-              ctx.clearRect(0, 0, canvas.width, canvas.height); 
+              gameMode = mode; gameActive = true; boardState.fill(''); currentPlayer = playerSymbol; 
+              if (boardElement) Array.from(boardElement.children).forEach(cell => cell.textContent = '');
+              if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height); 
               updateElementText(statusElement, `الدور: ${currentPlayer}`);
-              showHideElement(section.querySelector('.xo-options'), false); 
-              showHideElement(restartButton, true); 
-              disableBoardInteraction(false); 
-              playSound('snd-click');
+              showHideElement(optionsDiv, false); 
+              showHideElement(restartButton, true); showHideElement(exitGameButton, true);
+              disableBoardInteraction(false); playSound('snd-click');
           };
-
-          const resetGame = () => {
-              gameActive = false; gameMode = null; boardState.fill(''); currentPlayer = playerSymbol;
-              Array.from(boardElement.children).forEach(cell => cell.textContent = '');
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
-              updateElementText(statusElement, 'اختر نمط اللعبة');
-              showHideElement(restartButton, false);
-              showHideElement(section.querySelector('.xo-options'), true);
-              disableBoardInteraction(false); 
-              playSound('snd-click');
-          };
-
-          boardElement.innerHTML = Array(9).fill().map((_, i) => `<div class="cell" data-index="${i}"></div>`).join('');
-          Array.from(boardElement.children).forEach((cell, i) => cell.addEventListener('click', () => handleClick(i)));
+          
+          if (boardElement) {
+             boardElement.innerHTML = Array(9).fill().map((_, i) => `<div class="cell" data-index="${i}"></div>`).join('');
+             Array.from(boardElement.children).forEach((cell, i) => cell.addEventListener('click', () => handleClick(i)));
+          }
           
           if(pvpButton) pvpButton.addEventListener('click', () => startGameMode('pvp'));
           if(pvcHardButton) pvcHardButton.addEventListener('click', () => startGameMode('pvc-hard')); 
-          if(restartButton) restartButton.addEventListener('click', resetGame);
+          if(restartButton) restartButton.addEventListener('click', () => { playSound('snd-click'); startGameMode(gameMode); }); // Restart current mode
+          if(exitGameButton) exitGameButton.addEventListener('click', () => {
+              playSound('snd-click');
+              resetGame();
+              if (auth.currentUser && auth.currentUser.emailVerified) window.location.hash = 'game-launcher';
+          });
+          
           window.addEventListener('resize', resizeCanvas);
-           const observer = new MutationObserver((mutationsList) => {
+          const observer = new MutationObserver((mutationsList) => {
             for(const mutation of mutationsList) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
                     if (section.classList.contains('active')) {
                         resizeCanvas(); 
-                        if (!gameActive) resetGame();
+                        if (!gameActive) resetGame(); // If navigating to XO and game wasn't active, show mode selection
+                    } else {
+                        if (gameActive) resetGame(); // If navigating away from XO and game was active, reset it
                     }
                 }
             }
@@ -839,11 +816,12 @@
           resetGame(); 
       };
       
-      const initMemoryGame = () => { /* ... (same as previous correct version) ... */ 
+      const initMemoryGame = () => { 
         const section = document.querySelector('#memory'); if (!section) return;
         const cardsContainer = section.querySelector('.cards');
         const statusElement = section.querySelector('.status');
         const restartButton = section.querySelector('#memory-restart');
+        const exitGameButton = section.querySelector('#memory-exit-game');
         const pvpButtonMemory = section.querySelector('#memory-pvp');
         const soloButtonMemory = section.querySelector('#memory-solo');
         const optionsDivMemory = section.querySelector('.memory-options');
@@ -857,162 +835,84 @@
         const startPvpNamedButton = section.querySelector('#memory-start-pvp-named');
 
         const cardValues = ['🧠', '🎮', '🎯', '🎲', '💡', '💻', '🌟', '🚀'];
-        let gameCards = [];
-        let flippedCards = [];
-        let canFlip = true;
-        let gameActiveMemory = false;
-        let gameModeMemory = null; 
+        let gameCards = []; let flippedCards = []; let canFlip = true;
+        let gameActiveMemory = false; let gameModeMemory = null; 
         let currentPlayerMemory = null; 
         let playerNames = { player1: "اللاعب 1", player2: "اللاعب 2" };
         let scoresMemory = { player1: 0, player2: 0 };
         const FLIP_BACK_DELAY = 1800; 
 
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function updateScoresDisplay() {
-            if (gameModeMemory === 'pvp-memory') {
-                player1ScoreEl.textContent = `${playerNames.player1}: ${scoresMemory.player1}`;
-                player2ScoreEl.textContent = `${playerNames.player2}: ${scoresMemory.player2}`;
-                showHideElement(player2ScoreEl, true);
-                showHideElement(player2Separator, true);
-            } else if (gameModeMemory === 'solo-memory') {
-                player1ScoreEl.textContent = `النقاط: ${scoresMemory.player1}`;
-                showHideElement(player2ScoreEl, false);
-                showHideElement(player2Separator, false);
-            }
-        }
+        function shuffle(array) { /* ... */ for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
         
-        function updateStatus() {
-            if (!gameActiveMemory) {
-                updateElementText(statusElement, "اختر نمط اللعبة"); return;
-            }
-            let turnText = "";
-            if (gameModeMemory === 'pvp-memory') {
-                turnText = currentPlayerMemory === 'player1' ? `دور ${playerNames.player1}` : `دور ${playerNames.player2}`;
-            } else if (gameModeMemory === 'solo-memory') {
-                turnText = "ابحث عن التطابقات!";
-            }
-            updateElementText(statusElement, turnText);
-        }
+        const resetMemoryGame = () => {
+            gameActiveMemory = false; gameModeMemory = null; 
+            if(cardsContainer) cardsContainer.innerHTML = '';
+            showHideElement(optionsDivMemory, true); showHideElement(playerNamesInputDiv, false);
+            showHideElement(cardsContainer, false); showHideElement(scoresDivMemory, false);
+            showHideElement(restartButton, false); showHideElement(exitGameButton, false);
+            updateElementText(statusElement, 'اختر نمط اللعبة');
+            canFlip = true; 
+        };
 
-        function preparePvpNameInputs() {
-            showHideElement(optionsDivMemory, false);
-            showHideElement(playerNamesInputDiv, true);
-            player1NameInput.value = ''; player2NameInput.value = '';
-        }
-
-        function startGameMemory(mode) {
-            if (!auth.currentUser || !auth.currentUser.emailVerified) {
-                updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
+        function updateScoresDisplay() { /* ... */ if (gameModeMemory === 'pvp-memory') { player1ScoreEl.textContent = `${playerNames.player1}: ${scoresMemory.player1}`; player2ScoreEl.textContent = `${playerNames.player2}: ${scoresMemory.player2}`; showHideElement(player2ScoreEl, true); showHideElement(player2Separator, true); } else if (gameModeMemory === 'solo-memory') { player1ScoreEl.textContent = `النقاط: ${scoresMemory.player1}`; showHideElement(player2ScoreEl, false); showHideElement(player2Separator, false); } }
+        function updateStatus() { /* ... */ if (!gameActiveMemory) { updateElementText(statusElement, "اختر نمط اللعبة"); return; } let turnText = ""; if (gameModeMemory === 'pvp-memory') { turnText = currentPlayerMemory === 'player1' ? `دور ${playerNames.player1}` : `دور ${playerNames.player2}`; } else if (gameModeMemory === 'solo-memory') { turnText = "ابحث عن التطابقات!"; } updateElementText(statusElement, turnText); }
+        function preparePvpNameInputs() { /* ... */ showHideElement(optionsDivMemory, false); showHideElement(playerNamesInputDiv, true); player1NameInput.value = ''; player2NameInput.value = ''; showHideElement(restartButton, false); showHideElement(exitGameButton, false); }
+        function startGameMemory(mode, pvpSetupDone = false) {
+            if (!auth.currentUser || !auth.currentUser.emailVerified) { updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
+            if (mode === 'pvp-memory' && !pvpSetupDone) { preparePvpNameInputs(); return; }
+            if (mode === 'pvp-memory' && pvpSetupDone) {
+                 playerNames.player1 = player1NameInput.value.trim() || "اللاعب 1";
+                 playerNames.player2 = player2NameInput.value.trim() || "اللاعب 2";
             }
-            gameModeMemory = mode;
-            if (mode === 'pvp-memory') {
-                playerNames.player1 = player1NameInput.value.trim() || "اللاعب 1";
-                playerNames.player2 = player2NameInput.value.trim() || "اللاعب 2";
-            }
-            gameActiveMemory = true; canFlip = true; flippedCards = [];
+            gameModeMemory = mode; gameActiveMemory = true; canFlip = true; flippedCards = [];
             scoresMemory = { player1: 0, player2: 0 }; currentPlayerMemory = 'player1';
             showHideElement(optionsDivMemory, false); showHideElement(playerNamesInputDiv, false);
             showHideElement(scoresDivMemory, true); showHideElement(cardsContainer, true, 'grid');
-            cardsContainer.classList.remove('disabled'); showHideElement(restartButton, true);
+            if(cardsContainer) cardsContainer.classList.remove('disabled'); 
+            showHideElement(restartButton, true); showHideElement(exitGameButton, true);
             updateScoresDisplay(); createMemoryBoard(); updateStatus(); playSound('snd-click');
         }
-
-        function createMemoryBoard() {
-            if(!cardsContainer) return;
-            cardsContainer.innerHTML = ''; let items = shuffle([...cardValues, ...cardValues]); gameCards = [];
-            items.forEach((value, index) => {
-                const card = document.createElement('div'); card.classList.add('card');
-                card.dataset.value = value; card.dataset.id = index; 
-                const cardFaceFront = document.createElement('div'); cardFaceFront.classList.add('card-face', 'card-front');
-                const cardFaceBack = document.createElement('div'); cardFaceBack.classList.add('card-face', 'card-back');
-                cardFaceBack.textContent = value; card.appendChild(cardFaceFront); card.appendChild(cardFaceBack);
-                card.addEventListener('click', () => flipCardMemory(card));
-                cardsContainer.appendChild(card); gameCards.push(card);
-            });
-        }
+        function createMemoryBoard() { /* ... */ if(!cardsContainer) return; cardsContainer.innerHTML = ''; let items = shuffle([...cardValues, ...cardValues]); gameCards = []; items.forEach((value, index) => { const card = document.createElement('div'); card.classList.add('card'); card.dataset.value = value; card.dataset.id = index;  const cardFaceFront = document.createElement('div'); cardFaceFront.classList.add('card-face', 'card-front'); const cardFaceBack = document.createElement('div'); cardFaceBack.classList.add('card-face', 'card-back'); cardFaceBack.textContent = value; card.appendChild(cardFaceFront); card.appendChild(cardFaceBack); card.addEventListener('click', () => flipCardMemory(card)); cardsContainer.appendChild(card); gameCards.push(card); }); }
+        function flipCardMemory(card) { /* ... */ if (!auth.currentUser || !auth.currentUser.emailVerified) { updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } if (!gameActiveMemory || !canFlip || card.classList.contains('flipped') || card.classList.contains('matched')) return; card.classList.add('flipped'); flippedCards.push(card); playSound('snd-click'); if (flippedCards.length === 2) { canFlip = false; checkForMatchMemory(); } }
+        function checkForMatchMemory() { /* ... */ const [card1, card2] = flippedCards; const isMatch = card1.dataset.value === card2.dataset.value; if (isMatch) { card1.classList.add('matched'); card2.classList.add('matched'); if (gameModeMemory === 'pvp-memory') { if (currentPlayerMemory === 'player1') scoresMemory.player1++; else if (currentPlayerMemory === 'player2') scoresMemory.player2++; } else { scoresMemory.player1++; } updateScoresDisplay(); playSound('snd-win'); const totalPairs = cardValues.length; const matchedPairsCount = scoresMemory.player1 + (gameModeMemory === 'pvp-memory' ? scoresMemory.player2 : 0); if (matchedPairsCount === totalPairs) { gameActiveMemory = false; canFlip = false; let winnerMsg = "انتهت اللعبة! "; if (gameModeMemory === 'pvp-memory') { if (scoresMemory.player1 > scoresMemory.player2) winnerMsg += `فاز ${playerNames.player1}!`; else if (scoresMemory.player2 > scoresMemory.player1) winnerMsg += `فاز ${playerNames.player2}!`; else winnerMsg += "تعادل!"; } else { winnerMsg += `أحسنت!`; } updateElementText(statusElement, winnerMsg, 'success'); showHideElement(restartButton, true); showHideElement(exitGameButton, true); } else { flippedCards = []; canFlip = true;  if (gameModeMemory === 'pvp-memory') updateStatus();  } } else { playSound('snd-lose'); setTimeout(() => { card1.classList.remove('flipped'); card2.classList.remove('flipped'); flippedCards = []; if (gameActiveMemory) { if (gameModeMemory === 'pvp-memory') switchPlayerMemory(); else canFlip = true;  } }, FLIP_BACK_DELAY);  } }
+        function switchPlayerMemory() { /* ... */  if (!gameActiveMemory || gameModeMemory !== 'pvp-memory') return; currentPlayerMemory = currentPlayerMemory === 'player1' ? 'player2' : 'player1'; updateStatus(); canFlip = true;  }
         
-         function flipCardMemory(card) {
-            if (!auth.currentUser || !auth.currentUser.emailVerified) { updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
-            if (!gameActiveMemory || !canFlip || card.classList.contains('flipped') || card.classList.contains('matched')) return;
-            card.classList.add('flipped'); flippedCards.push(card); playSound('snd-click');
-            if (flippedCards.length === 2) { canFlip = false; checkForMatchMemory(); }
-        }
-
-        function checkForMatchMemory() {
-            const [card1, card2] = flippedCards; const isMatch = card1.dataset.value === card2.dataset.value;
-            if (isMatch) {
-                card1.classList.add('matched'); card2.classList.add('matched');
-                if (gameModeMemory === 'pvp-memory') {
-                    if (currentPlayerMemory === 'player1') scoresMemory.player1++; else if (currentPlayerMemory === 'player2') scoresMemory.player2++;
-                } else { scoresMemory.player1++; }
-                updateScoresDisplay(); playSound('snd-win');
-                const totalPairs = cardValues.length;
-                const matchedPairsCount = scoresMemory.player1 + (gameModeMemory === 'pvp-memory' ? scoresMemory.player2 : 0);
-                if (matchedPairsCount === totalPairs) {
-                    gameActiveMemory = false; canFlip = false; let winnerMsg = "انتهت اللعبة! ";
-                    if (gameModeMemory === 'pvp-memory') {
-                        if (scoresMemory.player1 > scoresMemory.player2) winnerMsg += `فاز ${playerNames.player1}!`;
-                        else if (scoresMemory.player2 > scoresMemory.player1) winnerMsg += `فاز ${playerNames.player2}!`;
-                        else winnerMsg += "تعادل!";
-                    } else { winnerMsg += `أحسنت!`; }
-                    updateElementText(statusElement, winnerMsg, 'success'); showHideElement(restartButton, true); 
-                } else {
-                    flippedCards = []; canFlip = true; 
-                    if (gameModeMemory === 'pvp-memory') updateStatus(); 
-                }
-            } else {
-                playSound('snd-lose');
-                setTimeout(() => {
-                    card1.classList.remove('flipped'); card2.classList.remove('flipped'); flippedCards = [];
-                    if (gameActiveMemory) {
-                        if (gameModeMemory === 'pvp-memory') switchPlayerMemory(); else canFlip = true; 
-                    }
-                }, FLIP_BACK_DELAY); 
-            }
-        }
-
-        function switchPlayerMemory() { 
-            if (!gameActiveMemory || gameModeMemory !== 'pvp-memory') return;
-            currentPlayerMemory = currentPlayerMemory === 'player1' ? 'player2' : 'player1';
-            updateStatus(); canFlip = true; 
-        }
-        
-        function resetMemoryGame() {
-            gameActiveMemory = false; gameModeMemory = null; cardsContainer.innerHTML = '';
-            showHideElement(optionsDivMemory, true); showHideElement(playerNamesInputDiv, false);
-            showHideElement(cardsContainer, false); showHideElement(scoresDivMemory, false);
-            showHideElement(restartButton, false); updateElementText(statusElement, 'اختر نمط اللعبة');
-            canFlip = true; playSound('snd-click');
-        }
-
-        if(pvpButtonMemory) pvpButtonMemory.addEventListener('click', preparePvpNameInputs);
-        if(startPvpNamedButton) startPvpNamedButton.addEventListener('click', () => startGameMemory('pvp-memory'));
+        if(pvpButtonMemory) pvpButtonMemory.addEventListener('click', () => startGameMemory('pvp-memory', false));
+        if(startPvpNamedButton) startPvpNamedButton.addEventListener('click', () => startGameMemory('pvp-memory', true));
         if(soloButtonMemory) soloButtonMemory.addEventListener('click', () => startGameMemory('solo-memory'));
-        if(restartButton) restartButton.addEventListener('click', resetMemoryGame);
-        resetMemoryGame();
+        if(restartButton) restartButton.addEventListener('click', () => { playSound('snd-click'); startGameMemory(gameModeMemory, true); }); // Restart current mode
+        if(exitGameButton) exitGameButton.addEventListener('click', () => {
+            playSound('snd-click');
+            resetMemoryGame();
+            if (auth.currentUser && auth.currentUser.emailVerified) window.location.hash = 'game-launcher';
+        });
+
         const observer = new MutationObserver((mutationsList) => {
             for(const mutation of mutationsList) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                    if (section.classList.contains('active') && !gameActiveMemory) resetMemoryGame();
+                    if (section.classList.contains('active')) {
+                        if (!gameActiveMemory) resetMemoryGame(); // If navigating to Memory and game wasn't active
+                    } else {
+                        if (gameActiveMemory) resetMemoryGame(); // If navigating away and game was active
+                    }
                 }
             }
         });
         if(section) observer.observe(section, { attributes: true });
+        resetMemoryGame();
       };
       
-      const initRPSGame = () => { /* ... (same as before) ... */ 
+      const initRPSGame = () => { 
         const section = document.querySelector('#rps'); if(!section) return;
         const resultElement = section.querySelector('.result');
         const choiceButtons = section.querySelectorAll('.gamebox button');
+        const exitGameButton = section.querySelector('#rps-exit-game');
         const options = ['🧱', '📄', '✂️']; 
-        if(resultElement) updateElementText(resultElement, 'اختر لبدء!');
+
+        const resetRPSGame = () => {
+            if(resultElement) updateElementText(resultElement, 'اختر لبدء!');
+        };
+
         choiceButtons.forEach(button => button.addEventListener('click', () => {
           if(!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.','info'); return;}
           const playerChoice = button.dataset.choice;
@@ -1023,72 +923,108 @@
           updateElementText(resultElement, `${message}! أنت: ${playerChoice} الكومبيوتر: ${computerChoice}`);
           playSound(message === 'فزت' ? 'snd-win' : message === 'خسرت' ? 'snd-lose' : 'snd-click');
         }));
+
+        if(exitGameButton) exitGameButton.addEventListener('click', () => {
+            playSound('snd-click');
+            resetRPSGame();
+            if (auth.currentUser && auth.currentUser.emailVerified) window.location.hash = 'game-launcher';
+        });
+
+        const observerRPS = new MutationObserver((mutationsList) => {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if (section.classList.contains('active')) {
+                         resetRPSGame(); // Always reset to initial "اختر لبدء!" when activated
+                    } 
+                    // No specific reset needed on deactivation as state is simple and reset on activation
+                }
+            }
+        });
+        if (section) observerRPS.observe(section, { attributes: true });
+        resetRPSGame(); 
       };
 
-      const initClickTargetGame = () => { /* ... (same as before) ... */ 
+      const initClickTargetGame = () => { 
         const section = document.querySelector('#click'); if (!section) return;
         const startButton = section.querySelector('#click-start');
+        const exitGameButton = section.querySelector('#click-exit-game');
         const targetArea = section.querySelector('#click-target-area');
         const statusElement = section.querySelector('.status');
-        let score = 0; let gameTimerId; let targetElement;
+        let score = 0; let gameTimerId; let targetElement; let gameActiveClick = false;
         const gameDuration = 15000; 
 
-        const spawnTarget = () => {
-            if(!targetArea) return; 
+        const resetClickTargetGame = () => {
+            clearTimeout(gameTimerId);
             if (targetElement) targetElement.remove();
-            targetElement = document.createElement('div');
-            targetElement.id = 'clickable-target';
-            targetElement.textContent = '🎯';
-            const areaRect = targetArea.getBoundingClientRect();
-            const targetSize = 50;
-             if (areaRect.height <= targetSize || areaRect.width <= targetSize) { 
-                return; 
-            }
-            targetElement.style.top = Math.random() * (areaRect.height - targetSize) + 'px';
-            targetElement.style.left = Math.random() * (areaRect.width - targetSize) + 'px';
-            targetElement.onclick = () => {
-                if(!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.','info'); return;}
-                score++;
-                updateElementText(statusElement, `النقاط: ${score}`);
-                playSound('snd-click');
-                spawnTarget();
-            };
-            targetArea.appendChild(targetElement);
+            targetElement = null;
+            score = 0;
+            updateElementText(statusElement, 'اضغط "ابدأ"');
+            showHideElement(startButton, true);
+            showHideElement(exitGameButton, false);
+            showHideElement(targetArea, false);
+            disableElement(startButton, false);
+            gameActiveClick = false;
         };
 
+        const spawnTarget = () => { /* ... */ if(!targetArea) return; if (targetElement) targetElement.remove(); targetElement = document.createElement('div'); targetElement.id = 'clickable-target'; targetElement.textContent = '🎯'; const areaRect = targetArea.getBoundingClientRect(); const targetSize = 50; if (areaRect.height <= targetSize || areaRect.width <= targetSize) { gameActiveClick = false; resetClickTargetGame(); return; } targetElement.style.top = Math.random() * (areaRect.height - targetSize) + 'px'; targetElement.style.left = Math.random() * (areaRect.width - targetSize) + 'px'; targetElement.onclick = () => { if(!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.','info'); return;} if(!gameActiveClick) return; score++; updateElementText(statusElement, `النقاط: ${score}`); playSound('snd-click'); spawnTarget(); }; targetArea.appendChild(targetElement); };
         const startGame = () => {
             if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.','info'); return;}
-            score = 0;
+            gameActiveClick = true; score = 0;
             updateElementText(statusElement, 'النقاط: 0');
-            showHideElement(startButton, false);
-            showHideElement(targetArea, true);
-            disableElement(startButton, true);
-            setTimeout(spawnTarget, 50);
-
+            showHideElement(startButton, false); showHideElement(exitGameButton, true);
+            showHideElement(targetArea, true); disableElement(startButton, true);
+            setTimeout(spawnTarget, 50); // Delay spawn slightly to ensure area is visible
             clearTimeout(gameTimerId);
             gameTimerId = setTimeout(() => {
-                if (targetElement) targetElement.remove();
+                gameActiveClick = false;
+                if (targetElement) targetElement.remove(); targetElement = null;
                 updateElementText(statusElement, `انتهت اللعبة! نقاطك: ${score}`);
                 playSound(score > 5 ? 'snd-win' : 'snd-lose');
-                showHideElement(startButton, true);
-                showHideElement(targetArea, false);
-                disableElement(startButton, false);
+                showHideElement(startButton, true); showHideElement(exitGameButton, false);
+                showHideElement(targetArea, false); disableElement(startButton, false);
             }, gameDuration);
         };
         if(startButton) startButton.addEventListener('click', startGame);
-        if(statusElement) updateElementText(statusElement, 'اضغط "ابدأ"');
+        if(exitGameButton) exitGameButton.addEventListener('click', () => {
+            playSound('snd-click');
+            resetClickTargetGame();
+            if (auth.currentUser && auth.currentUser.emailVerified) window.location.hash = 'game-launcher';
+        });
+        
+        const observerClick = new MutationObserver((mutationsList) => {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if (section.classList.contains('active')) {
+                        if (!gameActiveClick) resetClickTargetGame();
+                    } else {
+                        if (gameActiveClick) resetClickTargetGame();
+                    }
+                }
+            }
+        });
+        if (section) observerClick.observe(section, { attributes: true });
+        resetClickTargetGame();
       };
 
-      const initReactionTestGame = () => { /* ... (same as before) ... */ 
+      const initReactionTestGame = () => { 
         const section = document.querySelector('#react'); if (!section) return;
         const reactBox = section.querySelector('#react-box');
-        let startTime, timeoutId, waitingForClick = false;
+        const exitGameButton = section.querySelector('#react-exit-game');
+        let startTime, timeoutId, waitingForClick = false, gameActiveReact = false;
+
+        const resetReactionTestGame = () => {
+            clearTimeout(timeoutId);
+            waitingForClick = false; gameActiveReact = false;
+            updateElementText(reactBox, 'اضغط للبدء');
+            if(reactBox) reactBox.classList.remove('waiting', 'ready');
+        };
 
         const startGame = () => {
             if(!reactBox) return;
-            if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(reactBox, 'يرجى التحقق من بريدك للعب.','info'); reactBox.classList.remove('waiting', 'ready'); return;}
+            if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(reactBox, 'يرجى التحقق من بريدك للعب.','info'); if(reactBox) reactBox.classList.remove('waiting', 'ready'); return;}
             
             if (waitingForClick) { 
+                gameActiveReact = false; // Game ends here
                 if (reactBox.classList.contains('ready')) { 
                     const reactionTime = Date.now() - startTime;
                     updateElementText(reactBox, `وقتك: ${reactionTime} مللي ثانية. اضغط للبدء من جديد.`);
@@ -1097,16 +1033,14 @@
                     updateElementText(reactBox, 'مبكر جداً! اضغط للبدء من جديد.');
                     playSound('snd-lose');
                 }
-                waitingForClick = false;
-                clearTimeout(timeoutId);
-                reactBox.classList.remove('waiting', 'ready');
+                waitingForClick = false; clearTimeout(timeoutId);
+                if(reactBox) reactBox.classList.remove('waiting', 'ready');
                 return;
             }
             
             updateElementText(reactBox, 'انتظر اللون الأخضر...', 'waiting');
-            waitingForClick = true;
+            waitingForClick = true; gameActiveReact = true; // Game starts here
             const randomDelay = Math.random() * 3000 + 1000; 
-
             timeoutId = setTimeout(() => {
                 if (waitingForClick) { 
                     updateElementText(reactBox, 'اضغط الآن!', 'ready');
@@ -1114,17 +1048,38 @@
                 }
             }, randomDelay);
         };
-        if(reactBox) {
-            reactBox.addEventListener('click', startGame);
-            updateElementText(reactBox, 'اضغط للبدء'); 
-        }
+        if(reactBox) reactBox.addEventListener('click', startGame);
+        if(exitGameButton) exitGameButton.addEventListener('click', () => {
+            playSound('snd-click');
+            resetReactionTestGame();
+            if (auth.currentUser && auth.currentUser.emailVerified) window.location.hash = 'game-launcher';
+        });
+
+        const observerReact = new MutationObserver((mutationsList) => {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if (section.classList.contains('active')) {
+                        if (!gameActiveReact && !waitingForClick) resetReactionTestGame();
+                    } else {
+                        if (gameActiveReact || waitingForClick) resetReactionTestGame();
+                    }
+                }
+            }
+        });
+        if (section) observerReact.observe(section, { attributes: true });
+        resetReactionTestGame();
       };
 
-      const initDiceRollGame = () => { /* ... (same as before) ... */ 
+      const initDiceRollGame = () => { 
         const section = document.querySelector('#dice'); if (!section) return;
         const rollButton = section.querySelector('#dice-roll');
+        const exitGameButton = section.querySelector('#dice-exit-game');
         const resultElement = section.querySelector('#dice-result');
         const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+
+        const resetDiceRollGame = () => {
+            if(resultElement) updateElementText(resultElement, '--');
+        };
 
         if(rollButton) rollButton.addEventListener('click', () => {
             if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(resultElement, '--'); if(resultElement) resultElement.textContent = 'يرجى التحقق من بريدك.'; return;}
@@ -1132,265 +1087,228 @@
             updateElementText(resultElement, diceFaces[roll]);
             playSound('snd-click');
         });
-        if(resultElement) updateElementText(resultElement, '--');
+        if(exitGameButton) exitGameButton.addEventListener('click', () => {
+            playSound('snd-click');
+            resetDiceRollGame();
+            if (auth.currentUser && auth.currentUser.emailVerified) window.location.hash = 'game-launcher';
+        });
+        
+        const observerDice = new MutationObserver((mutationsList) => {
+             for (const mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if (section.classList.contains('active')) {
+                        resetDiceRollGame(); // Always reset to initial "--" when activated
+                    }
+                }
+            }
+        });
+        if (section) observerDice.observe(section, { attributes: true });
+        resetDiceRollGame();
       };
       
-      const initMathQuizGame = () => { /* ... (same as before) ... */ 
+      const initMathQuizGame = () => { 
         const section = document.querySelector('#math'); if (!section) return;
         const startButton = section.querySelector('#math-start');
+        const exitGameButton = section.querySelector('#math-exit-game');
         const questionArea = section.querySelector('.question-area');
         const answerInput = section.querySelector('#math-answer');
         const submitButton = section.querySelector('#math-submit');
         const resultElement = section.querySelector('.result');
-        let correctAnswer;
+        const inputGroupDiv = section.querySelector('.input-group');
+        let correctAnswer; let gameActiveMath = false;
 
-        const generateQuestion = () => {
-            const num1 = Math.floor(Math.random() * 10) + 1;
-            const num2 = Math.floor(Math.random() * 10) + 1;
-            correctAnswer = num1 + num2;
-            if(questionArea) questionArea.textContent = `${num1} + ${num2} = ?`;
-            if(answerInput) answerInput.value = '';
+        const resetMathQuizGame = () => {
+            showHideElement(startButton, true);
+            showHideElement(exitGameButton, false);
+            showHideElement(questionArea, false);
+            showHideElement(inputGroupDiv, false); 
             if(resultElement) updateElementText(resultElement, '--');
+            if(answerInput) answerInput.value = '';
+            gameActiveMath = false;
         };
+
+        const generateQuestion = () => { /* ... */ const num1 = Math.floor(Math.random() * 10) + 1; const num2 = Math.floor(Math.random() * 10) + 1; correctAnswer = num1 + num2; if(questionArea) questionArea.textContent = `${num1} + ${num2} = ?`; if(answerInput) answerInput.value = ''; if(resultElement) updateElementText(resultElement, '--'); };
         const startGame = () => {
-            if (!auth.currentUser || !auth.currentUser.emailVerified) {
-                if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
-            }
-            showHideElement(startButton, false);
-            showHideElement(questionArea, true);
-            showHideElement(section.querySelector('.input-group'), true, 'block'); 
-            generateQuestion();
-            if(answerInput) answerInput.focus();
-            playSound('snd-click');
+            if (!auth.currentUser || !auth.currentUser.emailVerified) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
+            gameActiveMath = true;
+            showHideElement(startButton, false); showHideElement(exitGameButton, true);
+            showHideElement(questionArea, true); showHideElement(inputGroupDiv, true, 'block'); 
+            generateQuestion(); if(answerInput) answerInput.focus(); playSound('snd-click');
         };
-        const checkAnswer = () => {
-            if (!auth.currentUser || !auth.currentUser.emailVerified || !answerInput || !resultElement) {
-                 if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
-            }
-            const userAnswer = parseInt(answerInput.value);
-            if (isNaN(userAnswer)) {
-                updateElementText(resultElement, 'الرجاء إدخال رقم صحيح.', 'error');
-                return;
-            }
-            if (userAnswer === correctAnswer) {
-                updateElementText(resultElement, 'صحيح! 🎉', 'success');
-                playSound('snd-win');
-                setTimeout(() => { 
-                    if (section.classList.contains('active') && auth.currentUser && auth.currentUser.emailVerified) generateQuestion(); 
-                }, 1500);
-            } else {
-                updateElementText(resultElement, `خطأ. الإجابة الصحيحة: ${correctAnswer}`, 'error');
-                playSound('snd-lose');
-            }
-             if(answerInput) {answerInput.value = ''; answerInput.focus(); }
-        };
+        const checkAnswer = () => { /* ... */ if (!auth.currentUser || !auth.currentUser.emailVerified || !answerInput || !resultElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } if (!gameActiveMath) return; const userAnswer = parseInt(answerInput.value); if (isNaN(userAnswer)) { updateElementText(resultElement, 'الرجاء إدخال رقم صحيح.', 'error'); return; } if (userAnswer === correctAnswer) { updateElementText(resultElement, 'صحيح! 🎉', 'success'); playSound('snd-win'); setTimeout(() => {  if (gameActiveMath && section.classList.contains('active') && auth.currentUser && auth.currentUser.emailVerified) generateQuestion();  }, 1500); } else { updateElementText(resultElement, `خطأ. الإجابة الصحيحة: ${correctAnswer}`, 'error'); playSound('snd-lose'); }  if(answerInput) {answerInput.value = ''; answerInput.focus(); } };
 
         if(startButton) startButton.addEventListener('click', startGame);
         if(submitButton) submitButton.addEventListener('click', checkAnswer);
-        if(answerInput) answerInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAnswer(); });
-        if(resultElement) updateElementText(resultElement, '--');
+        if(answerInput) answerInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && gameActiveMath) checkAnswer(); });
+        if(exitGameButton) exitGameButton.addEventListener('click', () => {
+            playSound('snd-click');
+            resetMathQuizGame();
+            if (auth.currentUser && auth.currentUser.emailVerified) window.location.hash = 'game-launcher';
+        });
+        
+        const observerMath = new MutationObserver((mutationsList) => {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if (section.classList.contains('active')) {
+                        if (!gameActiveMath) resetMathQuizGame();
+                    } else {
+                        if (gameActiveMath) resetMathQuizGame();
+                    }
+                }
+            }
+        });
+        if (section) observerMath.observe(section, { attributes: true });
+        resetMathQuizGame();
       };
 
-      const initGuessNumberGame = () => { /* ... (same as before) ... */ 
+      const initGuessNumberGame = () => { 
         const section = document.querySelector('#guessnum'); if (!section) return;
         const startButton = section.querySelector('#guessnum-start');
+        const exitGameButton = section.querySelector('#guessnum-exit-game');
         const inputField = section.querySelector('#guessnum-input');
         const submitButton = section.querySelector('#guessnum-submit');
         const resultElement = section.querySelector('.result');
         const messageElement = section.querySelector('.message');
-        let secretNumber, attempts;
+        const inputGroupDiv = section.querySelector('.input-group');
+        let secretNumber, attempts; let gameActiveGuessNum = false;
         const maxAttempts = 7;
 
-        const startGame = () => {
-            if (!auth.currentUser || !auth.currentUser.emailVerified) {
-                if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
-            }
-            secretNumber = Math.floor(Math.random() * 100) + 1;
-            attempts = 0;
-            showHideElement(startButton, false);
-            showHideElement(section.querySelector('.input-group'), true, 'block');
+        const resetGuessNumberGame = () => {
+            showHideElement(startButton, true);
+            showHideElement(exitGameButton, false);
+            showHideElement(inputGroupDiv, false);
             if(inputField) inputField.value = '';
-            if(messageElement) updateElementText(messageElement, `خمن رقمًا بين 1 و 100. لديك ${maxAttempts} محاولات.`);
+            if(messageElement) updateElementText(messageElement, `خمن رقمًا بين 1 و 100.`);
             if(resultElement) updateElementText(resultElement, '--');
-            if(inputField) inputField.focus();
-            disableElement(submitButton, false);
-            disableElement(inputField, false);
-            playSound('snd-click');
+            disableElement(submitButton, false); // Re-enable for next game
+            disableElement(inputField, false);   // Re-enable for next game
+            gameActiveGuessNum = false;
         };
-        const checkGuess = () => {
-            if (!auth.currentUser || !auth.currentUser.emailVerified || !inputField || !resultElement || !messageElement) {
-                if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
-            }
-            const guess = parseInt(inputField.value);
-            if (isNaN(guess) || guess < 1 || guess > 100) {
-                updateElementText(resultElement, 'الرجاء إدخال رقم بين 1 و 100.', 'error');
-                return;
-            }
-            attempts++;
-            if (guess === secretNumber) {
-                updateElementText(resultElement, `أحسنت! لقد خمنت الرقم ${secretNumber} في ${attempts} محاولات.`, 'success');
-                playSound('snd-win');
-                if(messageElement) updateElementText(messageElement, 'اضغط "ابدأ اللعبة" للعب مرة أخرى.');
-                showHideElement(startButton, true);
-                disableElement(submitButton, true);
-                disableElement(inputField, true);
-            } else {
-                playSound('snd-click');
-                const remainingAttempts = maxAttempts - attempts;
-                if (remainingAttempts <= 0) {
-                    updateElementText(resultElement, `للأسف انتهت محاولاتك. الرقم الصحيح كان ${secretNumber}.`, 'error');
-                    playSound('snd-lose');
-                    if(messageElement) updateElementText(messageElement, 'اضغط "ابدأ اللعبة" للعب مرة أخرى.');
-                    showHideElement(startButton, true);
-                    disableElement(submitButton, true);
-                    disableElement(inputField, true);
-                } else {
-                    updateElementText(resultElement, guess < secretNumber ? 'أعلى!' : 'أقل!', 'info');
-                    if(messageElement) updateElementText(messageElement, `محاولات متبقية: ${remainingAttempts}`);
-                }
-            }
-            if(inputField) {
-                 inputField.value = '';
-                 inputField.focus();
-            }
-        };
+
+        const startGame = () => { /* ... */ if (!auth.currentUser || !auth.currentUser.emailVerified) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } gameActiveGuessNum = true; secretNumber = Math.floor(Math.random() * 100) + 1; attempts = 0; showHideElement(startButton, false); showHideElement(exitGameButton, true); showHideElement(inputGroupDiv, true, 'block'); if(inputField) inputField.value = ''; if(messageElement) updateElementText(messageElement, `خمن رقمًا بين 1 و 100. لديك ${maxAttempts} محاولات.`); if(resultElement) updateElementText(resultElement, '--'); if(inputField) inputField.focus(); disableElement(submitButton, false); disableElement(inputField, false); playSound('snd-click'); };
+        const checkGuess = () => { /* ... */ if (!auth.currentUser || !auth.currentUser.emailVerified || !inputField || !resultElement || !messageElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } if (!gameActiveGuessNum) return; const guess = parseInt(inputField.value); if (isNaN(guess) || guess < 1 || guess > 100) { updateElementText(resultElement, 'الرجاء إدخال رقم بين 1 و 100.', 'error'); return; } attempts++; if (guess === secretNumber) { updateElementText(resultElement, `أحسنت! لقد خمنت الرقم ${secretNumber} في ${attempts} محاولات.`, 'success'); playSound('snd-win'); if(messageElement) updateElementText(messageElement, 'اضغط "ابدأ اللعبة" للعب مرة أخرى.'); showHideElement(startButton, true); showHideElement(exitGameButton, false); disableElement(submitButton, true); disableElement(inputField, true); gameActiveGuessNum = false; } else { playSound('snd-click'); const remainingAttempts = maxAttempts - attempts; if (remainingAttempts <= 0) { updateElementText(resultElement, `للأسف انتهت محاولاتك. الرقم الصحيح كان ${secretNumber}.`, 'error'); playSound('snd-lose'); if(messageElement) updateElementText(messageElement, 'اضغط "ابدأ اللعبة" للعب مرة أخرى.'); showHideElement(startButton, true); showHideElement(exitGameButton, false); disableElement(submitButton, true); disableElement(inputField, true); gameActiveGuessNum = false; } else { updateElementText(resultElement, guess < secretNumber ? 'أعلى!' : 'أقل!', 'info'); if(messageElement) updateElementText(messageElement, `محاولات متبقية: ${remainingAttempts}`); } } if(inputField) { inputField.value = ''; inputField.focus(); } };
+        
         if(startButton) startButton.addEventListener('click', startGame);
         if(submitButton) submitButton.addEventListener('click', checkGuess);
-        if(inputField) inputField.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkGuess(); });
-        if(messageElement) updateElementText(messageElement, 'خمن رقمًا بين 1 و 100');
+        if(inputField) inputField.addEventListener('keypress', (e) => { if (e.key === 'Enter' && gameActiveGuessNum) checkGuess(); });
+        if(exitGameButton) exitGameButton.addEventListener('click', () => {
+            playSound('snd-click');
+            resetGuessNumberGame();
+            if (auth.currentUser && auth.currentUser.emailVerified) window.location.hash = 'game-launcher';
+        });
+
+        const observerGuess = new MutationObserver((mutationsList) => {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if (section.classList.contains('active')) {
+                        if (!gameActiveGuessNum) resetGuessNumberGame();
+                    } else {
+                        if (gameActiveGuessNum) resetGuessNumberGame();
+                    }
+                }
+            }
+        });
+        if (section) observerGuess.observe(section, { attributes: true });
+        resetGuessNumberGame();
       };
 
-      const initBigSmallGame = () => { /* ... (same as before) ... */ 
+      const initBigSmallGame = () => { 
         const section = document.querySelector('#bigsmall'); if (!section) return;
         const startButton = section.querySelector('#bigsmall-start');
+        const exitGameButton = section.querySelector('#bigsmall-exit-game');
         const questionArea = section.querySelector('.question-area');
         const answerInput = section.querySelector('#bigsmall-answer');
         const submitButton = section.querySelector('#bigsmall-submit');
         const resultElement = section.querySelector('.result');
-        let num1, num2, biggerNum;
+        const inputGroupDiv = section.querySelector('.input-group');
+        let num1, num2, biggerNum; let gameActiveBigSmall = false;
 
-        const generateNumbers = () => {
-            num1 = Math.floor(Math.random() * 100) + 1;
-            do {
-                num2 = Math.floor(Math.random() * 100) + 1;
-            } while (num1 === num2); 
-            biggerNum = Math.max(num1, num2);
-            if(questionArea) questionArea.textContent = `أي الرقمين أكبر: ${num1} أم ${num2}؟`;
+        const resetBigSmallGame = () => {
+            showHideElement(startButton, true);
+            showHideElement(exitGameButton, false);
+            showHideElement(questionArea, false);
+            showHideElement(inputGroupDiv, false);
             if(answerInput) answerInput.value = '';
             if(resultElement) updateElementText(resultElement, '--');
+            gameActiveBigSmall = false;
         };
-        const startGame = () => {
-            if (!auth.currentUser || !auth.currentUser.emailVerified) {
-                if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
-            }
-            showHideElement(startButton, false);
-            showHideElement(questionArea, true);
-            showHideElement(section.querySelector('.input-group'), true, 'block');
-            generateNumbers();
-            if(answerInput) answerInput.focus();
-            playSound('snd-click');
-        };
-        const checkAnswer = () => {
-            if (!auth.currentUser || !auth.currentUser.emailVerified || !answerInput || !resultElement) {
-                if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
-            }
-            const userAnswer = parseInt(answerInput.value);
-            if (isNaN(userAnswer)) {
-                updateElementText(resultElement, 'الرجاء إدخال رقم.', 'error');
-                return;
-            }
-            if (userAnswer === biggerNum) {
-                updateElementText(resultElement, 'صحيح! 🎉', 'success');
-                playSound('snd-win');
-                 setTimeout(() => { 
-                    if (section.classList.contains('active') && auth.currentUser && auth.currentUser.emailVerified) generateNumbers();
-                }, 1500);
-            } else {
-                updateElementText(resultElement, `خطأ. الرقم الأكبر كان ${biggerNum}.`, 'error');
-                playSound('snd-lose');
-            }
-            if(answerInput) {answerInput.value = ''; answerInput.focus();}
-        };
+
+        const generateNumbers = () => { /* ... */ num1 = Math.floor(Math.random() * 100) + 1; do { num2 = Math.floor(Math.random() * 100) + 1; } while (num1 === num2);  biggerNum = Math.max(num1, num2); if(questionArea) questionArea.textContent = `أي الرقمين أكبر: ${num1} أم ${num2}؟`; if(answerInput) answerInput.value = ''; if(resultElement) updateElementText(resultElement, '--'); };
+        const startGame = () => { /* ... */ if (!auth.currentUser || !auth.currentUser.emailVerified) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } gameActiveBigSmall = true; showHideElement(startButton, false); showHideElement(exitGameButton, true); showHideElement(questionArea, true); showHideElement(inputGroupDiv, true, 'block'); generateNumbers(); if(answerInput) answerInput.focus(); playSound('snd-click'); };
+        const checkAnswer = () => { /* ... */ if (!auth.currentUser || !auth.currentUser.emailVerified || !answerInput || !resultElement) { if(resultElement) updateElementText(resultElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } if (!gameActiveBigSmall) return; const userAnswer = parseInt(answerInput.value); if (isNaN(userAnswer)) { updateElementText(resultElement, 'الرجاء إدخال رقم.', 'error'); return; } if (userAnswer === biggerNum) { updateElementText(resultElement, 'صحيح! 🎉', 'success'); playSound('snd-win');  setTimeout(() => {  if (gameActiveBigSmall && section.classList.contains('active') && auth.currentUser && auth.currentUser.emailVerified) generateNumbers(); }, 1500); } else { updateElementText(resultElement, `خطأ. الرقم الأكبر كان ${biggerNum}.`, 'error'); playSound('snd-lose'); } if(answerInput) {answerInput.value = ''; answerInput.focus();} };
+        
         if(startButton) startButton.addEventListener('click', startGame);
         if(submitButton) submitButton.addEventListener('click', checkAnswer);
-        if(answerInput) answerInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkAnswer(); });
-        if(resultElement) updateElementText(resultElement, '--');
+        if(answerInput) answerInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && gameActiveBigSmall) checkAnswer(); });
+        if(exitGameButton) exitGameButton.addEventListener('click', () => {
+            playSound('snd-click');
+            resetBigSmallGame();
+            if (auth.currentUser && auth.currentUser.emailVerified) window.location.hash = 'game-launcher';
+        });
+
+        const observerBigSmall = new MutationObserver((mutationsList) => {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if (section.classList.contains('active')) {
+                        if (!gameActiveBigSmall) resetBigSmallGame();
+                    } else {
+                        if (gameActiveBigSmall) resetBigSmallGame();
+                    }
+                }
+            }
+        });
+        if (section) observerBigSmall.observe(section, { attributes: true });
+        resetBigSmallGame();
       };
 
-      const initTypingTestGame = () => { /* ... (same as before) ... */ 
+      const initTypingTestGame = () => { 
         const section = document.querySelector('#typing'); if (!section) return;
         const startButton = section.querySelector('#typing-start');
+        const exitGameButton = section.querySelector('#typing-exit-game');
         const textToTypeElement = section.querySelector('.text-to-type');
         const inputField = section.querySelector('#typing-input');
         const submitButton = section.querySelector('#typing-submit'); 
         const statusElement = section.querySelector('.status');
+        const inputGroupDiv = section.querySelector('.input-group');
+        const sampleTexts = [ "أهلاً بك في اختبار الكتابة السريع. حاول أن تكتب هذه الجملة بدقة وسرعة.", "ممارسة الكتابة بانتظام تحسن من مهارتك بشكل ملحوظ.", "الألعاب الإلكترونية وسيلة رائعة للترفيه وتنمية بعض المهارات الذهنية.", "البرمجة هي لغة المستقبل، وتعلمها يفتح آفاقاً واسعة.", "الذكاء الاصطناعي يتطور بسرعة ويغير حياتنا اليومية." ];
+        let currentTextToType = ""; let startTime; let gameActiveTyping = false;
 
-        const sampleTexts = [
-            "أهلاً بك في اختبار الكتابة السريع. حاول أن تكتب هذه الجملة بدقة وسرعة.",
-            "ممارسة الكتابة بانتظام تحسن من مهارتك بشكل ملحوظ.",
-            "الألعاب الإلكترونية وسيلة رائعة للترفيه وتنمية بعض المهارات الذهنية.",
-            "البرمجة هي لغة المستقبل، وتعلمها يفتح آفاقاً واسعة.",
-            "الذكاء الاصطناعي يتطور بسرعة ويغير حياتنا اليومية."
-        ];
-        let currentTextToType = "";
-        let startTime;
-
-        const startGame = () => {
-            if (!auth.currentUser || !auth.currentUser.emailVerified) {
-                if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
-            }
-            currentTextToType = sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
-            if(textToTypeElement) textToTypeElement.textContent = currentTextToType;
-            if(inputField) inputField.value = '';
-            showHideElement(startButton, false);
-            showHideElement(textToTypeElement, true);
-            showHideElement(section.querySelector('.input-group'), true, 'block'); 
-            showHideElement(submitButton, true); 
-            disableElement(inputField, false);
-            disableElement(submitButton, false);
-            if(statusElement) updateElementText(statusElement, 'ابدأ الكتابة...');
-            if(inputField) inputField.focus();
-            startTime = new Date();
-            playSound('snd-click');
-        };
-        const checkTyping = () => {
-            if (!auth.currentUser || !auth.currentUser.emailVerified || !inputField || !textToTypeElement || !statusElement) {
-                if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
-            }
-            const typedText = inputField.value;
-            const originalText = textToTypeElement.textContent; 
-            const endTime = new Date();
-            const timeTaken = (endTime - startTime) / 1000; 
-
-            if (typedText.length < originalText.length && typedText !== originalText) {
-                 updateElementText(statusElement, 'أكمل النص أولاً ثم اضغط تحقق.');
-                 playSound('snd-lose');
-                 return;
-            }
-
-            let errors = 0;
-            for (let i = 0; i < originalText.length; i++) {
-                if (i >= typedText.length || typedText[i] !== originalText[i]) {
-                    errors++;
-                }
-            }
-            if (typedText.length > originalText.length) { 
-                errors += (typedText.length - originalText.length);
-            }
-
-            const words = originalText.split(/\s+/).filter(Boolean).length;
-            const wpm = timeTaken > 0 ? Math.round((words / timeTaken) * 60) : 0;
-            const accuracy = originalText.length > 0 ? Math.round(((originalText.length - errors) / originalText.length) * 100) : 0;
-            
-            updateElementText(statusElement, `الوقت: ${timeTaken.toFixed(1)} ثانية, السرعة: ${wpm} ك/د, الدقة: ${Math.max(0, accuracy)}%, الأخطاء: ${errors}`);
-            playSound(accuracy >= 80 ? 'snd-win' : 'snd-lose');
+        const resetTypingTestGame = () => {
             showHideElement(startButton, true);
-            disableElement(inputField, true);
-            disableElement(submitButton, true);
+            showHideElement(exitGameButton, false);
+            showHideElement(textToTypeElement, false);
+            showHideElement(inputGroupDiv, false); 
+            if(inputField) inputField.value = '';
+            disableElement(inputField, false); // Re-enable for next game
+            disableElement(submitButton, false); // Re-enable for next game
+            if(statusElement) updateElementText(statusElement, 'اضغط "ابدأ الاختبار"');
+            gameActiveTyping = false;
         };
+
+        const startGame = () => { /* ... */ if (!auth.currentUser || !auth.currentUser.emailVerified) { if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } gameActiveTyping = true; currentTextToType = sampleTexts[Math.floor(Math.random() * sampleTexts.length)]; if(textToTypeElement) textToTypeElement.textContent = currentTextToType; if(inputField) inputField.value = ''; showHideElement(startButton, false); showHideElement(exitGameButton, true); showHideElement(textToTypeElement, true); showHideElement(inputGroupDiv, true, 'block');  disableElement(inputField, false); disableElement(submitButton, false); if(statusElement) updateElementText(statusElement, 'ابدأ الكتابة...'); if(inputField) inputField.focus(); startTime = new Date(); playSound('snd-click'); };
+        const checkTyping = () => { /* ... */ if (!auth.currentUser || !auth.currentUser.emailVerified || !inputField || !textToTypeElement || !statusElement) { if(statusElement) updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; } if(!gameActiveTyping) return; const typedText = inputField.value; const originalText = textToTypeElement.textContent;  const endTime = new Date(); const timeTaken = (endTime - startTime) / 1000;  if (typedText.length < originalText.length && typedText !== originalText) { updateElementText(statusElement, 'أكمل النص أولاً ثم اضغط تحقق.'); playSound('snd-lose'); return; } let errors = 0; for (let i = 0; i < originalText.length; i++) { if (i >= typedText.length || typedText[i] !== originalText[i]) { errors++; } } if (typedText.length > originalText.length) {  errors += (typedText.length - originalText.length); } const words = originalText.split(/\s+/).filter(Boolean).length; const wpm = timeTaken > 0 ? Math.round((words / timeTaken) * 60) : 0; const accuracy = originalText.length > 0 ? Math.round(((originalText.length - errors) / originalText.length) * 100) : 0;  updateElementText(statusElement, `الوقت: ${timeTaken.toFixed(1)} ثانية, السرعة: ${wpm} ك/د, الدقة: ${Math.max(0, accuracy)}%, الأخطاء: ${errors}`); playSound(accuracy >= 80 ? 'snd-win' : 'snd-lose'); showHideElement(startButton, true); showHideElement(exitGameButton, false); disableElement(inputField, true); disableElement(submitButton, true); gameActiveTyping = false; };
+        
         if(startButton) startButton.addEventListener('click', startGame);
         if(submitButton) submitButton.addEventListener('click', checkTyping);
-        if(statusElement) updateElementText(statusElement, 'اضغط "ابدأ الاختبار"');
+        if(exitGameButton) exitGameButton.addEventListener('click', () => {
+            playSound('snd-click');
+            resetTypingTestGame();
+            if (auth.currentUser && auth.currentUser.emailVerified) window.location.hash = 'game-launcher';
+        });
+
+        const observerTyping = new MutationObserver((mutationsList) => {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if (section.classList.contains('active')) {
+                        if (!gameActiveTyping) resetTypingTestGame();
+                    } else {
+                        if (gameActiveTyping) resetTypingTestGame();
+                    }
+                }
+            }
+        });
+        if (section) observerTyping.observe(section, { attributes: true });
+        resetTypingTestGame();
       };
 
       initXOGame(); 
