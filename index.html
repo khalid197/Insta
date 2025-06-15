@@ -6,10 +6,84 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <style>
-    /* ... (نفس الأنماط العامة من الكود السابق) ... */
     @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;700;800;900&display=swap");
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-    body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat; background-size: cover; background-position: center; overflow-y: auto;}
+    body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: url("https://i.pinimg.com/originals/d7/b9/0c/d7b90cc80898e8823455a127945719af.jpg") no-repeat; background-size: cover; background-position: center; overflow-y: auto; position: relative; /* For sidebar positioning */
+    }
+
+    /* --- Sidebar Styles --- */
+    .sidebar-toggle {
+        position: fixed;
+        top: 15px;
+        right: 20px; /* Changed from left to right for LTR toggle on RTL page */
+        font-size: 2.2rem;
+        color: white;
+        background-color: #002b4d;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        z-index: 1002; /* Above sidebar overlay */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .sidebar-toggle:focus { outline: none; }
+
+    .sidebar {
+        height: 100%;
+        width: 0; /* Initially hidden */
+        position: fixed;
+        z-index: 1001;
+        top: 0;
+        right: 0; /* Changed from left to right */
+        background-color: #00233a; /* Slightly darker than nav */
+        overflow-x: hidden;
+        transition: 0.35s ease-out;
+        padding-top: 70px; /* Space for toggle button or header */
+        direction: rtl;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.2); /* Shadow on the left */
+    }
+    .sidebar.open {
+        width: 260px; /* Width when open */
+    }
+    .sidebar a {
+        padding: 12px 15px 12px 30px; /* Adjusted padding for RTL */
+        text-decoration: none;
+        font-size: 1.15rem;
+        color: #b0bec5; /* Lighter color for links */
+        display: block;
+        transition: 0.2s;
+        border-bottom: 1px solid #002b4d; /* Separator */
+    }
+    .sidebar a:last-child {
+        border-bottom: none;
+    }
+    .sidebar a:hover, .sidebar a.active-nav-link {
+        color: #fff;
+        background-color: #003B73;
+        font-weight: bold;
+    }
+    .sidebar .sidebar-close-btn {
+        position: absolute;
+        top: 15px;
+        left: 25px; /* Changed from right to left */
+        font-size: 2rem;
+        color: #b0bec5;
+        cursor: pointer;
+    }
+     .sidebar .sidebar-close-btn:hover {
+        color: #fff;
+     }
+
+    #admin-button-sidebar {
+        background-color: rgba(220, 53, 69, 0.7);
+        color: white !important; /* Important to override other styles */
+    }
+    #admin-button-sidebar:hover {
+         background-color: #dc3545;
+    }
+
+
+    /* --- General Styles (some might be adjusted) --- */
     .wrapper { margin-top: 80px; width: 420px; background-color: transparent; border: 2px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(15px); box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); color: #fff; border-radius: 16px; padding: 20px 30px; direction: rtl; }
     .wrapper h1 { font-size: 30px; text-align: center; margin-bottom:20px;}
     .wrapper .input-box { width: 100%; height: 50px; position: relative; margin: 30px 0; }
@@ -31,10 +105,8 @@
     #auth-status.error { background-color: rgba(220, 53, 69, 0.3); border: 1px solid rgba(220, 53, 69, 0.6); }
     #auth-status.info { background-color: rgba(23, 162, 184, 0.3); border: 1px solid rgba(23, 162, 184, 0.6); }
     
-    nav { background:#002b4d; padding:12px; text-align:center; position:fixed; top:0; left:0; right:0; z-index: 1000; direction: rtl;}
-    nav a { color:white; margin:0 10px; text-decoration:none; font-size:1.1rem; }
-    nav a:hover, nav a.active-nav-link { text-decoration:underline; font-weight: bold; }
-    #admin-button-nav { background-color: #dc3545; padding: 5px 10px; border-radius: 5px; font-weight: bold; }
+    /* Nav is now just the toggle button, so we can hide the old nav */
+    nav#main-nav { display: none; } 
     
     section {
       display: none; 
@@ -80,58 +152,18 @@
     section:not(#login):not(#game-launcher) button:disabled { background:#ccc; cursor:not-allowed; }
     .status, .result, .message, .timebox { margin:15px 0; font-size:1.1rem; min-height: 1.2em; text-align: center;}
     
-    /* XO Game Specific Styles */
-    .xo-board-container {
-        position: relative; 
-        width: 316px; 
-        height: 316px;
-        margin: 0 auto 20px auto;
-    }
-    .board { 
-        display:grid; 
-        grid-template-columns:repeat(3,100px); 
-        gap:8px; 
-        justify-content:center; 
-    }
-    .cell { 
-        width:100px; 
-        height:100px; 
-        border:2px solid #aaa; 
-        display:flex; 
-        align-items:center; 
-        justify-content:center; 
-        font-size:2.8rem; 
-        background:#f9f9f9; 
-        transition:background .2s; 
-        cursor:pointer; 
-        border-radius: 8px;
-        color: #333; 
-    }
+    .xo-board-container { position: relative; width: 316px; height: 316px; margin: 0 auto 20px auto; }
+    .board { display:grid; grid-template-columns:repeat(3,100px); gap:8px; justify-content:center; }
+    .cell { width:100px; height:100px; border:2px solid #aaa; display:flex; align-items:center; justify-content:center; font-size:2.8rem; background:#f9f9f9; transition:background .2s; cursor:pointer; border-radius: 8px; color: #333; }
     .cell:hover { background:#e9e9e9; }
-    #xo-winning-line-canvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none; 
-    }
+    #xo-winning-line-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
     .xo-options, .memory-options { margin-bottom: 15px; text-align: center; }
     .xo-options button, .memory-options button { margin: 0 3px; } 
 
-
-    .gamebox, 
-    .cards {
-      margin-top: 0; 
-      margin-right: auto; 
-      margin-bottom: 20px; 
-      margin-left: auto; 
-      text-align: center;
-    }
+    .gamebox, .cards { margin: 0 auto 20px auto; text-align: center; }
     .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 380px; }
     .cards.disabled { pointer-events: none; }
     .cards.disabled .card:not(.matched) { opacity: 0.8; }
-
 
     .card { width: 80px; height: 80px; background-color: #007bff; color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; border-radius: 8px; cursor: pointer; transition: transform 0.3s, background-color 0.3s; transform-style: preserve-3d; }
     .card .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
@@ -143,7 +175,6 @@
     .memory-scores { margin-bottom: 10px; font-weight: bold; }
     .memory-player-names-input { margin-bottom:15px; text-align:center; }
     .memory-player-names-input input { padding:8px; margin:0 5px; border-radius:5px; border:1px solid #ccc; text-align:center;}
-
 
     #click-target-area { text-align: left; min-height: 200px; background-color: #e9ecef; position: relative; border-radius: 8px; overflow: hidden; }
     #clickable-target { width: 50px; height: 50px; background-color: red; border-radius: 50%; position: absolute; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: all 0.1s; }
@@ -174,11 +205,19 @@
 </head>
 <body>
 
-  <nav id="main-nav">
-    <a href="#login" id="nav-login-link">تسجيل الدخول</a>
-    <a href="#settings" id="nav-settings-link" style="display:none;">الإعدادات</a>
-    <a href="#" id="admin-button-nav" style="display:none;" onclick="showAdminMessage(event)">لوحة الأدمن</a>
-  </nav>
+  <button class="sidebar-toggle" id="sidebar-toggle-button">
+    <i class='bx bx-menu'></i>
+  </button>
+
+  <div class="sidebar" id="mySidebar">
+    <a href="javascript:void(0)" class="sidebar-close-btn" id="sidebar-close-button">×</a>
+    <a href="#login" id="nav-login-link-sidebar">تسجيل الدخول</a>
+    <a href="#game-launcher" id="nav-games-launcher-link-sidebar" style="display:none;">الألعاب</a>
+    <a href="#settings" id="nav-settings-link-sidebar" style="display:none;">الإعدادات</a>
+    <a href="#" id="admin-button-sidebar" style="display:none;" onclick="showAdminArea(event)">لوحة الأدمن</a>
+    <!-- Dynamic game links will be added here by JS -->
+  </div>
+
 
   <section id="login">
     <div class="wrapper">
@@ -256,9 +295,17 @@
       <div id="settings-status" class="info"></div>
   </section>
 
+  <section id="admin-area" class="game-section" style="display:none;">
+      <h2>لوحة تحكم الأدمن 👑</h2>
+      <p>مرحباً بك أيها الأدمن!</p>
+      <p>في هذه المنطقة، يمكنك (نظريًا) إدارة المستخدمين.</p>
+      <p><strong>ملاحظة:</strong> عرض قائمة المستخدمين وحذفهم يتطلب إعدادات من جهة الخادم (Backend) باستخدام Firebase Admin SDK لضمان الأمان. هذا الجزء هو مجرد واجهة توضيحية حاليًا.</p>
+      <div id="admin-status" class="info"></div>
+  </section>
+
 
   <!-- ... (باقي أقسام الألعاب كما هي) ... -->
-  <section id="rps" class="game-section"> <h2>حجر ورقة مقص 🧱📄✂️</h2> <div class="gamebox"> <button data-choice="🧱">🧱</button> <button data-choice="📄">📄</button> <button data-choice="✂️">✂️</button> </div> <div class="result">اختر لبدء!</div> </section>
+  <section id="rps" class="game-section"> <h2>حجر ورقة مقص 🧱📄✂️</h2> <div class="gamebox"> <button data-choice="🧱">🧱</button> <button data-choice="📄">📄</button> <button data-choice="✂️">✂️</button> </div> <div class="result">اختر لبدء!</d> </div> </section>
   <section id="click" class="game-section"> <h2>اصطياد الهدف 🎯</h2> <div class="gamebox"><button id="click-start">ابدأ</button></div> <div id="click-target-area" class="gamebox" style="display:none;"></div> <div class="status">اضغط "ابدأ"</div> </section>
   <section id="react" class="game-section"> <h2>اختبار سرعة الضغط ⌛</h2> <div class="timebox" id="react-box">اضغط للبدء</div> </section>
   <section id="dice" class="game-section"> <h2>لعبة النرد 🎲</h2> <div class="gamebox"><button id="dice-roll">رمي النرد</button></div> <div class="result" id="dice-result" style="font-size: 3rem;">--</div> </section>
@@ -298,10 +345,16 @@
       const disableElement = (el, dis) => { if(el) el.disabled = dis; };
 
       const allSections = document.querySelectorAll('section');
-      const mainNav = document.getElementById('main-nav');
-      const navLoginLink = document.getElementById('nav-login-link');
-      const navSettingsLink = document.getElementById('nav-settings-link');
-      const adminButtonNav = document.getElementById('admin-button-nav');
+      const sidebar = document.getElementById('mySidebar');
+      const sidebarToggleButton = document.getElementById('sidebar-toggle-button');
+      const sidebarCloseButton = document.getElementById('sidebar-close-button');
+      
+      // Sidebar links
+      const navLoginLinkSidebar = document.getElementById('nav-login-link-sidebar');
+      const navGamesLauncherLinkSidebar = document.getElementById('nav-games-launcher-link-sidebar');
+      const navSettingsLinkSidebar = document.getElementById('nav-settings-link-sidebar');
+      const adminButtonSidebar = document.getElementById('admin-button-sidebar');
+
       const gameLauncherSection = document.getElementById('game-launcher');
       const gameIconsGridContainer = document.getElementById('game-icons-grid-container');
       
@@ -317,7 +370,6 @@
           { id: "bigsmall", text: "من الأكبر", icon: "bxs-sort-alt" }, 
           { id: "typing", text: "الكتابة", icon: "bxs-keyboard" }
       ];
-      let navGamesLink = null; 
       let isLoginMode = true;
 
       const loginTitle = document.getElementById('login-title');
@@ -326,23 +378,27 @@
       const authFormFields = document.getElementById('auth-form-fields');
       const loginEmailInput = document.getElementById('login-email');
       const loginPasswordInput = document.getElementById('login-password');
-      const btnLogout = document.getElementById('btn-logout');
+      const btnLogout = document.getElementById('btn-logout'); // This button is inside the login form, might need to move it or create a new one for sidebar
       const authStatusDiv = document.getElementById('auth-status');
 
-      // Settings section elements
       const settingsUserEmailEl = document.getElementById('settings-user-email');
       const btnChangePassword = document.getElementById('btn-change-password');
       const settingsStatusDiv = document.getElementById('settings-status');
+      const adminAreaSection = document.getElementById('admin-area');
 
 
        const updateAuthUI = (isLoggedIn, user, isVerified = true) => {
         showHideElement(authFormFields, !isLoggedIn);
         showHideElement(mainActionButton, !isLoggedIn);
         showHideElement(toggleAuthModeText.parentElement, !isLoggedIn);
-        showHideElement(btnLogout, isLoggedIn);
-        showHideElement(navSettingsLink, isLoggedIn && isVerified);
-        showHideElement(adminButtonNav, isLoggedIn && user && user.email === ADMIN_EMAIL);
+        showHideElement(btnLogout, isLoggedIn); // Keep this for the login form if needed, or rely on sidebar's logout
 
+        // Sidebar links visibility
+        showHideElement(navLoginLinkSidebar, !isLoggedIn); // Show "Login" if not logged in
+        showHideElement(navGamesLauncherLinkSidebar, isLoggedIn && isVerified);
+        showHideElement(navSettingsLinkSidebar, isLoggedIn && isVerified);
+        showHideElement(adminButtonSidebar, isLoggedIn && user && user.email === ADMIN_EMAIL);
+        // Dynamic game links in sidebar will be handled by populateSidebarGameLinks
 
         const currentActiveSection = document.querySelector('section.active');
         const activeSectionId = currentActiveSection ? currentActiveSection.id : 'login';
@@ -353,33 +409,38 @@
             updateElementText(authStatusDiv, user.email, 'success');
             if(gameIconsGridContainer && gameIconsGridContainer.children.length === 0) populateGameLauncher();
             if(settingsUserEmailEl) settingsUserEmailEl.textContent = user.email;
+            populateSidebarGameLinks(); // Populate game links in sidebar
           } else {
             updateElementText(authStatusDiv, `تم تسجيل الدخول كـ ${user.email}. يرجى التحقق من بريدك الإلكتروني للوصول الكامل.`, 'info');
             if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
-             if(settingsUserEmailEl) settingsUserEmailEl.textContent = "يرجى التحقق من بريدك أولاً.";
+            if(settingsUserEmailEl) settingsUserEmailEl.textContent = "يرجى التحقق من بريدك أولاً.";
+            clearSidebarGameLinks();
           }
-          navLoginLink.textContent = 'تسجيل الخروج';
-          navLoginLink.href = "#logout"; 
-          navLoginLink.onclick = (e) => { e.preventDefault(); btnLogout.click(); };
+          // Change login link in sidebar to logout
+          navLoginLinkSidebar.textContent = 'تسجيل الخروج';
+          navLoginLinkSidebar.href = "#logout"; 
+          // The click handler for logout will be managed globally for sidebar links
           
         } else {
           isLoginMode = true; 
           updateLoginModeUI(); 
           updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
-          navLoginLink.textContent = 'تسجيل الدخول';
-          navLoginLink.href = "#login";
-          navLoginLink.onclick = handleNavLinkClick;
+          // Change sidebar link back to login
+          navLoginLinkSidebar.textContent = 'تسجيل الدخول';
+          navLoginLinkSidebar.href = "#login";
+
           if(gameIconsGridContainer) gameIconsGridContainer.innerHTML = ''; 
           if(settingsUserEmailEl) settingsUserEmailEl.textContent = "غير مسجل الدخول";
           updateElementText(settingsStatusDiv, '', 'info');
+          clearSidebarGameLinks();
           allSections.forEach(s => { 
-                if(s.id !== 'login') s.classList.remove('active');
+                if(s.id !== 'login' && s.id !== 'admin-area') s.classList.remove('active'); // Keep admin area potentially active
           });
         }
-        updateNavigationDOM(isLoggedIn && isVerified, activeSectionId); 
+        updateSidebarActiveLink(activeSectionId); 
       };
 
-      const updateLoginModeUI = () => {
+      const updateLoginModeUI = () => { /* ... (same as before) ... */ 
         const linkId = 'toggle-auth-mode-link-inner';
         if (isLoginMode) {
           loginTitle.textContent = 'تسجيل الدخول';
@@ -396,14 +457,14 @@
         if(newToggleLink) newToggleLink.addEventListener('click', toggleMode);
       };
       
-      const toggleMode = (e) => { 
+      const toggleMode = (e) => { /* ... (same as before) ... */ 
         if(e) e.preventDefault(); 
         isLoginMode = !isLoginMode; 
         updateLoginModeUI(); 
         updateElementText(authStatusDiv, isLoginMode ? 'أدخل بيانات تسجيل الدخول.' : 'أدخل بيانات لإنشاء حساب جديد.', 'info'); 
       };
 
-      const handleAuthAction = () => {
+      const handleAuthAction = () => { /* ... (same as before) ... */ 
         const email = loginEmailInput.value.trim(); const password = loginPasswordInput.value;
         if (!email || !password) { updateElementText(authStatusDiv, "الرجاء إدخال البريد الإلكتروني وكلمة المرور.", 'error'); return; }
         if (!isLoginMode && password.length < 6) { updateElementText(authStatusDiv, "كلمة المرور يجب أن تكون 6 حروف على الأقل.", 'error'); return; }
@@ -461,13 +522,17 @@
       };
       updateLoginModeUI(); 
       mainActionButton.addEventListener('click', handleAuthAction);
+      
+      // Logout logic for the main button in login form (if you keep it)
       btnLogout.addEventListener('click', () => { 
         auth.signOut().catch(e => console.error('Logout error', e)); 
         updateElementText(authStatusDiv, 'يرجى تسجيل الدخول أو إنشاء حساب جديد.', 'info');
         window.location.hash = 'login';
+        closeSidebar();
       });
 
-      if(btnChangePassword) {
+
+      if(btnChangePassword) { /* ... (same as before) ... */ 
           btnChangePassword.addEventListener('click', () => {
               const user = auth.currentUser;
               if (user && user.email) {
@@ -485,15 +550,13 @@
           });
       }
 
-      window.showAdminMessage = (event) => { // Make it global to be accessible from onclick
+      window.showAdminArea = (event) => { 
           event.preventDefault();
-          alert("أهلاً أيها الأدمن! هذه منطقة مخصصة لك.");
-          // In a real application, you would navigate to an admin section or fetch admin data here.
-          // For now, it just shows an alert.
+          window.location.hash = "admin-area";
+          closeSidebar();
       };
 
-
-      const populateGameLauncher = () => {
+      const populateGameLauncher = () => { /* ... (same as before) ... */ 
         if (!gameIconsGridContainer) return;
         gameIconsGridContainer.innerHTML = ''; 
         gameNavLinksData.forEach(game => {
@@ -521,50 +584,66 @@
         });
       };
 
-      const updateNavigationDOM = (isLoggedInAndVerified, activeSectionId) => { 
-        if (navGamesLink && navGamesLink.parentNode === mainNav) {
-            mainNav.removeChild(navGamesLink);
-            navGamesLink = null;
-        }
-        if (isLoggedInAndVerified) {
-            const isGameSectionActive = gameNavLinksData.some(game => game.id === activeSectionId);
-            if (isGameSectionActive) { 
-                navGamesLink = document.createElement('a');
-                navGamesLink.href = "#game-launcher";
-                navGamesLink.textContent = "الألعاب";
-                navGamesLink.id = "nav-games-launcher-link";
-                navGamesLink.onclick = handleNavLinkClick;
-                mainNav.insertBefore(navGamesLink, navSettingsLink); // Insert before settings
-            }
-        }
-        if (!mainNav.contains(navLoginLink)) {
-            mainNav.insertBefore(navLoginLink, mainNav.firstChild);
-        }
-        
-        Array.from(mainNav.children).forEach(a => {
+      const populateSidebarGameLinks = () => {
+          clearSidebarGameLinks(); // Clear existing dynamic links first
+          const adminButton = document.getElementById('admin-button-sidebar'); // Reference to insert before
+
+          gameNavLinksData.forEach(game => {
+              const gameLink = document.createElement('a');
+              gameLink.href = `#${game.id}`;
+              gameLink.textContent = game.text;
+              gameLink.classList.add('sidebar-game-link'); // For easy removal
+              gameLink.onclick = handleSidebarLinkClick;
+              if (adminButton && adminButton.parentNode === sidebar) {
+                 sidebar.insertBefore(gameLink, adminButton);
+              } else {
+                 sidebar.appendChild(gameLink); // Fallback if admin button isn't there
+              }
+          });
+      };
+      const clearSidebarGameLinks = () => {
+          const dynamicLinks = sidebar.querySelectorAll('.sidebar-game-link');
+          dynamicLinks.forEach(link => link.remove());
+      };
+
+      const updateSidebarActiveLink = (activeSectionId) => { 
+        const links = sidebar.querySelectorAll('a');
+        links.forEach(a => {
             if (a) a.classList.remove('active-nav-link');
+            // Check if href matches, considering the #
             if (a && a.getAttribute('href') === `#${activeSectionId}`) {
                 a.classList.add('active-nav-link');
             }
         });
-         if (activeSectionId === 'login' || (auth.currentUser && activeSectionId !== 'login' && !auth.currentUser.emailVerified) ) {
-            if(navLoginLink) navLoginLink.classList.add('active-nav-link');
-        } else if (navLoginLink) {
-             navLoginLink.classList.remove('active-nav-link');
+        // Special case for logout which is part of login link when logged in
+        if (activeSectionId === 'login' && auth.currentUser) {
+            // No specific active state for logout, login link text changes
+        } else if (activeSectionId === 'login' && !auth.currentUser) {
+            if(navLoginLinkSidebar) navLoginLinkSidebar.classList.add('active-nav-link');
         }
       };
 
+
       const showSectionByHash = () => {
-        const hash = window.location.hash.slice(1) || 'login';
+        let hash = window.location.hash.slice(1);
+        if (!hash && auth.currentUser && auth.currentUser.emailVerified) {
+            hash = 'game-launcher'; // Default to game launcher if logged in and no hash
+            window.location.hash = hash; // Update URL
+        } else if (!hash && (!auth.currentUser || !auth.currentUser.emailVerified)) {
+            hash = 'login'; // Default to login if not logged in and no hash
+             window.location.hash = hash; // Update URL
+        }
+
+
         const currentUser = auth.currentUser;
         const isVerified = currentUser && currentUser.emailVerified;
         let targetIdToShow = 'login'; 
 
         if (isVerified) {
-            if (hash === 'game-launcher' || gameNavLinksData.some(game => game.id === hash) || hash === 'settings') {
+            if (hash === 'game-launcher' || gameNavLinksData.some(game => game.id === hash) || hash === 'settings' || (hash === 'admin-area' && currentUser.email === ADMIN_EMAIL)) {
                 targetIdToShow = hash;
-            } else if (hash === 'login'){
-                 targetIdToShow = 'game-launcher';
+            } else if (hash === 'login'){ // If explicitly trying to go to login while verified
+                 targetIdToShow = 'game-launcher'; // Redirect to game launcher
                  if (window.location.hash !== '#game-launcher') window.location.hash = 'game-launcher';
             } else { // Default to game launcher if hash is unknown and verified
                 targetIdToShow = 'game-launcher';
@@ -586,31 +665,55 @@
                 s.classList.remove('active');
             }
         });
-        updateNavigationDOM(isVerified, targetIdToShow);
-         if (targetIdToShow === 'settings' && settingsStatusDiv) updateElementText(settingsStatusDiv, '', 'info'); // Clear status on settings open
+        updateSidebarActiveLink(targetIdToShow);
+        if (targetIdToShow === 'settings' && settingsStatusDiv) updateElementText(settingsStatusDiv, '', 'info'); 
       };
       
       auth.onAuthStateChanged(user => {
         updateAuthUI(!!user, user, user ? user.emailVerified : false);
-        showSectionByHash();
+        showSectionByHash(); // Call this to ensure correct section is shown after auth state change
       });
 
-      const handleNavLinkClick = (e) => {
+      const handleSidebarLinkClick = (e) => {
           e.preventDefault(); 
           const targetHash = e.currentTarget.getAttribute('href');
           if (targetHash === '#logout') { 
-             btnLogout.click();
-             return;
-           }
-          window.location.hash = targetHash;
+            auth.signOut().catch(err => console.error('Logout error', err));
+            window.location.hash = 'login'; // Go to login after logout
+          } else {
+            window.location.hash = targetHash;
+          }
+          closeSidebar();
       };
-      navLoginLink.addEventListener('click', handleNavLinkClick);
-      if (navSettingsLink) navSettingsLink.addEventListener('click', handleNavLinkClick);
+
+      // Assign click handlers to static sidebar links
+      navLoginLinkSidebar.addEventListener('click', handleSidebarLinkClick);
+      if (navGamesLauncherLinkSidebar) navGamesLauncherLinkSidebar.addEventListener('click', handleSidebarLinkClick);
+      if (navSettingsLinkSidebar) navSettingsLinkSidebar.addEventListener('click', handleSidebarLinkClick);
+      // Admin button has onclick in HTML for showAdminArea, which then changes hash and calls closeSidebar.
       
       window.addEventListener('hashchange', showSectionByHash);
 
+      // Sidebar Toggle Logic
+      function openSidebar() {
+        if(sidebar) sidebar.classList.add('open');
+      }
+      function closeSidebar() {
+        if(sidebar) sidebar.classList.remove('open');
+      }
+      if(sidebarToggleButton) sidebarToggleButton.addEventListener('click', openSidebar);
+      if(sidebarCloseButton) sidebarCloseButton.addEventListener('click', closeSidebar);
+      document.addEventListener('click', function(event) {
+        if (sidebar && sidebar.classList.contains('open') && 
+            !sidebar.contains(event.target) && 
+            !sidebarToggleButton.contains(event.target)) {
+            closeSidebar();
+        }
+      });
+
+
       // --- Game Initializations ---
-      const initXOGame = () => {
+      const initXOGame = () => { /* ... (same as before) ... */ 
           const section = document.querySelector('#xo');
           if (!section) return;
           const boardElement = section.querySelector('.board');
@@ -818,7 +921,7 @@
           resetGame(); 
       };
       
-      const initMemoryGame = () => {
+      const initMemoryGame = () => { /* ... (same as previous correct version) ... */ 
         const section = document.querySelector('#memory'); if (!section) return;
         const cardsContainer = section.querySelector('.cards');
         const statusElement = section.querySelector('.status');
@@ -835,13 +938,12 @@
         const player2NameInput = section.querySelector('#memory-player2-name');
         const startPvpNamedButton = section.querySelector('#memory-start-pvp-named');
 
-
         const cardValues = ['🧠', '🎮', '🎯', '🎲', '💡', '💻', '🌟', '🚀'];
         let gameCards = [];
         let flippedCards = [];
         let canFlip = true;
         let gameActiveMemory = false;
-        let gameModeMemory = null; // 'pvp-memory', 'solo-memory'
+        let gameModeMemory = null; 
         let currentPlayerMemory = null; 
         let playerNames = { player1: "اللاعب 1", player2: "اللاعب 2" };
         let scoresMemory = { player1: 0, player2: 0 };
@@ -870,8 +972,7 @@
         
         function updateStatus() {
             if (!gameActiveMemory) {
-                updateElementText(statusElement, "اختر نمط اللعبة");
-                return;
+                updateElementText(statusElement, "اختر نمط اللعبة"); return;
             }
             let turnText = "";
             if (gameModeMemory === 'pvp-memory') {
@@ -885,181 +986,110 @@
         function preparePvpNameInputs() {
             showHideElement(optionsDivMemory, false);
             showHideElement(playerNamesInputDiv, true);
-            player1NameInput.value = '';
-            player2NameInput.value = '';
+            player1NameInput.value = ''; player2NameInput.value = '';
         }
 
         function startGameMemory(mode) {
             if (!auth.currentUser || !auth.currentUser.emailVerified) {
-                updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info');
-                return;
+                updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return;
             }
-            
             gameModeMemory = mode;
             if (mode === 'pvp-memory') {
                 playerNames.player1 = player1NameInput.value.trim() || "اللاعب 1";
                 playerNames.player2 = player2NameInput.value.trim() || "اللاعب 2";
-            } else { // solo-memory
-                playerNames.player1 = "أنت"; // Or just keep it generic
             }
-
-            gameActiveMemory = true;
-            canFlip = true;
-            flippedCards = [];
-            scoresMemory = { player1: 0, player2: 0 };
-            currentPlayerMemory = 'player1';
-
-            showHideElement(optionsDivMemory, false);
-            showHideElement(playerNamesInputDiv, false); // Hide name inputs after starting
-            showHideElement(scoresDivMemory, true);
-            showHideElement(cardsContainer, true, 'grid');
-            cardsContainer.classList.remove('disabled');
-            showHideElement(restartButton, true);
-            
-            updateScoresDisplay();
-            createMemoryBoard();
-            updateStatus();
-            playSound('snd-click');
+            gameActiveMemory = true; canFlip = true; flippedCards = [];
+            scoresMemory = { player1: 0, player2: 0 }; currentPlayerMemory = 'player1';
+            showHideElement(optionsDivMemory, false); showHideElement(playerNamesInputDiv, false);
+            showHideElement(scoresDivMemory, true); showHideElement(cardsContainer, true, 'grid');
+            cardsContainer.classList.remove('disabled'); showHideElement(restartButton, true);
+            updateScoresDisplay(); createMemoryBoard(); updateStatus(); playSound('snd-click');
         }
-
 
         function createMemoryBoard() {
             if(!cardsContainer) return;
-            cardsContainer.innerHTML = '';
-            let items = shuffle([...cardValues, ...cardValues]); 
-            gameCards = [];
-
+            cardsContainer.innerHTML = ''; let items = shuffle([...cardValues, ...cardValues]); gameCards = [];
             items.forEach((value, index) => {
-                const card = document.createElement('div');
-                card.classList.add('card');
-                card.dataset.value = value;
-                card.dataset.id = index; 
-                const cardFaceFront = document.createElement('div');
-                cardFaceFront.classList.add('card-face', 'card-front');
-                const cardFaceBack = document.createElement('div');
-                cardFaceBack.classList.add('card-face', 'card-back');
-                cardFaceBack.textContent = value;
-                card.appendChild(cardFaceFront);
-                card.appendChild(cardFaceBack);
+                const card = document.createElement('div'); card.classList.add('card');
+                card.dataset.value = value; card.dataset.id = index; 
+                const cardFaceFront = document.createElement('div'); cardFaceFront.classList.add('card-face', 'card-front');
+                const cardFaceBack = document.createElement('div'); cardFaceBack.classList.add('card-face', 'card-back');
+                cardFaceBack.textContent = value; card.appendChild(cardFaceFront); card.appendChild(cardFaceBack);
                 card.addEventListener('click', () => flipCardMemory(card));
-                cardsContainer.appendChild(card);
-                gameCards.push(card);
+                cardsContainer.appendChild(card); gameCards.push(card);
             });
         }
         
          function flipCardMemory(card) {
-            if (!auth.currentUser || !auth.currentUser.emailVerified) {
-                updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info');
-                return;
-            }
+            if (!auth.currentUser || !auth.currentUser.emailVerified) { updateElementText(statusElement, 'يرجى التحقق من بريدك للعب.', 'info'); return; }
             if (!gameActiveMemory || !canFlip || card.classList.contains('flipped') || card.classList.contains('matched')) return;
-            
-            card.classList.add('flipped');
-            flippedCards.push(card);
-            playSound('snd-click');
-
-            if (flippedCards.length === 2) {
-                canFlip = false; 
-                checkForMatchMemory();
-            }
+            card.classList.add('flipped'); flippedCards.push(card); playSound('snd-click');
+            if (flippedCards.length === 2) { canFlip = false; checkForMatchMemory(); }
         }
 
         function checkForMatchMemory() {
-            const [card1, card2] = flippedCards;
-            const isMatch = card1.dataset.value === card2.dataset.value;
-
+            const [card1, card2] = flippedCards; const isMatch = card1.dataset.value === card2.dataset.value;
             if (isMatch) {
-                card1.classList.add('matched');
-                card2.classList.add('matched');
-                
+                card1.classList.add('matched'); card2.classList.add('matched');
                 if (gameModeMemory === 'pvp-memory') {
-                    if (currentPlayerMemory === 'player1') scoresMemory.player1++;
-                    else if (currentPlayerMemory === 'player2') scoresMemory.player2++;
-                } else { // solo-memory
-                    scoresMemory.player1++;
-                }
-                
-                updateScoresDisplay();
-                playSound('snd-win');
-
+                    if (currentPlayerMemory === 'player1') scoresMemory.player1++; else if (currentPlayerMemory === 'player2') scoresMemory.player2++;
+                } else { scoresMemory.player1++; }
+                updateScoresDisplay(); playSound('snd-win');
                 const totalPairs = cardValues.length;
                 const matchedPairsCount = scoresMemory.player1 + (gameModeMemory === 'pvp-memory' ? scoresMemory.player2 : 0);
-
                 if (matchedPairsCount === totalPairs) {
-                    gameActiveMemory = false;
-                    canFlip = false;
-                    let winnerMsg = "انتهت اللعبة! ";
+                    gameActiveMemory = false; canFlip = false; let winnerMsg = "انتهت اللعبة! ";
                     if (gameModeMemory === 'pvp-memory') {
                         if (scoresMemory.player1 > scoresMemory.player2) winnerMsg += `فاز ${playerNames.player1}!`;
                         else if (scoresMemory.player2 > scoresMemory.player1) winnerMsg += `فاز ${playerNames.player2}!`;
                         else winnerMsg += "تعادل!";
-                    } else { // solo-memory
-                        winnerMsg += `لقد وجدت كل الأزواج في ${scoresMemory.player1} محاولة!`; // Or just "أحسنت!"
-                    }
-                    updateElementText(statusElement, winnerMsg, 'success');
-                    showHideElement(restartButton, true); 
+                    } else { winnerMsg += `أحسنت!`; }
+                    updateElementText(statusElement, winnerMsg, 'success'); showHideElement(restartButton, true); 
                 } else {
-                    flippedCards = [];
-                    canFlip = true; 
-                    // In PvP, current player gets another turn. In Solo, just continue.
+                    flippedCards = []; canFlip = true; 
                     if (gameModeMemory === 'pvp-memory') updateStatus(); 
                 }
             } else {
                 playSound('snd-lose');
                 setTimeout(() => {
-                    card1.classList.remove('flipped');
-                    card2.classList.remove('flipped');
-                    flippedCards = [];
+                    card1.classList.remove('flipped'); card2.classList.remove('flipped'); flippedCards = [];
                     if (gameActiveMemory) {
-                        if (gameModeMemory === 'pvp-memory') switchPlayerMemory();
-                        else canFlip = true; // For solo, allow flipping again
+                        if (gameModeMemory === 'pvp-memory') switchPlayerMemory(); else canFlip = true; 
                     }
                 }, FLIP_BACK_DELAY); 
             }
         }
 
-        function switchPlayerMemory() { // Only relevant for PvP
+        function switchPlayerMemory() { 
             if (!gameActiveMemory || gameModeMemory !== 'pvp-memory') return;
             currentPlayerMemory = currentPlayerMemory === 'player1' ? 'player2' : 'player1';
-            updateStatus();
-            canFlip = true; 
+            updateStatus(); canFlip = true; 
         }
         
         function resetMemoryGame() {
-            gameActiveMemory = false;
-            gameModeMemory = null;
-            cardsContainer.innerHTML = '';
-            showHideElement(optionsDivMemory, true);
-            showHideElement(playerNamesInputDiv, false);
-            showHideElement(cardsContainer, false);
-            showHideElement(scoresDivMemory, false);
-            showHideElement(restartButton, false);
-            updateElementText(statusElement, 'اختر نمط اللعبة');
-            canFlip = true;
-            playSound('snd-click');
+            gameActiveMemory = false; gameModeMemory = null; cardsContainer.innerHTML = '';
+            showHideElement(optionsDivMemory, true); showHideElement(playerNamesInputDiv, false);
+            showHideElement(cardsContainer, false); showHideElement(scoresDivMemory, false);
+            showHideElement(restartButton, false); updateElementText(statusElement, 'اختر نمط اللعبة');
+            canFlip = true; playSound('snd-click');
         }
 
         if(pvpButtonMemory) pvpButtonMemory.addEventListener('click', preparePvpNameInputs);
         if(startPvpNamedButton) startPvpNamedButton.addEventListener('click', () => startGameMemory('pvp-memory'));
         if(soloButtonMemory) soloButtonMemory.addEventListener('click', () => startGameMemory('solo-memory'));
         if(restartButton) restartButton.addEventListener('click', resetMemoryGame);
-        
         resetMemoryGame();
-
         const observer = new MutationObserver((mutationsList) => {
             for(const mutation of mutationsList) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                    if (section.classList.contains('active') && !gameActiveMemory) {
-                       resetMemoryGame();
-                    }
+                    if (section.classList.contains('active') && !gameActiveMemory) resetMemoryGame();
                 }
             }
         });
         if(section) observer.observe(section, { attributes: true });
       };
       
-      // ... (init functions for other games remain the same)
-      const initRPSGame = () => { 
+      const initRPSGame = () => { /* ... (same as before) ... */ 
         const section = document.querySelector('#rps'); if(!section) return;
         const resultElement = section.querySelector('.result');
         const choiceButtons = section.querySelectorAll('.gamebox button');
@@ -1077,7 +1107,7 @@
         }));
       };
 
-      const initClickTargetGame = () => {
+      const initClickTargetGame = () => { /* ... (same as before) ... */ 
         const section = document.querySelector('#click'); if (!section) return;
         const startButton = section.querySelector('#click-start');
         const targetArea = section.querySelector('#click-target-area');
@@ -1131,7 +1161,7 @@
         if(statusElement) updateElementText(statusElement, 'اضغط "ابدأ"');
       };
 
-      const initReactionTestGame = () => {
+      const initReactionTestGame = () => { /* ... (same as before) ... */ 
         const section = document.querySelector('#react'); if (!section) return;
         const reactBox = section.querySelector('#react-box');
         let startTime, timeoutId, waitingForClick = false;
@@ -1172,7 +1202,7 @@
         }
       };
 
-      const initDiceRollGame = () => {
+      const initDiceRollGame = () => { /* ... (same as before) ... */ 
         const section = document.querySelector('#dice'); if (!section) return;
         const rollButton = section.querySelector('#dice-roll');
         const resultElement = section.querySelector('#dice-result');
@@ -1187,7 +1217,7 @@
         if(resultElement) updateElementText(resultElement, '--');
       };
       
-      const initMathQuizGame = () => {
+      const initMathQuizGame = () => { /* ... (same as before) ... */ 
         const section = document.querySelector('#math'); if (!section) return;
         const startButton = section.querySelector('#math-start');
         const questionArea = section.querySelector('.question-area');
@@ -1243,7 +1273,7 @@
         if(resultElement) updateElementText(resultElement, '--');
       };
 
-      const initGuessNumberGame = () => {
+      const initGuessNumberGame = () => { /* ... (same as before) ... */ 
         const section = document.querySelector('#guessnum'); if (!section) return;
         const startButton = section.querySelector('#guessnum-start');
         const inputField = section.querySelector('#guessnum-input');
@@ -1312,7 +1342,7 @@
         if(messageElement) updateElementText(messageElement, 'خمن رقمًا بين 1 و 100');
       };
 
-      const initBigSmallGame = () => {
+      const initBigSmallGame = () => { /* ... (same as before) ... */ 
         const section = document.querySelector('#bigsmall'); if (!section) return;
         const startButton = section.querySelector('#bigsmall-start');
         const questionArea = section.querySelector('.question-area');
@@ -1369,7 +1399,7 @@
         if(resultElement) updateElementText(resultElement, '--');
       };
 
-      const initTypingTestGame = () => {
+      const initTypingTestGame = () => { /* ... (same as before) ... */ 
         const section = document.querySelector('#typing'); if (!section) return;
         const startButton = section.querySelector('#typing-start');
         const textToTypeElement = section.querySelector('.text-to-type');
