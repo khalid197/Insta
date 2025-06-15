@@ -205,8 +205,7 @@
     <h2>إكس أو (XO)</h2>
     <div class="xo-options">
         <button id="xo-pvp">لاعب ضد لاعب</button>
-        <button id="xo-pvc-normal">لاعب ضد كمبيوتر</button> 
-        <button id="xo-pvc-hard">لاعب ضد كمبيوتر</button> 
+        <button id="xo-pvc-hard">لاعب ضد كمبيوتر (صعب)</button> 
     </div>
     <div class="xo-board-container">
         <div class="board"></div> 
@@ -549,7 +548,6 @@
           const statusElement = section.querySelector('.status');
           const restartButton = section.querySelector('#xo-restart');
           const pvpButton = section.querySelector('#xo-pvp');
-          const pvcNormalButton = section.querySelector('#xo-pvc-normal'); 
           const pvcHardButton = section.querySelector('#xo-pvc-hard'); 
           const canvas = section.querySelector('#xo-winning-line-canvas');
           const ctx = canvas.getContext('2d');
@@ -558,7 +556,7 @@
           let boardState = Array(9).fill('');
           let currentPlayer = '❌';
           let gameActive = false;
-          let gameMode = null; // 'pvp', 'pvc-normal', 'pvc-hard'
+          let gameMode = null; // 'pvp', 'pvc-hard'
           const playerSymbol = '❌';
           const computerSymbol = '⭕';
 
@@ -577,6 +575,10 @@
               if (!combination || combination.length < 3) return;
               resizeCanvas(); 
               ctx.clearRect(0, 0, canvas.width, canvas.height); 
+              
+              ctx.save(); // Save current state
+              ctx.translate(0.5, 0.5); // Offset by half a pixel
+
               ctx.beginPath();
               ctx.lineWidth = 8; 
               ctx.strokeStyle = 'rgba(220, 53, 69, 0.8)'; 
@@ -599,6 +601,8 @@
               ctx.moveTo(startCell.x, startCell.y);
               ctx.lineTo(endCell.x, endCell.y);
               ctx.stroke();
+              
+              ctx.restore(); // Restore original state
           };
           
           const checkWin = () => { 
@@ -645,19 +649,15 @@
                   return;
               }
               
-              const previousPlayer = currentPlayer; 
               currentPlayer = (currentPlayer === playerSymbol) ? computerSymbol : playerSymbol;
               updateElementText(statusElement, `الدور: ${currentPlayer}`);
 
-              if (gameActive && currentPlayer === computerSymbol) {
+              if (gameMode && gameMode.startsWith('pvc-') && gameActive && currentPlayer === computerSymbol) {
                   disableBoardInteraction(true);
                   let moveDelay = 500 + Math.random() * 500;
-                  let computerMoveFunction;
+                  let computerMoveFunction = null;
 
-                  if (gameMode === 'pvc-normal') {
-                      computerMoveFunction = computerMoveNormal;
-                      moveDelay = 400 + Math.random() * 300; 
-                  } else if (gameMode === 'pvc-hard') {
+                  if (gameMode === 'pvc-hard') {
                       computerMoveFunction = computerMoveHard;
                       moveDelay = 300 + Math.random() * 200; 
                   }
@@ -673,6 +673,9 @@
                   } else {
                        disableBoardInteraction(false); 
                   }
+              } else {
+                  // For PvP, ensure board is interactable for the next player
+                  disableBoardInteraction(false);
               }
           };
           
@@ -682,6 +685,7 @@
             });
           };
 
+          // computerMoveNormal is no longer used but can be kept for reference or future use
           const computerMoveNormal = () => { 
               if (!gameActive) return -1;
               let availableCells = [];
@@ -695,7 +699,6 @@
               }
               return -1; 
           };
-
 
           const computerMoveHard = () => { 
             if (!gameActive) return -1;
@@ -761,6 +764,7 @@
               updateElementText(statusElement, `الدور: ${currentPlayer}`);
               showHideElement(section.querySelector('.xo-options'), false); 
               showHideElement(restartButton, true); 
+              disableBoardInteraction(false); // Ensure board is enabled at start
               playSound('snd-click');
           };
 
@@ -782,7 +786,6 @@
           Array.from(boardElement.children).forEach((cell, i) => cell.addEventListener('click', () => handleClick(i)));
           
           if(pvpButton) pvpButton.addEventListener('click', () => startGameMode('pvp'));
-          if(pvcNormalButton) pvcNormalButton.addEventListener('click', () => startGameMode('pvc-normal')); 
           if(pvcHardButton) pvcHardButton.addEventListener('click', () => startGameMode('pvc-hard')); 
           if(restartButton) restartButton.addEventListener('click', resetGame);
 
@@ -992,9 +995,8 @@
                     card1.classList.remove('flipped');
                     card2.classList.remove('flipped');
                     flippedCards = [];
-                    // canFlip will be set in switchPlayerMemory or at the start of computerTurnMemory
                     if (gameActiveMemory) switchPlayerMemory(); 
-                }, 1200); // Increased delay to see cards before they flip back
+                }, 1800); // MODIFIED: Increased delay from 1200ms to 1800ms
             }
         }
 
@@ -1095,10 +1097,10 @@
 
                 if (!secondCardToFlip && flippedCards.length === 1) { 
                     setTimeout(() => {
-                        firstCardToFlip.classList.remove('flipped'); 
+                        if (firstCardToFlip) firstCardToFlip.classList.remove('flipped'); 
                         flippedCards = [];
                         if (gameActiveMemory) switchPlayerMemory();
-                    }, 1200); 
+                    }, 1800); // MODIFIED: Use the same longer delay for consistency 
                     return;
                 }
                 
@@ -1233,28 +1235,30 @@
         const startGame = () => {
             if(!reactBox) return;
             if (!auth.currentUser||!auth.currentUser.emailVerified) {updateElementText(reactBox, 'يرجى التحقق من بريدك للعب.','info'); reactBox.classList.remove('waiting', 'ready'); return;}
-            if (waitingForClick) { 
-                if (reactBox.classList.contains('ready')) { 
+            
+            if (waitingForClick) { // If currently waiting or green
+                if (reactBox.classList.contains('ready')) { // Clicked on green
                     const reactionTime = Date.now() - startTime;
-                    updateElementText(reactBox, `وقتك: ${reactionTime} مللي ثانية`);
+                    updateElementText(reactBox, `وقتك: ${reactionTime} مللي ثانية. اضغط للبدء من جديد.`);
                     playSound('snd-win');
-                } else { 
+                } else { // Clicked too early (on red/waiting)
                     updateElementText(reactBox, 'مبكر جداً! اضغط للبدء من جديد.');
                     playSound('snd-lose');
                 }
                 waitingForClick = false;
                 clearTimeout(timeoutId);
                 reactBox.classList.remove('waiting', 'ready');
-                updateElementText(reactBox, 'اضغط للبدء'); 
+                // Don't immediately reset to "اضغط للبدء", message above serves as reset prompt
                 return;
             }
             
+            // Start a new round
             updateElementText(reactBox, 'انتظر اللون الأخضر...', 'waiting');
             waitingForClick = true;
             const randomDelay = Math.random() * 3000 + 1000; 
 
             timeoutId = setTimeout(() => {
-                if (waitingForClick) { 
+                if (waitingForClick) { // Ensure still waiting (user hasn't clicked too early and reset)
                     updateElementText(reactBox, 'اضغط الآن!', 'ready');
                     startTime = Date.now();
                 }
