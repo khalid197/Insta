@@ -576,12 +576,12 @@
               resizeCanvas(); 
               ctx.clearRect(0, 0, canvas.width, canvas.height); 
               
-              ctx.save(); // Save current state
-              ctx.translate(0.5, 0.5); // Offset by half a pixel
+              ctx.save(); 
+              ctx.translate(0.5, 0.5); 
 
               ctx.beginPath();
-              ctx.lineWidth = 10; // Increased line width slightly for better visibility
-              ctx.strokeStyle = 'rgba(220, 53, 69, 0.9)'; // Made slightly more opaque
+              ctx.lineWidth = 10; 
+              ctx.strokeStyle = 'rgba(220, 53, 69, 0.9)'; 
               ctx.lineCap = 'round';
 
               const cellSize = 100; 
@@ -602,7 +602,7 @@
               ctx.lineTo(endCell.x, endCell.y);
               ctx.stroke();
               
-              ctx.restore(); // Restore original state
+              ctx.restore(); 
           };
           
           const checkWin = () => { 
@@ -674,7 +674,6 @@
                        disableBoardInteraction(false); 
                   }
               } else {
-                  // For PvP, ensure board is interactable for the next player
                   disableBoardInteraction(false);
               }
           };
@@ -749,7 +748,7 @@
               updateElementText(statusElement, `الدور: ${currentPlayer}`);
               showHideElement(section.querySelector('.xo-options'), false); 
               showHideElement(restartButton, true); 
-              disableBoardInteraction(false); // Ensure board is enabled at start
+              disableBoardInteraction(false); 
               playSound('snd-click');
           };
 
@@ -815,7 +814,8 @@
         let currentPlayerMemory = null; 
         let scoresMemory = { player1: 0, player2: 0, computer: 0 };
         let revealedByComputer = []; 
-        const FLIP_BACK_DELAY = 2500; // MODIFIED: Centralized and increased flip back delay
+        const FLIP_BACK_DELAY = 2500; 
+        const COMPUTER_SECOND_PICK_DELAY = 5000; // MODIFIED: New constant for computer's second pick delay
 
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -965,7 +965,7 @@
                     showHideElement(restartButton, true); 
                 } else {
                     flippedCards = [];
-                    canFlip = true; // Current player gets another turn
+                    canFlip = true; 
                     updateStatus(); 
                     if (gameModeMemory === 'pvc-memory' && currentPlayerMemory === 'computer' && gameActiveMemory) {
                          cardsContainer.classList.add('disabled');
@@ -975,14 +975,13 @@
                     }
                 }
             } else {
-                // No match
                 playSound('snd-lose');
                 setTimeout(() => {
                     card1.classList.remove('flipped');
                     card2.classList.remove('flipped');
                     flippedCards = [];
                     if (gameActiveMemory) switchPlayerMemory(); 
-                }, FLIP_BACK_DELAY); // MODIFIED: Used FLIP_BACK_DELAY
+                }, FLIP_BACK_DELAY); 
             }
         }
 
@@ -1072,7 +1071,7 @@
                 return;
             }
 
-            setTimeout(() => { 
+            setTimeout(() => { // Delay for first computer pick
                 if (firstCardToFlip && !firstCardToFlip.classList.contains('flipped')) {
                     firstCardToFlip.classList.add('flipped');
                     flippedCards.push(firstCardToFlip);
@@ -1086,12 +1085,12 @@
                         if (firstCardToFlip) firstCardToFlip.classList.remove('flipped'); 
                         flippedCards = [];
                         if (gameActiveMemory) switchPlayerMemory();
-                    }, FLIP_BACK_DELAY); // MODIFIED: Used FLIP_BACK_DELAY
+                    }, FLIP_BACK_DELAY); 
                     return;
                 }
                 
                 if (secondCardToFlip) {
-                    setTimeout(() => { 
+                    setTimeout(() => { // MODIFIED: Delay for second computer pick
                         if (secondCardToFlip && !secondCardToFlip.classList.contains('flipped')) {
                             secondCardToFlip.classList.add('flipped');
                             flippedCards.push(secondCardToFlip);
@@ -1103,9 +1102,9 @@
                         else { 
                              if (gameActiveMemory) switchPlayerMemory();
                         }
-                    }, 1000); 
+                    }, COMPUTER_SECOND_PICK_DELAY); // MODIFIED: Used COMPUTER_SECOND_PICK_DELAY
                 }
-            }, 1000); 
+            }, 1000); // Initial delay before computer picks first card
         }
         
         function resetMemoryGame() {
